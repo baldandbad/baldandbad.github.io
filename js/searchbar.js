@@ -1,8 +1,17 @@
-  // Get the JSON from the <script> tag
-  const rawData = document.getElementById('blog-data').textContent;
-  const data = JSON.parse(rawData);
+let data = [];
 
-  const container = document.getElementById('search-results-container');
+async function loadData() {
+  try {
+    const res = await fetch('js/pagesdata.json'); // ← your JSON path here
+    data = await res.json();
+    displayResults(data); // display everything on initial load
+  } catch (err) {
+    document.getElementById('search-results').innerHTML = '<p>Error loading data.</p>';
+    console.error(err);
+  }
+}
+
+  const container = document.getElementById('search-results');
 
   function displayResults(results) {
     container.innerHTML = results.map(item => `
