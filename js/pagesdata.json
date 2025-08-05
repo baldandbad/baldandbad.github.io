@@ -1,0 +1,20 @@
+[
+  {
+    "title": "The Design of HTML5",
+    "url": "blog-html5.html",
+    "image": "images/use_img/blog_img1.jpg",
+    "description": "A deep dive into HTML5 design principles and structure.",
+    "author": "Greg Christman",
+    "date": "March 17, 2016",
+    "categories": ["Online Courses"]
+  },
+  {
+    "title": "Tricks and Tips for Photoshop",
+    "url": "blog-photoshop.html",
+    "image": "images/use_img/blog_img2.jpg",
+    "description": "Photoshop CS6 tips to improve your workflow and creativity.",
+    "author": "Sebastien Gabriel",
+    "date": "March 17, 2016",
+    "categories": ["Design"]
+  }
+]
