@@ -6,7 +6,9 @@ import fetch from "node-fetch";
 dotenv.config();
 const app = express();
 app.use(cors({
-  origin: 'https://baldandbad.github.io', // your GitHub Pages URL
+  origin: 'https://baldandbad.github.io', // Your GitHub Pages site
+  methods: ['GET', 'POST', 'OPTIONS'],
+  allowedHeaders: ['Content-Type'],
 }));
 app.use(express.json());
 
