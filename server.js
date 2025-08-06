@@ -18,7 +18,7 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   const payload = {
-    model: "mistralai/mistral-7b-instruct", // or any model OpenRouter supports
+    model: "deepseek/deepseek-r1-0528:free", // or any model OpenRouter supports
     messages: [{ role: "user", content: userMsg }],
   };
 
@@ -33,7 +33,7 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await openRes.json();
-    res.json({ reply: data.choices?.[0]?.message?.content || "No reply." });
+    res.json({ reply: data.choices?.[0]?.message?.content || "   reply." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error talking to OpenRouter" });
@@ -47,3 +47,5 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT || 3000, () =>
   console.log("Server ready 🚀")
 );
+
+console.log("API KEY:", API_KEY);
