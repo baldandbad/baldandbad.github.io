@@ -5,7 +5,9 @@ import fetch from "node-fetch";
 
 dotenv.config();
 const app = express();
-app.use(cors());
+app.use(cors({
+  origin: 'https://baldandbad.github.io', // your GitHub Pages URL
+}));
 app.use(express.json());
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
