@@ -5,7 +5,7 @@
 <script>
 async function ask() {
   const input = document.getElementById("input").value;
-  const res = await fetch("https://your-backend.up.railway.app/ask", {
+  const res = await fetch("baldandbadgithubio-production.up.railway.app", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: input })
