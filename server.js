@@ -28,7 +28,7 @@ app.post("/ask", async (req, res) => {
       headers: {
         Authorization: `Bearer ${API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://baldandbad.github.io/", // optional but helps with OpenRouter limits
+        "HTTP-Referer": "https://baldandbadgithubio-production.up.railway.app/", // optional but helps with OpenRouter limits
       },
       body: JSON.stringify(payload),
     });
