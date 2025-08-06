@@ -21,7 +21,7 @@ app.post("/ask", async (req, res) => {
     model: "openrouter/horizon-beta", // or any model OpenRouter supports
     messages: [
       { role: "system", content: "You are a helpful assistant that speaks Vietnamese." },
-      { role: "user", content: userMessage }
+      { role: "user", content: userMsg}
     ]
   };
 
