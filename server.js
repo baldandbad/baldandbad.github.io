@@ -27,8 +27,7 @@ app.post("/ask", async (req, res) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://baldandbadgithubio-production.up.railway.app/", // optional but helps with OpenRouter limits
+        "Content-Type": "application/json", // optional but helps with OpenRouter limits
       },
       body: JSON.stringify(payload),
     });
@@ -39,6 +38,10 @@ app.post("/ask", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error talking to OpenRouter" });
   }
+});
+
+app.get('/', (req, res) => {
+  res.send('AI backend is running!');
 });
 
 app.listen(process.env.PORT || 3000, () =>
