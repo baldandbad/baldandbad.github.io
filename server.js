@@ -18,7 +18,7 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   const payload = {
-    model: "deepseek/deepseek-r1-0528:free", // or any model OpenRouter supports
+    model: "qwen/qwen3-4b:free", // or any model OpenRouter supports
     messages: [{ role: "user", content: userMsg }],
   };
 
@@ -48,4 +48,3 @@ app.listen(process.env.PORT || 3000, () =>
   console.log("Server ready 🚀")
 );
 
-console.log("API KEY:", API_KEY);
