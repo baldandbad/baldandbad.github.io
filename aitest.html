@@ -1,0 +1,16 @@
+<input id="input" placeholder="Hỏi AI..." />
+<button onclick="ask()">Hỏi</button>
+<pre id="response"></pre>
+
+<script>
+async function ask() {
+  const input = document.getElementById("input").value;
+  const res = await fetch("https://your-backend.up.railway.app/ask", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: input })
+  });
+  const data = await res.json();
+  document.getElementById("response").innerText = data.reply;
+}
+</script>
