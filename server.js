@@ -20,9 +20,9 @@ app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   console.log("User message:", userMsg);
   const payload = {
-    model: "openai/gpt-oss-20b:free", // or any model OpenRouter supports
+    model: "deepseek/deepseek-r1-0528-qwen3-8b:free", // or any model OpenRouter supports
     messages: [
-      { role: "system", content: "You are a helpful assistant that speaks Vietnamese." },
+      { role: "system", content: "You are a helpful assistant who specializes in historical relics in Vietnam that speaks Vietnamese and you only go into details when they ask about things related to historical relics in Vietnam." },
       { role: "user", content: userMsg}
     ]
   };
