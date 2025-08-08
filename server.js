@@ -22,7 +22,7 @@ app.post("/ask", async (req, res) => {
   const payload = {
     model: "deepseek/deepseek-r1-0528-qwen3-8b:free", // or any model OpenRouter supports
     messages: [
-      { role: "system", content: "You are a helpful assistant who specializes in historical relics in Vietnam that speaks Vietnamese and you only go into details when they ask about things related to historical relics in Vietnam." },
+      { role: "system", content: "You are a helpful assistant who specializes in historical relics in Vietnam that speaks Vietnamese (exclusively Vietnamese) and you only go into details when they ask about things related to historical relics in Vietnam." },
       { role: "user", content: userMsg}
     ]
   };
