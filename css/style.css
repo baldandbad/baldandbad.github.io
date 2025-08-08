@@ -6038,4 +6038,72 @@ a.fav-load {
   #no-more-tables td:last-child.text-right:before {
     content: "";
   }
+  /* Chatbox container */
+#chat-widget {
+  position: fixed;
+  bottom: 80px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-family: sans-serif;
+}
+
+/* Header */
+#chat-header {
+  background: #007bff;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+}
+
+/* Chat messages area */
+#chat-body {
+  flex: 1;
+  padding: 10px;
+  overflow-y: auto;
+  background: #f9f9f9;
+}
+
+/* Input area */
+#chat-input-area {
+  display: flex;
+  border-top: 1px solid #ddd;
+}
+#chat-input {
+  flex: 1;
+  border: none;
+  padding: 10px;
+  outline: none;
+}
+#chat-send {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+/* Floating toggle button */
+#chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #007bff;
+  color: white;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  cursor: pointer;
+}
 }

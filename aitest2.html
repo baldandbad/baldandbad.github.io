@@ -1,0 +1,144 @@
+<style>
+  /* Floating chat button */
+  #chat-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 55px;
+    height: 55px;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+  }
+
+  /* Chatbox container */
+  #chatbox {
+    display: none;
+    position: fixed;
+    bottom: 85px;
+    right: 20px;
+    width: 300px;
+    height: 400px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Chat messages area */
+  #messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f5f5f5;
+  }
+
+  .message {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 6px;
+    max-width: 80%;
+    word-wrap: break-word;
+  }
+
+  .user {
+    background: #d1e7dd;
+    align-self: flex-end;
+  }
+
+  .bot {
+    background: #e2e3e5;
+    align-self: flex-start;
+  }
+
+  /* Input area */
+  #chat-input-area {
+    display: flex;
+    border-top: 1px solid #ddd;
+  }
+
+  #chat-input {
+    flex: 1;
+    border: none;
+    padding: 10px;
+    font-size: 14px;
+  }
+
+  #send-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+  }
+</style>
+
+<!-- Chat button -->
+<button id="chat-toggle">💬</button>
+
+<!-- Chatbox -->
+<div id="chatbox">
+  <div id="messages"></div>
+  <div id="chat-input-area">
+    <input id="chat-input" type="text" placeholder="Type a message..." />
+    <button id="send-btn">➤</button>
+  </div>
+</div>
+
+<script>
+  const chatToggle = document.getElementById("chat-toggle");
+  const chatbox = document.getElementById("chatbox");
+  const messages = document.getElementById("messages");
+  const chatInput = document.getElementById("chat-input");
+  const sendBtn = document.getElementById("send-btn");
+
+  chatToggle.addEventListener("click", () => {
+    chatbox.style.display = chatbox.style.display === "none" ? "flex" : "none";
+  });
+
+  async function sendMessage() {
+    const userMsg = chatInput.value.trim();
+    if (!userMsg) return;
+    appendMessage(userMsg, "user");
+    chatInput.value = "";
+
+    appendMessage("Typing...", "bot", true);
+
+    try {
+      const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: userMsg })
+      });
+      const data = await res.json();
+
+      // Remove the "Typing..." placeholder
+      messages.lastChild.remove();
+      appendMessage(data.reply || "No reply.", "bot");
+    } catch (err) {
+      messages.lastChild.remove();
+      appendMessage("Error: Could not connect to AI.", "bot");
+    }
+  }
+
+  function appendMessage(text, sender, isTemp = false) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", sender);
+    if (isTemp) msg.style.opacity = 0.6;
+    msg.textContent = text;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+  sendBtn.addEventListener("click", sendMessage);
+  chatInput.addEventListener("keypress", e => {
+    if (e.key === "Enter") sendMessage();
+  });
+</script>

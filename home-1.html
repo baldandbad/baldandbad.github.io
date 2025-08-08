@@ -25,8 +25,7 @@
   <body>
     <div class="header_meta header_meta_one">
       <div class="container">
-        <div class="row">
-        </div>
+        <div class="row"></div>
       </div>
     </div>
     <header class="site-header home-one" id="masthead">
@@ -456,15 +455,15 @@
                         <span>9:00 - 10:00</span> Class Duration
                       </li>
                       </li>
-                   </ul>
+                    </ul>
                   </div>
+                </div>
               </div>
             </div>
-          </div> 
-        </div> 
-      </div> 
-    </div>
-</section>
+          </div>
+        </div>
+      </div>
+    </section>
     </section>
     <section class="our-blog">
       <div class="container">
@@ -583,11 +582,176 @@
       </div>
       <div class="footer-bottom">
         <div class="container">
-          <div class="row">
-          </div>
+          <div class="row"></div>
         </div>
       </div>
     </footer>
+    <!-- Chatbox HTML -->
+    <!-- Chatbox Container -->
+    <div id="chatbox-container">
+      <div id="chatbox-header"> AI Assistant <button id="chatbox-close">✖</button>
+      </div>
+      <div id="chatbox-messages"></div>
+      <div id="chatbox-input-area">
+        <input id="chatbox-input" type="text" placeholder="Type your message..." />
+        <button id="chatbox-send">Send</button>
+      </div>
+    </div>
+    <!-- Toggle Button -->
+    <button id="chatbox-toggle">💬</button>
+    <style>
+      /* Chatbox Position & Layout */
+      #chatbox-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        display: none;
+        flex-direction: column;
+        overflow: hidden;
+        z-index: 9999;
+      }
+
+      /* Header */
+      #chatbox-header {
+        background: #0078ff;
+        color: white;
+        padding: 10px;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      #chatbox-header button {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      /* Messages Area */
+      #chatbox-messages {
+        flex: 1;
+        padding: 10px;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      /* Input Area */
+      #chatbox-input-area {
+        display: flex;
+        border-top: 1px solid #ddd;
+      }
+
+      #chatbox-input {
+        flex: 1;
+        padding: 8px;
+        border: none;
+        outline: none;
+      }
+
+      #chatbox-send {
+        background: #0078ff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+
+      /* Chat Bubbles */
+      .chat-message {
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 15px;
+        word-wrap: break-word;
+      }
+
+      .chat-user {
+        align-self: flex-end;
+        background: #0078ff;
+        color: white;
+        border-bottom-right-radius: 0;
+      }
+
+      .chat-ai {
+        align-self: flex-start;
+        background: #e5e5ea;
+        color: black;
+        border-bottom-left-radius: 0;
+      }
+
+      /* Toggle Button */
+      #chatbox-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #0078ff;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        cursor: pointer;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+      }
+    </style>
+    <script>
+      const toggleBtn = document.getElementById("chatbox-toggle");
+      const chatbox = document.getElementById("chatbox-container");
+      const closeBtn = document.getElementById("chatbox-close");
+      const sendBtn = document.getElementById("chatbox-send");
+      const input = document.getElementById("chatbox-input");
+      const messages = document.getElementById("chatbox-messages");
+      // Open/Close chatbox
+      toggleBtn.onclick = () => chatbox.style.display = "flex";
+      closeBtn.onclick = () => chatbox.style.display = "none";
+      // Send message
+      sendBtn.onclick = sendMessage;
+      input.addEventListener("keypress", e => {
+        if (e.key === "Enter") sendMessage();
+      });
+      async function sendMessage() {
+        const text = input.value.trim();
+        if (!text) return;
+        // Show user bubble
+        addMessage(text, "user");
+        input.value = "";
+        try {
+          const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              message: text
+            })
+          });
+          const data = await res.json();
+          // Show AI bubble
+          addMessage(data.reply || "(No reply)", "ai");
+        } catch (err) {
+          addMessage("Error: " + err.message, "ai");
+        }
+      }
+
+      function addMessage(text, sender) {
+        const div = document.createElement("div");
+        div.classList.add("chat-message", sender === "user" ? "chat-user" : "chat-ai");
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+    </script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="vendor/flexslider/jquery.flexslider-min.js"></script>
