@@ -17,6 +17,7 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
+  console.log("User message:", userMsg);
   const payload = {
     model: "openrouter/horizon-beta", // or any model OpenRouter supports
     messages: [
@@ -36,7 +37,7 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await openRes.json();
-    res.json({ reply: data.choices?.[0]?.message?.content || "   reply." });
+    res.json({ reply: data.choices?.[0]?.message?.content || " No reply." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error talking to OpenRouter" });
@@ -50,7 +51,4 @@ app.get('/', (req, res) => {
 app.listen(process.env.PORT || 3000, () =>
   console.log("Server ready 🚀")
 );
-
-const data = await res.json();
-console.log(data);
 
