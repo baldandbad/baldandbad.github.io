@@ -18,7 +18,7 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   const payload = {
-    model: "openrouter/horizon-beta", // or any model OpenRouter supports
+    model: "google/gemma-3n-e4b-it:free", // or any model OpenRouter supports
     messages: [
       { role: "system", content: "You are a helpful assistant that speaks Vietnamese." },
       { role: "user", content: userMsg}
