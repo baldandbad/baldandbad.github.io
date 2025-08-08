@@ -20,7 +20,7 @@ app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   console.log("User message:", userMsg);
   const payload = {
-    model: "google/gemma-3n-e4b-it:free", // or any model OpenRouter supports
+    model: "deepseek/deepseek-r1-0528:free", // or any model OpenRouter supports
     messages: [
       { role: "system", content: "You are a helpful assistant that speaks Vietnamese." },
       { role: "user", content: userMsg}
