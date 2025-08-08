@@ -14,6 +14,7 @@ app.use(express.json());
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
+console.log("API key loaded?", !!API_KEY);
 
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
@@ -37,6 +38,7 @@ app.post("/ask", async (req, res) => {
     });
 
     const data = await openRes.json();
+    console.log("OpenRouter raw response:", data);
     res.json({ reply: data.choices?.[0]?.message?.content || " No reply." });
   } catch (err) {
     console.error(err);
