@@ -218,9 +218,9 @@
                     <p class="meta">In " <a href="blog-details.html#">Online Courses</a>" </p>
                   </article>
                 </div>
+              </section>
                 <div class="comments-area" id="comments">
                   <ul id="comment-list"></ul>
-
 <script>
 async function loadComments() {
   const res = await fetch("/comments"); // API endpoint from your backend
@@ -344,6 +344,7 @@ document.getElementById("commentform").addEventListener("submit", async function
 // Load on page start
 loadComments();
 </script>
+</div>
             </main>
             <div class="widget-area col-xs-12 col-sm-4 pull-right" id="secondary">
               <aside class="widget widget_search">
