@@ -327,52 +327,47 @@ async function loadComments() {
   });
 }
 
-document.addEventListener("click", function (e) {
-  if (e.target.classList.contains("comment-reply-link")) {
-    e.preventDefault();
+document.addEventListener("click", function(e) {
+    if (e.target.classList.contains("comment-reply-link")) {
+        e.preventDefault();
 
-    // Remove any existing inline reply forms
-    document.querySelectorAll(".inline-reply-form").forEach(f => f.remove());
+        const commentId = e.target.closest("li.comment").id.replace("li-comment-", "");
+        
+        // Create reply form
+        const formHTML = `
+          <form class="reply-form">
+            <input type="text" name="name" placeholder="Your Name" required>
+            <textarea name="message" placeholder="Your Reply" required></textarea>
+            <button type="submit">Submit Reply</button>
+          </form>
+        `;
 
-    const commentElement = e.target.closest(".comment");
-    const parentId = commentElement.id.replace("li-comment-", "");
+        // Insert under the comment
+        e.target.closest(".comment-wrapper").insertAdjacentHTML("beforeend", formHTML);
 
-    // Create a small inline reply form
-    const replyForm = document.createElement("form");
-    replyForm.classList.add("inline-reply-form");
-    replyForm.innerHTML = `
-      <input type="text" name="reply-name" placeholder="Your name" required />
-      <textarea name="reply-message" placeholder="Write your reply..." required></textarea>
-      <button type="submit">Post Reply</button>
-    `;
+        // Attach submit handler
+        const form = e.target.closest(".comment-wrapper").querySelector(".reply-form");
+        form.addEventListener("submit", async function(ev) {
+            ev.preventDefault();
+            const name = form.name.value;
+            const message = form.message.value;
 
-    // Append form to comment
-    commentElement.appendChild(replyForm);
+            await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name,
+                    message,
+                    avatar: null,
+                    created_at: created_at,
+                    post_id: postID,
+                    parent_id: parentId
+                })
+            });
 
-    // Handle reply form submission
-    replyForm.addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const name = this.querySelector("input[name='reply-name']").value;
-      const message = this.querySelector("textarea[name='reply-message']").value;
-      const created_at = new Date();
-
-      await fetch("/comments", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          message,
-          avatar: null,
-          created_at: created_at,
-          post_id: postID,
-          parent_id: parentId
-        })
-      });
-
-      // Reload comments
-      loadComments();
-    });
-  }
+            loadComments(); // refresh
+        });
+    }
 });
 
 
