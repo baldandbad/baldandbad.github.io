@@ -265,32 +265,85 @@ async function loadComments() {
 loadComments();
 </script>
                   <div class="comment-respond" id="respond">
-                    <h3 class="comment-reply-title" id="reply-title">Leave A Comment</h3>
-                    <form class="comment-form" id="commentform" method="post" action="blog-details.html#">
-                      <p class="comment-form-author">
-                        <label>Name <span class="required">*</span>
-                        </label>
-                        <input type="text" value="" name="author" id="author">
-                      </p>
-                      <p class="comment-form-email">
-                        <label>Email <span class="required">*</span>
-                        </label>
-                        <input type="email" value="" name="email" id="email">
-                      </p>
-                      <p class="comment-form-url">
-                        <label>Website</label>
-                        <input type="url" value="" name="url">
-                      </p>
-                      <p class="comment-form-comment">
-                        <label>Comment</label>
-                        <textarea rows="8" cols="45" name="comment"></textarea>
-                      </p>
-                      <p class="form-submit">
-                        <input type="submit" value="Submit" class="submit btn btn-default" id="submit" name="submit">
-                      </p>
-                    </form>
-                  </div>
-                </div>
+  <h3 class="comment-reply-title" id="reply-title">Leave A Comment</h3>
+  <form class="comment-form" id="commentform" method="post" action="#">
+    <p class="comment-form-author">
+      <label>Name <span class="required">*</span></label>
+      <input type="text" name="author" id="author" required>
+    </p>
+    <p class="comment-form-comment">
+      <label>Comment</label>
+      <textarea rows="8" cols="45" name="comment" id="comment" required></textarea>
+    </p>
+    <p class="form-submit">
+      <input type="submit" value="Submit" class="submit btn btn-default" id="submit">
+    </p>
+  </form>
+</div>
+                <script>
+const API_URL = "https://your-backend.up.railway.app/comments"; // change this to your Railway backend
+
+// Create a comment item using your original <li> template
+function createCommentHTML(c) {
+  return `
+    <li id="li-comment-${c.id}" class="comment">
+      <article class="comment-body" id="comment-${c.id}">
+        <div class="author-photo">
+          <a href="#" class="avatar">
+            <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+          </a>
+        </div>
+        <div class="comment-wrapper">
+          <div class="comment-meta">
+            <div class="comment-author vcard">
+              <h5 class="fn">${c.name}</h5>
+            </div>
+          </div>
+          <div class="comment-content">
+            <p>${c.message}</p>
+          </div>
+          <div class="comment-metadata">
+            <span>${new Date(c.created_at).toLocaleDateString()}</span>
+          </div>
+          <div class="reply">
+            <a href="#" class="comment-reply-link btn btn-default">Reply</a>
+          </div>
+        </div>
+      </article>
+    </li>
+  `;
+}
+
+// Load comments from backend
+async function loadComments() {
+  const res = await fetch(API_URL);
+  const comments = await res.json();
+  const list = document.getElementById("comment-list");
+  list.innerHTML = "";
+  comments.forEach(c => {
+    list.insertAdjacentHTML("beforeend", createCommentHTML(c));
+  });
+}
+
+// Handle form submit
+document.getElementById("commentform").addEventListener("submit", async function(e) {
+  e.preventDefault();
+  const name = document.getElementById("author").value;
+  const message = document.getElementById("comment").value;
+
+  await fetch(API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name, message })
+  });
+
+  this.reset();
+  loadComments();
+});
+
+// Load on page start
+loadComments();
+</script>
             </main>
             <div class="widget-area col-xs-12 col-sm-4 pull-right" id="secondary">
               <aside class="widget widget_search">
