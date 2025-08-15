@@ -1269,6 +1269,7 @@ li.comment {
   font-size: 13px;
   margin-left: 4px;
 }
+
 .bypostauthor .comment-wrapper {
   border-top-width: 3px;
   border-bottom-width: 3px;
@@ -1283,6 +1284,49 @@ li.comment {
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
   border-radius: 0;
+}
+/* Base comment styling */
+.comment {
+  position: relative;
+  padding: 20px;
+  margin-bottom: 20px;
+  background: #fff;
+  border-radius: 4px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: margin 0.3s ease;
+}
+
+/* Reply specific styling */
+.comment.is-reply {
+  border-left: 3px solid #4a89dc;
+  background: #f9f9f9;
+}
+
+.comment-replies {
+  margin-top: 15px;
+  position: relative;
+}
+
+.reply-indicator {
+  font-size: 0.8em;
+  color: #777;
+  margin-left: 8px;
+  font-style: italic;
+}
+
+/* Visual hierarchy connector lines */
+.comment-replies::before {
+  content: "";
+  position: absolute;
+  top: -15px;
+  left: -20px;
+  bottom: 0;
+  width: 1px;
+  background: #ddd;
+}
+
+.comment:hover {
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 #comments .reply .btn-default:hover {
   color: #ff5722 !important;

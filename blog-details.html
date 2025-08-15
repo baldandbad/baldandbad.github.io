@@ -262,18 +262,45 @@ function buildCommentTree(comments) {
   return roots;
 }
 
-function createCommentHTML(c) {
-    return `
-      <div class="comment" id="li-comment-${c.id}">
-        <p><strong>${c.name}</strong>: ${c.message}</p>
-        <a href="#" class="comment-reply-link">Reply</a>
-        ${c.replies?.length ? `
-          <div class="comment-replies" style="margin-left: 20px;">
-            ${c.replies.map(createCommentHTML).join("")}
+function createCommentHTML(c, depth = 0) {
+  // Calculate indentation - limit to 5 levels max for sanity
+  const indent = Math.min(depth, 5) * 30; // 30px per level
+  
+  return `
+    <li class="comment ${depth > 0 ? 'is-reply' : ''}" 
+        id="li-comment-${c.id}"
+        style="margin-left: ${indent}px">
+      <article class="comment-body">
+        <div class="author-photo">
+          <a href="blog-details.html" class="avatar">
+            <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+          </a>
+        </div>
+        <div class="comment-wrapper">
+          <div class="comment-meta">
+            <div class="comment-author vcard">
+              <h5 class="fn">${c.name}</h5>
+              ${depth > 0 ? `<span class="reply-indicator">↳ replied to ${c.parent_author || 'parent'}</span>` : ''}
+            </div>
           </div>
-        ` : ""}
-      </div>
-    `;
+          <div class="comment-content">
+            <p>${c.message}</p>
+          </div>
+          <div class="comment-metadata">
+            <span>${new Date(c.created_at).toLocaleDateString()}</span>
+          </div>
+          <div class="reply">
+            <a href="#" class="comment-reply-link btn btn-default">Reply</a>
+          </div>
+        </div>
+      </article>
+      ${c.replies?.length ? `
+        <ol class="comment-replies">
+          ${c.replies.map(reply => createCommentHTML(reply, depth + 1)).join('')}
+        </ol>
+      ` : ''}
+    </li>
+  `;
 }
 
 // Load comments from backend
