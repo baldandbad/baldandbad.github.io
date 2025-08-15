@@ -1187,6 +1187,12 @@ article blockquote.post-quote footer {
 #main .comment-list li.odd {
   background: #fbfbfd;
 }
+li.comment {
+  margin-bottom: 20px;  /* space between comments */
+  padding: 15px;        /* inner spacing */
+  border-bottom: 1px solid #ddd; /* separator line */
+  list-style: none;     /* remove default bullet */
+}
 #comments {
   margin-top: 40px;
   padding-bottom: 40px;
