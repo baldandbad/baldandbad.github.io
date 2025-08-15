@@ -14,9 +14,17 @@ const pool = new Pool({
 // GET all comments
 router.get("/", async (req, res) => {
     try {
-        const { rows } = await pool.query(
-            "SELECT * FROM comments ORDER BY created_at DESC"
-        );
+        const { post_id } = req.query;
+        let query = "SELECT * FROM comments";
+        let params = [];
+
+        if (post_id) {
+            query += " WHERE post_id = $1";
+            params.push(post_id);
+        }
+
+        query += " ORDER BY created_at DESC";
+        const { rows } = await pool.query(query, params);
         res.json(rows);
     } catch (err) {
         console.error(err);
@@ -34,7 +42,7 @@ router.post("/", async (req, res) => {
 
         const { rows } = await pool.query(
             "INSERT INTO comments (name, message, avatar, created_at, post_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [name, message, avatar || null]
+            [name, message, avatar || null, created_at, post_id]
         );
 
         res.status(201).json(rows[0]);

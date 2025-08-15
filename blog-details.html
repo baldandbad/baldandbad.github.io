@@ -332,11 +332,12 @@ document.getElementById("commentform").addEventListener("submit", async function
   e.preventDefault();
   const name = document.getElementById("author").value;
   const message = document.getElementById("comment").value;
-  const Created_at = new Date();
+  const created_at = new Date();
+  const post_id = postID;
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, message , NULL, Created_at, postID})
+    body: JSON.stringify({ name, message , avatar: null, created_at, post_id})
   });
 
   this.reset();
