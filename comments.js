@@ -16,6 +16,7 @@ router.get("/", async (req, res) => {
         const { post_id } = req.query;
         let query = "SELECT * FROM comments";
         let params = [];
+        console.log(post_id);
 
         if (post_id) {
             query += " WHERE post_id = $1";
