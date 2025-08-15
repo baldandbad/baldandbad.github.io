@@ -223,8 +223,9 @@
                   <ul id="comment-list"></ul>
 <script>
 window.POST_ID = 1;
+const API_URL1 = "https://baldandbadgithubio-production.up.railway.app/comments";
 async function loadComments() {
-  const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`); // API endpoint from your backend
+  const res = await fetch(`${API_URL1}?post_id=${window.POST_ID}`); // API endpoint from your backend
   const comments = await res.json();
 
   const list = document.getElementById("comment-list");
