@@ -336,12 +336,7 @@ document.getElementById("commentform").addEventListener("submit", async function
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      post_id: postID,
-      name:author,
-      message:comment,
-      created_at: Created_at
-    })
+    body: JSON.stringify({ name, message , NULL, Created_at, postID})
   });
 
   this.reset();
