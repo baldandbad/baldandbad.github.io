@@ -1171,6 +1171,7 @@ article blockquote.post-quote footer {
   padding: 0 !important;
 }
 .comment-list {
+  margin-top:40px;
   margin-left: -15px;
 }
 #main .comment-list li {
@@ -1188,6 +1189,7 @@ article blockquote.post-quote footer {
   background: #fbfbfd;
 }
 #comments {
+  margin-top: 40px;
   padding-bottom: 40px;
 }
 #comments .comment {
