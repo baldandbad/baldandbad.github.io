@@ -27,7 +27,7 @@ router.get("/", async (req, res) => {
 // POST new comment
 router.post("/", async (req, res) => {
     try {
-        const { name, message, avatar } = req.body;
+        const { name, message, avatar, created_at, post_id } = req.body;
         if (!name || !message) {
             return res.status(400).json({ error: "Name and message are required" });
         }
