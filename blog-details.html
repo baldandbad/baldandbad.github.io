@@ -288,10 +288,10 @@ const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
 // Create a comment item using your original <li> template
 function createCommentHTML(c) {
   return `
-    <li id="li-comment-${c.id}" class="comment">
-      <article class="comment-body" id="comment-${c.id}">
+    <li class="comment" id="li-comment-${c.id}">
+      <article class="comment-body">
         <div class="author-photo">
-          <a href="#" class="avatar">
+          <a href="blog-details.html" class="avatar">
             <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
           </a>
         </div>
@@ -326,6 +326,52 @@ async function loadComments() {
     list.insertAdjacentHTML("beforeend", createCommentHTML(c));
   });
 }
+
+document.addEventListener("click", function (e) {
+  if (e.target.classList.contains("comment-reply-link")) {
+    e.preventDefault();
+
+    // Remove any existing inline reply forms
+    document.querySelectorAll(".inline-reply-form").forEach(f => f.remove());
+
+    const commentElement = e.target.closest(".comment");
+    const parentId = commentElement.id.replace("li-comment-", "");
+
+    // Create a small inline reply form
+    const replyForm = document.createElement("form");
+    replyForm.classList.add("inline-reply-form");
+    replyForm.innerHTML = `
+      <input type="text" name="reply-name" placeholder="Your name" required />
+      <textarea name="reply-message" placeholder="Write your reply..." required></textarea>
+      <button type="submit">Post Reply</button>
+    `;
+
+    // Append form to comment
+    commentElement.appendChild(replyForm);
+
+    // Handle reply form submission
+    replyForm.addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const name = this.querySelector("input[name='reply-name']").value;
+      const message = this.querySelector("textarea[name='reply-message']").value;
+
+      await fetch("/comments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          message,
+          post_id: POST_ID,
+          parent_id: parentId
+        })
+      });
+
+      // Reload comments
+      loadComments();
+    });
+  }
+});
+
 
 // Handle form submit
 document.getElementById("commentform").addEventListener("submit", async function(e) {
