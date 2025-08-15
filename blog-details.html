@@ -280,7 +280,7 @@ function createCommentHTML(c, depth = 0) {
           <div class="comment-meta">
             <div class="comment-author vcard">
               <h5 class="fn">${c.name}</h5>
-              ${depth > 0 ? `<span class="reply-indicator">↳ replied to ${c.parent_author || 'parent'}</span>` : ''}
+              ${depth > 0 ? `<span class="reply-indicator">↳ replied </span>` : ''}
             </div>
           </div>
           <div class="comment-content">
