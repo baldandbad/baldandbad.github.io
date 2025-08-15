@@ -383,7 +383,7 @@ document.getElementById("commentform").addEventListener("submit", async function
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, message , avatar: null, created_at, post_id})
+    body: JSON.stringify({ name, message , avatar: null, created_at, post_id, parent_id: null})
   });
 
   this.reset();
