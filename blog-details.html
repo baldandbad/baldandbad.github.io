@@ -223,51 +223,128 @@
                   <ul id="comment-list"></ul>
 <script>
 window.POST_ID = 1;
-const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
+async function loadComments() {
+  const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`); // API endpoint from your backend
+  const comments = await res.json();
 
+  const list = document.getElementById("comment-list");
+  list.innerHTML = ""; // clear old comments
+
+  comments.forEach(c => {
+    const html = `
+      <li class="comment">
+        <article class="comment-body">
+          <div class="author-photo">
+            <a href="blog-details.html" class="avatar">
+              <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+            </a>
+          </div>
+          <div class="comment-wrapper">
+            <div class="comment-meta">
+              <div class="comment-author vcard">
+                <h5 class="fn">${c.name}</h5>
+              </div>
+            </div>
+            <div class="comment-content">
+              <p>${c.message}</p>
+            </div>
+            <div class="comment-metadata">
+              <span>${new Date(c.created_at).toLocaleDateString()}</span>
+            </div>
+            <div class="reply">
+              <a href="#" class="comment-reply-link btn btn-default">Reply</a>
+            </div>
+          </div>
+        </article>
+      </li>
+    `;
+    list.insertAdjacentHTML("beforeend", html);
+  });
+}
+
+// Call on page load
+loadComments();
+</script>
+                  <div class="comment-respond" id="respond">
+  <h3 class="comment-reply-title" id="reply-title">Leave A Comment</h3>
+  <form class="comment-form" id="commentform" method="post" action="#">
+    <p class="comment-form-author">
+      <label>Name <span class="required">*</span></label>
+      <input type="text" name="author" id="author" required>
+    </p>
+    <p class="comment-form-comment">
+      <label>Comment</label>
+      <textarea rows="8" cols="45" name="comment" id="comment" required></textarea>
+    </p>
+    <p class="form-submit">
+      <input type="submit" value="Submit" class="submit btn btn-default" id="submit">
+    </p>
+  </form>
+</div>
+                <script>
+window.POST_ID = 1;
+const postID = window.POST_ID;
+const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments"; // change this to your Railway backend
+// Create a comment item using your original <li> template
 function createCommentHTML(c) {
   return `
-    <li class="comment">
-      <article class="comment-body">
+    <li id="li-comment-${c.id}" class="comment">
+      <article class="comment-body" id="comment-${c.id}">
         <div class="author-photo">
-          <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+          <a href="#" class="avatar">
+            <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+          </a>
         </div>
         <div class="comment-wrapper">
-          <h5>${c.name}</h5>
-          <p>${c.message}</p>
-          <small>${new Date(c.created_at).toLocaleDateString()}</small>
+          <div class="comment-meta">
+            <div class="comment-author vcard">
+              <h5 class="fn">${c.name}</h5>
+            </div>
+          </div>
+          <div class="comment-content">
+            <p>${c.message}</p>
+          </div>
+          <div class="comment-metadata">
+            <span>${new Date(c.created_at).toLocaleDateString()}</span>
+          </div>
+          <div class="reply">
+            <a href="#" class="comment-reply-link btn btn-default">Reply</a>
+          </div>
         </div>
       </article>
     </li>
   `;
 }
 
+// Load comments from backend
 async function loadComments() {
   const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`);
   const comments = await res.json();
   const list = document.getElementById("comment-list");
   list.innerHTML = "";
-  comments.forEach(c => list.insertAdjacentHTML("beforeend", createCommentHTML(c)));
+  comments.forEach(c => {
+    list.insertAdjacentHTML("beforeend", createCommentHTML(c));
+  });
 }
 
-document.getElementById("commentform").addEventListener("submit", async e => {
+// Handle form submit
+document.getElementById("commentform").addEventListener("submit", async function(e) {
   e.preventDefault();
   const name = document.getElementById("author").value;
   const message = document.getElementById("comment").value;
+  const created_at = new Date();
+  const post_id = postID;
   await fetch(API_URL, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      name,
-      message,
-      created_at: new Date(),
-      post_id: window.POST_ID
-    })
+    body: JSON.stringify({ name, message , avatar: null, created_at, post_id})
   });
-  e.target.reset();
+
+  this.reset();
   loadComments();
 });
 
+// Load on page start
 loadComments();
 </script>
 </div>
