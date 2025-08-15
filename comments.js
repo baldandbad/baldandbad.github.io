@@ -1,9 +1,6 @@
 // comments.js
 import express from "express";
 import pkg from "pg";
-import cors from "cors";
-
-app.use(cors());
 const { Pool } = pkg;
 const router = express.Router();
 
