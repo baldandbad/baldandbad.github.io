@@ -241,19 +241,6 @@ loadComments();
 window.POST_ID = 1;
 const postID = window.POST_ID;
 const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
-function createCommentHTML(c) {
-  return `
-    <div class="comment" id="li-comment-${c.id}">
-      <p><strong>${c.name}</strong>: ${c.message}</p>
-      <a href="#" class="comment-reply-link">Reply</a>
-      ${c.replies?.length ? `
-        <div class="comment-replies" style="margin-left: 20px;">
-          ${c.replies.map(createCommentHTML).join("")}
-        </div>
-      ` : ""}
-    </div>
-  `;
-}
 
 function buildCommentTree(comments) {
   const map = {};
@@ -275,13 +262,28 @@ function buildCommentTree(comments) {
   return roots;
 }
 
+function createCommentHTML(c) {
+    return `
+      <div class="comment" id="li-comment-${c.id}">
+        <p><strong>${c.name}</strong>: ${c.message}</p>
+        <a href="#" class="comment-reply-link">Reply</a>
+        ${c.replies?.length ? `
+          <div class="comment-replies" style="margin-left: 20px;">
+            ${c.replies.map(createCommentHTML).join("")}
+          </div>
+        ` : ""}
+      </div>
+    `;
+}
+
 // Load comments from backend
 async function loadComments() {
   const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`);
   const comments = await res.json();
-  const list = buildCommentTree(comments);
+  const nestedComments = buildCommentTree(comments);
+  const list = document.getElementById("comment-list");
   list.innerHTML = "";
-  comments.forEach(c => {
+  nestedComments.forEach(c => {
     list.insertAdjacentHTML("beforeend", createCommentHTML(c));
   });
 }
