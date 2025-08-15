@@ -35,14 +35,14 @@ router.get("/", async (req, res) => {
 // POST new comment
 router.post("/", async (req, res) => {
     try {
-        const { name, message, avatar, created_at, post_id } = req.body;
+        const { name, message, avatar, created_at, post_id, parent_id } = req.body;
         if (!name || !message) {
             return res.status(400).json({ error: "Name and message are required" });
         }
 
         const { rows } = await pool.query(
-            "INSERT INTO comments (name, message, avatar, created_at, post_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [name, message, avatar || null, created_at, post_id]
+            "INSERT INTO comments (name, message, avatar, created_at, post_id) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            [name, message, avatar || null, created_at, post_id, parent_id || null]
         );
 
         res.status(201).json(rows[0]);
