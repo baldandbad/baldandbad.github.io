@@ -358,7 +358,7 @@ document.addEventListener("click", function (e) {
       console.log(message);
       const created_at = new Date();
 
-      await fetch("/comments", {
+      await fetch("https://baldandbadgithubio-production.up.railway.app/comments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
