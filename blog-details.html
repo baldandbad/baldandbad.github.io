@@ -354,6 +354,7 @@ document.addEventListener("click", function (e) {
       e.preventDefault();
       const name = this.querySelector("input[name='reply-name']").value;
       const message = this.querySelector("textarea[name='reply-message']").value;
+      const created_at = new Date();
 
       await fetch("/comments", {
         method: "POST",
@@ -361,6 +362,8 @@ document.addEventListener("click", function (e) {
         body: JSON.stringify({
           name,
           message,
+          avatar: null,
+          created_at: created_at,
           post_id: postID,
           parent_id: parentId
         })
