@@ -219,113 +219,51 @@
                   </article>
                 </div>
                 <div class="comments-area" id="comments">
-                  <h2 class="comments-title">
-                    <span>(4)</span> Comments
-                  </h2>
-                  <ol class="comment-list">
-                    <li class="comment even thread-even">
-                      <article class="comment-body">
-                        <div class="author-photo">
-                          <a href="blog-details.html" class="avatar">
-                            <img class="avatar" src="images/use_img/post_author.jpg" alt="" />
-                          </a>
-                        </div>
-                        <div class="comment-wrapper">
-                          <div class="comment-meta">
-                            <div class="comment-author vcard">
-                              <h5 class="fn">Jones Lee</h5>
-                            </div>
-                          </div>
-                          <div class="comment-content">
-                            <p>This looks like a dream. It makes perfect sense. A place where authentic problems are solved and learning takes place at “just the right moment.”</p>
-                          </div>
-                          <div class="comment-metadata">
-                            <span>April 2, 2016 <small>.</small> 5 months ago </span>
-                          </div>
-                          <div class="reply">
-                            <a href="blog-details.html#" class="comment-reply-link btn btn-default">Reply</a>
-                          </div>
-                        </div>
-                      </article>
-                    </li>
-                    <li class="comment odd alt thread-odd thread-alt">
-                      <article class="comment-body">
-                        <div class="author-photo">
-                          <a href="blog-details.html" class="avatar">
-                            <img class="avatar" src="images/use_img/post_author.jpg" alt="" />
-                          </a>
-                        </div>
-                        <div class="comment-wrapper">
-                          <div class="comment-meta">
-                            <div class="comment-author vcard">
-                              <h5 class="fn">James Bond</h5>
-                            </div>
-                          </div>
-                          <div class="comment-content">
-                            <p>Why not do this in a other areas? Nothing you describe cannot be done in everywhere in America. All it takes it LEADERSHIP to make it happen!!</p>
-                          </div>
-                          <div class="comment-metadata">
-                            <span>April 2, 2016 <small>.</small> 5 months ago </span>
-                          </div>
-                          <div class="reply">
-                            <a href="blog-details.html#" class="comment-reply-link btn btn-default">Reply</a>
-                          </div>
-                        </div>
-                      </article>
-                      <ul class="children">
-                        <li class="comment even depth-2">
-                          <article class="comment-body">
-                            <div class="author-photo">
-                              <a href="blog-details.html" class="avatar">
-                                <img class="avatar" src="images/use_img/post_author.jpg" alt="" />
-                              </a>
-                            </div>
-                            <div class="comment-wrapper">
-                              <div class="comment-meta">
-                                <div class="comment-author vcard">
-                                  <h5 class="fn">Jones Lee</h5>
-                                </div>
-                              </div>
-                              <div class="comment-content">
-                                <p>This is true and I have also experienced such in others. Implementation of this is at the heart of what we support and nurture at Powerful Learning Practice.</p>
-                              </div>
-                              <div class="comment-metadata">
-                                <span>April 2, 2016 <small>.</small> 5 months ago </span>
-                              </div>
-                              <div class="reply">
-                                <a href="blog-details.html#" class="comment-reply-link btn btn-default">Reply</a>
-                              </div>
-                            </div>
-                          </article>
-                        </li>
-                      </ul>
-                    </li>
-                    <li id="li-comment-10" class="comment odd alt thread-even depth-1">
-                      <article class="comment-body" id="comment-10">
-                        <div class="author-photo">
-                          <a href="blog-details.html" class="avatar">
-                            <img class="avatar" src="images/use_img/post_author.jpg" alt="" />
-                          </a>
-                        </div>
-                        <div class="comment-wrapper">
-                          <div class="comment-meta">
-                            <div class="comment-author vcard">
-                              <h5 class="fn">Josef Ermola</h5>
-                            </div>
-                          </div>
-                          <div class="comment-content">
-                            <p>In the short term- the get it started now with good leadership &mdash; it is more efficient (I think) to start with a community to do so. Less strings attached I think. However, this sort of thing would be a fantastic.</p>
-                          </div>
-                          <div class="comment-metadata">
-                            <span>April 2, 2016 <small>.</small> 5 months ago </span>
-                          </div>
-                          <div class="reply">
-                            <a href="blog-details.html#" class="comment-reply-link btn btn-default">Reply</a>
-                          </div>
-                        </div>
-                      </article>
-                    </li>
-                  </ol>
+                  <ul id="comment-list"></ul>
+
+<script>
+async function loadComments() {
+  const res = await fetch("/comments"); // API endpoint from your backend
+  const comments = await res.json();
+
+  const list = document.getElementById("comment-list");
+  list.innerHTML = ""; // clear old comments
+
+  comments.forEach(c => {
+    const html = `
+      <li class="comment">
+        <article class="comment-body">
+          <div class="author-photo">
+            <a href="blog-details.html" class="avatar">
+              <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+            </a>
+          </div>
+          <div class="comment-wrapper">
+            <div class="comment-meta">
+              <div class="comment-author vcard">
+                <h5 class="fn">${c.name}</h5>
+              </div>
+            </div>
+            <div class="comment-content">
+              <p>${c.message}</p>
+            </div>
+            <div class="comment-metadata">
+              <span>${new Date(c.created_at).toLocaleDateString()}</span>
+            </div>
+            <div class="reply">
+              <a href="#" class="comment-reply-link btn btn-default">Reply</a>
+            </div>
+          </div>
+        </article>
+      </li>
+    `;
+    list.insertAdjacentHTML("beforeend", html);
+  });
+}
+
+// Call on page load
+loadComments();
+</script>
                   <div class="comment-respond" id="respond">
                     <h3 class="comment-reply-title" id="reply-title">Leave A Comment</h3>
                     <form class="comment-form" id="commentform" method="post" action="blog-details.html#">

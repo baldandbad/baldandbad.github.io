@@ -1,16 +1,15 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import bodyParser from "body-parser";
 import fetch from "node-fetch";
+import commentsRouter from "./comments.js";
 
 dotenv.config();
 const app = express();
-app.use(cors({
-  origin: 'https://baldandbad.github.io', // Your GitHub Pages site
-  methods: ['GET', 'POST', 'OPTIONS'],
-  allowedHeaders: ['Content-Type'],
-}));
+app.use(cors());
 app.use(express.json());
+app.use(bodyParser.json());
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
@@ -44,6 +43,12 @@ app.post("/ask", async (req, res) => {
     console.error(err);
     res.status(500).json({ error: "Error talking to OpenRouter" });
   }
+});
+
+app.use("/comments", commentsRouter);
+
+app.get("/", (req, res) => {
+    res.send("Backend for comments is running ✅");
 });
 
 app.get('/', (req, res) => {
