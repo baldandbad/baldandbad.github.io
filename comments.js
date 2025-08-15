@@ -33,7 +33,7 @@ router.post("/", async (req, res) => {
         }
 
         const { rows } = await pool.query(
-            "INSERT INTO comments (name, message, avatar) VALUES ($1, $2, $3) RETURNING *",
+            "INSERT INTO comments (name, message, avatar, created_at, post_id) VALUES ($1, $2, $3, $4, $5) RETURNING *",
             [name, message, avatar || null]
         );
 
