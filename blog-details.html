@@ -45,8 +45,8 @@
             </div>
             <div class="collapse navbar-collapse navbar-ex1-collapse">
               <ul class="nav navbar-nav">
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Home <span class="caret"></span>
+                <li class="dropdown active">
+                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="home-1.html#"> Home <span class="caret"></span>
                   </a>
                   <ul class=" dropdown-menu" role="menu">
                     <li>
@@ -58,37 +58,7 @@
                   </ul>
                 </li>
                 <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Classes <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li>
-                      <a href="classes-2-columns.html">Classes 2 Columns List</a>
-                    </li>
-                    <li>
-                      <a href="classes-3-columns.html">Classes 3 Columns List</a>
-                    </li>
-                    <li>
-                      <a href="classes-details.html">Classes Detail</a>
-                    </li>
-                    <li>
-                      <a href="classes-video-details.html">Classes Detail With Video</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Events <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li>
-                      <a href="events.html">Event Listing</a>
-                    </li>
-                    <li>
-                      <a href="event-detail.html">Event Detail</a>
-                    </li>
-                  </ul>
-                </li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Pages <span class="caret"></span>
+                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="home-1.html#"> Pages <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu" role="menu">
                     <li>
@@ -123,8 +93,8 @@
                     </li>
                   </ul>
                 </li>
-                <li class="dropdown active">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Blog <span class="caret"></span>
+                <li class="dropdown">
+                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="home-1.html#"> Blog <span class="caret"></span>
                   </a>
                   <ul class="dropdown-menu" role="menu">
                     <li>
@@ -134,21 +104,6 @@
                       <a href="blog-details.html">Blog Detail</a>
                     </li>
                   </ul>
-                </li>
-                <li class="dropdown">
-                  <a class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" href="blog-details.html#"> Shop <span class="caret"></span>
-                  </a>
-                  <ul class="dropdown-menu" role="menu">
-                    <li>
-                      <a href="shopping-cart.html">Shopping Cart</a>
-                    </li>
-                    <li>
-                      <a href="checkout.html">Checkout</a>
-                    </li>
-                  </ul>
-                </li>
-                <li>
-                  <a href="contactus.html">Contact Us</a>
                 </li>
               </ul>
             </div>
@@ -285,43 +240,46 @@ loadComments();
                 <script>
 window.POST_ID = 1;
 const postID = window.POST_ID;
-const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments"; // change this to your Railway backend
-// Create a comment item using your original <li> template
+const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
 function createCommentHTML(c) {
   return `
-    <li class="comment" id="li-comment-${c.id}">
-      <article class="comment-body">
-        <div class="author-photo">
-          <a href="blog-details.html" class="avatar">
-            <img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
-          </a>
+    <div class="comment" id="li-comment-${c.id}">
+      <p><strong>${c.name}</strong>: ${c.message}</p>
+      <a href="#" class="comment-reply-link">Reply</a>
+      ${c.replies?.length ? `
+        <div class="comment-replies" style="margin-left: 20px;">
+          ${c.replies.map(createCommentHTML).join("")}
         </div>
-        <div class="comment-wrapper">
-          <div class="comment-meta">
-            <div class="comment-author vcard">
-              <h5 class="fn">${c.name}</h5>
-            </div>
-          </div>
-          <div class="comment-content">
-            <p>${c.message}</p>
-          </div>
-          <div class="comment-metadata">
-            <span>${new Date(c.created_at).toLocaleDateString()}</span>
-          </div>
-          <div class="reply">
-            <a href="#" class="comment-reply-link btn btn-default">Reply</a>
-          </div>
-        </div>
-      </article>
-    </li>
+      ` : ""}
+    </div>
   `;
+}
+
+function buildCommentTree(comments) {
+  const map = {};
+  const roots = [];
+
+  comments.forEach(c => {
+    c.replies = [];
+    map[c.id] = c;
+  });
+
+  comments.forEach(c => {
+    if (c.parent_id) {
+      map[c.parent_id]?.replies.push(c);
+    } else {
+      roots.push(c);
+    }
+  });
+
+  return roots;
 }
 
 // Load comments from backend
 async function loadComments() {
   const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`);
   const comments = await res.json();
-  const list = document.getElementById("comment-list");
+  const list = buildCommentTree(comments);
   list.innerHTML = "";
   comments.forEach(c => {
     list.insertAdjacentHTML("beforeend", createCommentHTML(c));
