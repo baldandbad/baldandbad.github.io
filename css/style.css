@@ -6147,6 +6147,23 @@ a.fav-load {
   background: white;
   transition: 0.2s;
 }
+.navbar .btn-white {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.navbar .btn-white:hover {
+  background-color: #f5f5f5;
+  color: #000;
+}
+.navbar-form .btn {
+  background: #ff4500;
+  color: white;
+  border: none;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
 
 .navbar-form .btn:hover {
   background: #ff4500;
