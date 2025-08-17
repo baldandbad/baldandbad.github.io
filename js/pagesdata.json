@@ -1,65 +1,205 @@
 [
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
+    "title": "Bảo tàng Chứng tích Chiến tranh",
+    "url": "baotangchungtichchientranh.html",
     "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "description": "Bảo tàng nổi tiếng tại TP.HCM trưng bày hiện vật và hình ảnh về chiến tranh Việt Nam.",
+    "categories": ["none"]
   },
   {
-    "title": "Tricks and Tips for Photoshop",
-    "url": "blog-photoshop.html",
+    "title": "Bảo tàng Thành phố Hồ Chí Minh",
+    "url": "baotangtphcm.html",
     "image": "images/use_img/blog_img2.jpg",
-    "description": "Photoshop CS6 tips to improve your workflow and creativity.",
-    "author": "Sebastien Gabriel",
-    "date": "March 17, 2016",
-    "categories": ["Design"]
+    "description": "Bảo tàng giới thiệu lịch sử hình thành và phát triển của Sài Gòn – TP.HCM.",
+    "categories": ["none"]
   },
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
-    "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "title": "Căn cứ Rừng Sác",
+    "url": "cancurungsac.html",
+    "image": "images/use_img/blog_img3.jpg",
+    "description": "Di tích căn cứ cách mạng trong rừng ngập mặn Cần Giờ thời kháng chiến.",
+    "categories": ["none"]
   },
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
-    "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "title": "Chợ Bến Thành",
+    "url": "chobenthanh.html",
+    "image": "images/use_img/blog_img4.jpg",
+    "description": "Biểu tượng nổi tiếng của Sài Gòn, nơi buôn bán sầm uất và thu hút du khách.",
+    "categories": ["none"]
   },
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
-    "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "title": "Chợ Bình Tây",
+    "url": "chobinhtay.html",
+    "image": "images/use_img/blog_img5.jpg",
+    "description": "Khu chợ lớn tại Quận 6 mang kiến trúc Á Đông cổ kính, trung tâm thương mại của người Hoa.",
+    "categories": ["none"]
   },
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
-    "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "title": "Chùa Giác Lâm",
+    "url": "chuagiaclam.html",
+    "image": "images/use_img/blog_img6.jpg",
+    "description": "Ngôi chùa cổ nhất Sài Gòn, được xây dựng vào năm 1744 với kiến trúc truyền thống.",
+    "categories": ["none"]
   },
   {
-    "title": "The Design of HTML5",
-    "url": "blog-html5.html",
-    "image": "images/use_img/blog_img1.jpg",
-    "description": "A deep dive into HTML5 design principles and structure.",
-    "author": "Greg Christman",
-    "date": "March 17, 2016",
-    "categories": ["Online Courses", "all"]
+    "title": "Chùa Giác Viên",
+    "url": "chuagiacvien.html",
+    "image": "images/use_img/blog_img7.jpg",
+    "description": "Chùa nổi tiếng với kiến trúc gỗ cổ và những pho tượng Phật quý giá.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Cơ sở Giấu vũ khí",
+    "url": "cosogiauvukhi.html",
+    "image": "images/use_img/blog_img8.jpg",
+    "description": "Di tích cách mạng, nơi cất giấu vũ khí bí mật phục vụ chiến đấu tại Sài Gòn.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Địa đạo Củ Chi",
+    "url": "diadaocuchi.html",
+    "image": "images/use_img/blog_img9.jpg",
+    "description": "Mạng lưới địa đạo ngầm nổi tiếng thể hiện tinh thần kiên cường của quân dân Việt Nam.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Địa đạo Phú Thọ Hòa",
+    "url": "diadaophuthohoa.html",
+    "image": "images/use_img/blog_img10.jpg",
+    "description": "Di tích lịch sử cách mạng với hệ thống địa đạo được đào từ kháng chiến chống Pháp.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Đình Thông Tây Hội",
+    "url": "dingthongtayhoi.html",
+    "image": "images/use_img/blog_img11.jpg",
+    "description": "Ngôi đình cổ nhất TP.HCM, mang kiến trúc truyền thống Nam Bộ đặc sắc.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Đình Bình Đông",
+    "url": "dinhbinhdong.html",
+    "image": "images/use_img/blog_img12.jpg",
+    "description": "Ngôi đình lâu đời ở Quận 8, gắn liền với lịch sử cộng đồng người Hoa.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Đình Chí Hòa",
+    "url": "dinhchihoa.html",
+    "image": "images/use_img/blog_img13.jpg",
+    "description": "Đình cổ kính mang giá trị văn hóa và tín ngưỡng dân gian tại Sài Gòn.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Dinh Độc Lập",
+    "url": "dinhdoclap.html",
+    "image": "images/use_img/blog_img14.jpg",
+    "description": "Công trình lịch sử – kiến trúc, nơi gắn liền với sự kiện 30/4/1975.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Đình Phong Phú",
+    "url": "dinhphongphu.html",
+    "image": "images/use_img/blog_img15.jpg",
+    "description": "Ngôi đình cổ kính gắn với truyền thống văn hóa tín ngưỡng của người dân địa phương.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Khu giam trại Bệnh viện Trợ Quán",
+    "url": "khugiamtraibenhvientroquan.html",
+    "image": "images/use_img/blog_img16.jpg",
+    "description": "Di tích cách mạng từng là nơi giam giữ và tra tấn các chiến sĩ yêu nước.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Lăng Lê Văn Duyệt",
+    "url": "langlevanduyet.html",
+    "image": "images/use_img/blog_img17.jpg",
+    "description": "Khu lăng mộ vị Tổng trấn Gia Định Thành, di tích lịch sử nổi bật tại TP.HCM.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Lân Sư Rồng",
+    "url": "lansurong.html",
+    "image": "images/use_img/blog_img18.jpg",
+    "description": "Múa lân sư rồng là nét văn hóa đặc trưng trong các dịp lễ hội và Tết Nguyên Đán.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Lễ hội Khai hạ cầu an",
+    "url": "lehoikhaihacauan.html",
+    "image": "images/use_img/blog_img19.jpg",
+    "description": "Lễ hội truyền thống nhằm cầu bình an, mùa màng thuận lợi cho người dân.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Lễ hội Nghinh Ông",
+    "url": "lehoinghinhong.html",
+    "image": "images/use_img/blog_img20.jpg",
+    "description": "Lễ hội đặc sắc của ngư dân Nam Bộ nhằm tôn vinh cá Ông và cầu ngư lộc.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Lễ hội Nguyên Tiêu",
+    "url": "lehoinguyentieu.html",
+    "image": "images/use_img/blog_img21.jpg",
+    "description": "Lễ hội truyền thống của cộng đồng người Hoa với rước đèn và múa lân.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Logo M",
+    "url": "logom.html",
+    "image": "images/use_img/blog_img22.jpg",
+    "description": "Biểu trưng mang tính nhận diện, đại diện cho một sự kiện hay tổ chức tại TP.HCM.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Mộ Phan Châu Trinh",
+    "url": "mophanchautrinh.html",
+    "image": "images/use_img/blog_img23.jpg",
+    "description": "Nơi an nghỉ của chí sĩ yêu nước Phan Châu Trinh tại TP.HCM.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Ngã ba Giồng",
+    "url": "ngabagiong.html",
+    "image": "images/use_img/blog_img24.jpg",
+    "description": "Di tích lịch sử, nơi ghi dấu sự hy sinh của nhiều chiến sĩ cách mạng.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Nhà hát Thành phố Hồ Chí Minh",
+    "url": "nhahattphcm.html",
+    "image": "images/use_img/blog_img25.jpg",
+    "description": "Công trình kiến trúc Pháp cổ, trung tâm biểu diễn nghệ thuật lớn của thành phố.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Nhà thờ Đức Bà Sài Gòn",
+    "url": "nhathoducba.html",
+    "image": "images/use_img/blog_img26.jpg",
+    "description": "Biểu tượng kiến trúc Pháp cổ kính giữa lòng TP.HCM.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Tịnh xá Ngọc Phương",
+    "url": "tinhxangocphuong.html",
+    "image": "images/use_img/blog_img27.jpg",
+    "description": "Ngôi tịnh xá nổi tiếng với kiến trúc thanh tịnh và nét đặc trưng của Phật giáo Nam tông.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Trụ sở UBND TP.HCM",
+    "url": "trusoubndtphcm.html",
+    "image": "images/use_img/blog_img28.jpg",
+    "description": "Công trình kiến trúc Pháp nổi bật, hiện là nơi làm việc của chính quyền thành phố.",
+    "categories": ["none"]
+  },
+  {
+    "title": "Vovinam",
+    "url": "vovinam.html",
+    "image": "images/use_img/blog_img29.jpg",
+    "description": "Môn võ cổ truyền Việt Nam nổi tiếng với tinh thần thượng võ và kỹ thuật đa dạng.",
+    "categories": ["none"]
   }
 ]

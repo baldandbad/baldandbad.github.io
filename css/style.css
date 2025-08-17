@@ -6114,6 +6114,56 @@ a.fav-load {
   padding: 10px;
   font-weight: bold;
 }
+/* Keep search form inline and compact */
+.navbar-form {
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px; /* space between inputs */
+}
+
+/* Input smaller height to match nav links */
+.navbar-form .form-control {
+  height: 32px;
+  font-size: 14px;
+  padding: 4px 10px;
+}
+
+/* Category dropdown */
+.navbar-form select.form-control {
+  height: 32px;
+  padding: 4px 8px;
+}
+
+/* Search button style */
+.navbar-form .btn {
+  height: 32px;
+  line-height: 1;
+  padding: 4px 14px;
+  border-radius: 20px;
+  border: 1px solid #ff4500; /* match your orange nav border */
+  color: #ff4500;
+  background: white;
+  transition: 0.2s;
+}
+
+.navbar-form .btn:hover {
+  background: #ff4500;
+  color: white;
+}
+.nav-search-form {
+  overflow: hidden;
+  max-width: 0;
+  opacity: 0;
+  transition: all 0.3s ease;
+}
+
+.nav-search-form.active {
+  max-width: 400px; /* adjust as needed */
+  opacity: 1;
+}
+
 
 /* Chat messages area */
 #chat-body {
