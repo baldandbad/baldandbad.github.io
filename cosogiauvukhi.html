@@ -568,6 +568,248 @@ Di tích quốc gia
         </form>
       </div>
     </div>
+    <button id="chatbox-toggle">Open</button>
+    <div id="chatbox-container" aria-hidden="true">
+      <div id="chatbox-header"> AI Assistant <button id="chatbox-close">✖</button>
+      </div>
+      <div id="chatbox-messages" aria-live="polite">
+        <!-- sample messages -->
+        <div class="chat-message chat-ai">Hello — how can I help?</div>
+      </div>
+      <div id="chatbox-input-area">
+        <input id="chatbox-input" type="text" placeholder="Type your message..." />
+        <button id="chatbox-send">Send</button>
+      </div>
+    </div>
+    <style>
+      /* Use a very high z-index to ensure the chat sits above other UI.
+     If another element still covers it, make sure that element doesn't
+     create a new stacking context with transform/opacity/position and a higher z-index. */
+      #chatbox-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        /* z-index high so it sits above most site elements */
+        z-index: 2147483647;
+        /* Hidden (off-screen) state using transform for smooth GPU animation */
+        transform: translateX(380px);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .38s cubic-bezier(.2, .9, .2, 1), opacity .28s;
+        will-change: transform, opacity;
+      }
+
+      /* show state -> visible & interactive */
+      #chatbox-container.show {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #chatbox-header {
+        flex: 0 0 50px;
+        background: #0078ff;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+
+      /* Messages area fills the available middle space and is scrollable */
+      #chatbox-messages {
+        flex: 1;
+        height: 280px;
+        padding: 10px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 12px;
+      }
+
+      .message.sent {
+        align-self: flex-end;
+        /* moves your messages to the right */
+        background-color: #007bff;
+        color: white;
+      }
+
+      .message.received {
+        align-self: flex-start;
+        /* moves other messages to the left */
+        background-color: #e5e5ea;
+        color: black;
+      }
+
+      /* If you want the newest messages to appear at the bottom visually,
+     use JS to auto-scroll to bottom on open/new message. */
+      /* Chat bubbles must NOT flex-grow */
+      .chat-message {
+        flex: 0 0 auto;
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        animation: msgIn .18s ease;
+      }
+
+      .chat-user {
+        align-self: flex-end;
+        background: #0078ff;
+        color: white;
+        border-bottom-right-radius: 0;
+      }
+
+      .chat-ai {
+        align-self: flex-start;
+        background: #e5e5ea;
+        color: black;
+        border-bottom-left-radius: 0;
+      }
+
+      #chatbox-input-area {
+        flex: 0 0 56px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px;
+        border-top: 1px solid #eee;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 250, 250, 0.9));
+      }
+
+      #chatbox-input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+
+      #chatbox-send {
+        background: #0078ff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* toggle button z-index should also be high so it's clickable */
+      #chatbox-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2147483647;
+      }
+
+      @keyframes msgIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById("chatbox-toggle");
+        const chatbox = document.getElementById("chatbox-container");
+        const closeBtn = document.getElementById("chatbox-close");
+        const sendBtn = document.getElementById("chatbox-send");
+        const input = document.getElementById("chatbox-input");
+        const messages = document.getElementById("chatbox-messages");
+        // Ensure chatbox is direct child of body to avoid stacking context issues
+        if (chatbox && chatbox.parentElement !== document.body) {
+          document.body.appendChild(chatbox);
+        }
+        // open/close helpers
+        function openChat() {
+          chatbox.classList.add("show");
+          chatbox.setAttribute('aria-hidden', 'false');
+          input.focus();
+          // ensure latest messages visible
+          requestAnimationFrame(() => {
+            messages.scrollTop = messages.scrollHeight;
+          });
+        }
+
+        function closeChat() {
+          chatbox.classList.remove("show");
+          chatbox.setAttribute('aria-hidden', 'true');
+          toggleBtn.focus();
+        }
+        // Toggle button
+        toggleBtn.addEventListener('click', () => {
+          if (chatbox.classList.contains('show')) closeChat();
+          else openChat();
+        });
+        // Close button
+        closeBtn.addEventListener('click', closeChat);
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === "Escape" && chatbox.classList.contains("show")) closeChat();
+        });
+        // Send message handlers
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+        // single addMessage function (no duplicates)
+        function addMessage(text, sender) {
+          const div = document.createElement("div");
+          div.classList.add("chat-message", sender === "user" ? "chat-user" : "chat-ai");
+          div.textContent = text;
+          messages.appendChild(div);
+          requestAnimationFrame(() => {
+            messages.scrollTop = messages.scrollHeight;
+          });
+        }
+        // sendMessage (keeps your fetch)
+        async function sendMessage() {
+          const text = input.value.trim();
+          if (!text) return;
+          addMessage(text, "user");
+          input.value = "";
+          try {
+            const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                message: text
+              })
+            });
+            const data = await res.json();
+            addMessage(data.reply || "(No reply)", "ai");
+          } catch (err) {
+            addMessage("Error: " + err.message, "ai");
+          }
+        }
+      });
+    </script>
     <script src="js/jquery.min.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/theme.js"></script>
