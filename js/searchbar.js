@@ -35,11 +35,6 @@ function displayResults(results) {
       </header>
       <div class="entry-content"><p>${item.description}</p></div>
       <footer class="entry-footer">
-        <div class="entry-meta">
-          <span class="posted-on"><a href="${item.url}">${item.date}</a></span>
-          <span class="byline">by <span class="author vcard"><a href="#">${item.author}</a></span></span>
-          <span class="cat-links">Posted in "<a href="#">${item.categories?.[0]}</a>"</span>
-        </div>
       </footer>
       <a class="btn btn-medium read-more" href="${item.url}">Read More <i class="lnr lnr-arrow-right"></i></a>
     </article>
