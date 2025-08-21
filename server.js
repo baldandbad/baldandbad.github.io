@@ -61,10 +61,6 @@ app.get('/', (req, res) => {
   res.send('AI backend is running!');
 });
 
-app.listen(process.env.PORT || 3000, () =>
-  console.log("Server ready 🚀")
-);
-
 app.get("/api/quizzes", async (_req, res) => {
   try {
     const { rows } = await pool.query("SELECT id, title FROM quizzes ORDER BY id");
