@@ -8,14 +8,14 @@ import http from "http";
 import { Server } from "socket.io";
 import pool from "./db.js";
 
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
-
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(bodyParser.json());
+
+const server = http.createServer(app);
+const io = new Server(server, { cors: { origin: "*" } });
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
