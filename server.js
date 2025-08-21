@@ -6,7 +6,6 @@ import fetch from "node-fetch";
 import commentsRouter from "./comments.js";
 require("dotenv").config();
 const http = require("http");
-const cors = require("cors");
 const { Server } = require("socket.io");
 const pool = require("./db");
 app.use(cors());
