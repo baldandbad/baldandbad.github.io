@@ -4,7 +4,6 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import commentsRouter from "./comments.js";
-require("dotenv").config();
 const http = require("http");
 const { Server } = require("socket.io");
 const pool = require("./db");
