@@ -4,9 +4,9 @@ import cors from "cors";
 import bodyParser from "body-parser";
 import fetch from "node-fetch";
 import commentsRouter from "./comments.js";
-const http = require("http");
-const { Server } = require("socket.io");
-const pool = require("./db");
+import http from "http";
+import { Server } from "socket.io";
+import pool from "./db";
 app.use(cors());
 app.use(express.json());
 
