@@ -6,7 +6,7 @@ import fetch from "node-fetch";
 import commentsRouter from "./comments.js";
 import http from "http";
 import { Server } from "socket.io";
-import pool from "./db";
+import pool from "./db.js";
 app.use(cors());
 app.use(express.json());
 
