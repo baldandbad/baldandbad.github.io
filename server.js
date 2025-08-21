@@ -7,8 +7,6 @@ import commentsRouter from "./comments.js";
 import http from "http";
 import { Server } from "socket.io";
 import pool from "./db.js";
-app.use(cors());
-app.use(express.json());
 
 const server = http.createServer(app);
 const io = new Server(server, { cors: { origin: "*" } });
