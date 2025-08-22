@@ -2,196 +2,212 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz App</title>
+  <title>Quiz Game</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea, #764ba2);
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      color: #fff;
       display: flex;
       justify-content: center;
       align-items: center;
-      min-height: 100vh;
+      height: 100vh;
       margin: 0;
-      color: #333;
+      overflow: hidden;
     }
-
-    #quiz-container {
-      background: #fff;
-      padding: 40px 30px;
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      width: 480px;
-      max-width: 95%;
+    #app {
+      background: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 16px;
+      width: 450px;
       text-align: center;
-      animation: fadeIn 0.5s ease;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+      animation: fadeIn 0.8s ease;
     }
-
-    h2 {
-      margin-bottom: 25px;
-      font-size: 24px;
-      font-weight: bold;
-      color: #444;
+    h1 {
+      margin-bottom: 1rem;
+      font-size: 2rem;
+      animation: popIn 0.6s ease;
     }
-
-    select, button, input {
-      width: 100%;
-      margin: 12px 0;
-      padding: 14px;
-      border: none;
-      border-radius: 12px;
-      font-size: 16px;
-      outline: none;
-      transition: 0.3s ease;
-    }
-
-    select, input {
-      background: #f4f4f4;
-    }
-
     button {
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      color: white;
-      font-weight: 600;
+      display: block;
+      margin: 0.5rem auto;
+      padding: 12px 22px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
       cursor: pointer;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
-    }
-
-    button:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-    }
-
-    .btn-secondary {
-      background: #ddd;
+      background: #ffcc00;
       color: #333;
-      box-shadow: none;
+      font-weight: bold;
+      transition: transform 0.2s, background 0.3s;
+    }
+    button:hover {
+      transform: scale(1.05);
+      background: #ffdb4d;
+    }
+    .question {
+      margin-bottom: 1rem;
+      animation: slideUp 0.5s ease;
+    }
+    .score {
+      font-size: 18px;
+      margin-top: 1rem;
+      animation: fadeIn 0.8s ease;
+    }
+    input[type="text"] {
+      padding: 10px;
+      border-radius: 8px;
+      border: none;
+      outline: none;
+      width: 80%;
+      margin: 0.5rem auto;
+      display: block;
+      text-align: center;
     }
 
-    .btn-secondary:hover {
-      background: #ccc;
-    }
-
-    .question-option {
-      background: #f9f9f9;
-      border: 2px solid transparent;
-      transition: all 0.2s ease;
-    }
-
-    .question-option:hover {
-      border-color: #667eea;
-      background: #eef0ff;
-    }
-
+    /* Animations */
     @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes slideUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes popIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
     }
   </style>
 </head>
 <body>
-  <div id="quiz-container"></div>
+  <div id="app">
+    <h1>Quiz Game</h1>
+    <div id="screen"></div>
+  </div>
 
   <script>
+    const API_URL = "https://baldandbadgithubio-production.up.railway.app"; // backend
+    const screen = document.getElementById("screen");
+
+    let questions = [];
     let currentIndex = 0;
     let score = 0;
-    let questions = [];
 
-    // ---------- MODE SELECTION ----------
-    function showModeSelection() {
-      document.getElementById("quiz-container").innerHTML = `
-        <h2>Choose Your Mode</h2>
-        <button onclick="showSoloMode()">🎯 Solo Mode</button>
-        <button onclick="showRoomMode()">👥 Room Mode</button>
+    // Start menu
+    function showMainMenu() {
+      screen.innerHTML = `
+        <h2>Choose Mode</h2>
+        <button onclick="soloMode()">🎮 Solo Mode</button>
+        <button onclick="roomMode()">👥 Room Mode</button>
       `;
     }
 
-    // ---------- SOLO MODE ----------
-    async function showSoloMode() {
-      try {
-        const res = await fetch("https://baldandbadgithubio-production.up.railway.app/api/quizzes");
-        if (!res.ok) throw new Error("Failed to load quizzes");
-        const quizzes = await res.json();
+    // Solo mode
+    async function soloMode() {
+      const res = await fetch(API_URL + "/api/quizzes");
+      const quizzes = await res.json();
 
-        document.getElementById("quiz-container").innerHTML = `
-          <h2>Select a Quiz</h2>
-          <select id="quiz-select">
-            ${quizzes.map(q => `<option value="${q.id}">${q.title}</option>`).join("")}
-          </select>
-          <button onclick="startQuiz()">Start Quiz</button>
-          <button class="btn-secondary" onclick="showModeSelection()">⬅ Back</button>
-        `;
-      } catch (err) {
-        document.getElementById("quiz-container").innerHTML = `<p>Error: ${err.message}</p>`;
-      }
+      screen.innerHTML = "<h2>Select a Quiz</h2>";
+      quizzes.forEach(q => {
+        const btn = document.createElement("button");
+        btn.textContent = q.title;
+        btn.onclick = () => startQuiz(q.id);
+        screen.appendChild(btn);
+      });
     }
 
-    async function startQuiz() {
-      const quizId = document.getElementById("quiz-select").value;
-      try {
-        const res = await fetch(`https://baldandbadgithubio-production.up.railway.app/api/quizzes/${quizId}`);
-        if (!res.ok) throw new Error("Failed to load quiz");
-        questions = await res.json();
-        currentIndex = 0;
-        score = 0;
-        showQuestion();
-      } catch (err) {
-        document.getElementById("quiz-container").innerHTML = `<p>Error: ${err.message}</p>`;
-      }
-    }
-
-    function showQuestion() {
-      const container = document.getElementById("quiz-container");
-      if (currentIndex >= questions.length) {
-        container.innerHTML = `
-          <h2>🎉 Quiz Finished!</h2>
-          <p>Your Score: <b>${score} / ${questions.length}</b></p>
-          <button onclick="showSoloMode()">Back to Quizzes</button>
-          <button class="btn-secondary" onclick="showModeSelection()">⬅ Main Menu</button>
-        `;
-        return;
-      }
-
-      const q = questions[currentIndex];
-      container.innerHTML = `
-        <h2>${q.question_text}</h2>
-        <button class="question-option" onclick="checkAnswer('a')">${q.option_a}</button>
-        <button class="question-option" onclick="checkAnswer('b')">${q.option_b}</button>
-        <button class="question-option" onclick="checkAnswer('c')">${q.option_c}</button>
-        <button class="question-option" onclick="checkAnswer('d')">${q.option_d}</button>
-      `;
-    }
-
-    function checkAnswer(selected) {
-      const correct = questions[currentIndex].correct_option;
-      if (selected === correct) {
-        score++;
-      }
-      currentIndex++;
-      showQuestion();
-    }
-
-    // ---------- ROOM MODE (placeholder) ----------
-    function showRoomMode() {
-      document.getElementById("quiz-container").innerHTML = `
+    // Room mode
+    function roomMode() {
+      screen.innerHTML = `
         <h2>Room Mode</h2>
-        <input type="text" id="room-code" placeholder="Enter Room Code">
-        <button onclick="joinRoom()">Join Room</button>
-        <button onclick="createRoom()">Create Room</button>
-        <button class="btn-secondary" onclick="showModeSelection()">⬅ Back</button>
+        <button onclick="hostRoom()">📢 Host Room</button>
+        <button onclick="joinRoom()">🔑 Join Room</button>
+        <button onclick="showMainMenu()">⬅ Back</button>
       `;
+    }
+
+    async function hostRoom() {
+      screen.innerHTML = `<h2>Hosting Room...</h2><p>Share this Room ID: <b>12345</b></p>`;
+      // You can later replace with backend-generated ID + WebSocket
     }
 
     function joinRoom() {
-      const code = document.getElementById("room-code").value;
-      alert("Joining room: " + code + " (not implemented yet)");
+      screen.innerHTML = `
+        <h2>Join Room</h2>
+        <input id="roomId" type="text" placeholder="Enter Room ID" />
+        <button onclick="enterRoom()">Join</button>
+        <button onclick="roomMode()">⬅ Back</button>
+      `;
     }
 
-    function createRoom() {
-      alert("Creating new room (not implemented yet)");
+    function enterRoom() {
+      const roomId = document.getElementById("roomId").value;
+      screen.innerHTML = `<h2>Joined Room ${roomId}</h2><p>Waiting for host...</p>`;
     }
 
-    // Load first screen
-    showModeSelection();
+    // Quiz logic
+    // Quiz logic
+async function startQuiz(quizId) {
+  const res = await fetch(`${API_URL}/api/quizzes/${quizId}`);
+  questions = await res.json();
+  currentIndex = 0;
+  score = 0;
+  showQuestion();
+}
+
+function showQuestion() {
+  if (currentIndex >= questions.length) {
+    showResult();
+    return;
+  }
+
+  const q = questions[currentIndex];
+  screen.innerHTML = `
+    <div class="question">
+      <h2>${q.question_text}</h2>
+    </div>
+  `;
+
+  // map options A–D
+  const options = [
+    { key: "A", text: q.option_a },
+    { key: "B", text: q.option_b },
+    { key: "C", text: q.option_c },
+    { key: "D", text: q.option_d }
+  ];
+
+  options.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+    btn.onclick = () => {
+      if (opt.key === q.correct_option) {
+        score++;
+        btn.style.background = "limegreen";
+      } else {
+        btn.style.background = "crimson";
+      }
+      setTimeout(() => {
+        currentIndex++;
+        showQuestion();
+      }, 600);
+    };
+    screen.appendChild(btn);
+  });
+}
+
+    function showResult() {
+      screen.innerHTML = `
+        <h2>Quiz Finished!</h2>
+        <div class="score">Your Score: ${score} / ${questions.length}</div>
+        <button onclick="soloMode()">Play Again</button>
+        <button onclick="showMainMenu()">🏠 Main Menu</button>
+      `;
+    }
+
+    // Start on main menu
+    showMainMenu();
   </script>
 </body>
 </html>
