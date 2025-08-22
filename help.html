@@ -149,7 +149,7 @@
 
     // Quiz logic
     async function startQuiz(quizId) {
-      const res = await fetch(`${API_URL}/api/quizzes/${quizId}/questions`);
+      const res = await fetch(`${API_URL}/api/quizzes/${quizId}`);
       questions = await res.json();
       currentIndex = 0;
       score = 0;
