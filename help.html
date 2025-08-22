@@ -169,20 +169,11 @@ function showQuestion() {
     </div>
   `;
 
-  // options come as separate fields: option_a, option_b, ...
-  const options = [
-    { key: "A", text: q.option_a },
-    { key: "B", text: q.option_b },
-    { key: "C", text: q.option_c },
-    { key: "D", text: q.option_d }
-  ];
-
-  options.forEach(opt => {
-    if (!opt.text) return; // skip empty options
+  q.answers.forEach(opt => {
     const btn = document.createElement("button");
     btn.textContent = opt.text;
     btn.onclick = () => {
-      if (opt.key === q.correct_option) {
+      if (opt.id === q.correctAnswerId) {
         score++;
         btn.style.background = "limegreen";
       } else {
