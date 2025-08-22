@@ -69,7 +69,7 @@ app.get("/api/quizzes", async (_req, res) => {
 });
 
 // get one quiz with questions+answers (includes correct answer id for solo play)
-app.get("/api/quiz/:id", async (req, res) => {
+app.get("/api/quizzes/:id", async (req, res) => {
   try {
     const quizId = req.params.id;
 
