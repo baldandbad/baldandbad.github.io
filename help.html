@@ -156,7 +156,6 @@ async function startQuiz(quizId) {
   score = 0;
   showQuestion();
 }
-
 function showQuestion() {
   if (currentIndex >= questions.length) {
     showResult();
@@ -198,3 +197,18 @@ function showQuestion() {
   });
 }
 
+
+    function showResult() {
+      screen.innerHTML = `
+        <h2>Quiz Finished!</h2>
+        <div class="score">Your Score: ${score} / ${questions.length}</div>
+        <button onclick="soloMode()">Play Again</button>
+        <button onclick="showMainMenu()">🏠 Main Menu</button>
+      `;
+    }
+
+    // Start on main menu
+    showMainMenu();
+  </script>
+</body>
+</html>
