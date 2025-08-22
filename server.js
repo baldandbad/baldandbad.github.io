@@ -70,32 +70,34 @@ app.get("/api/quizzes", async (_req, res) => {
 
 // get one quiz with questions+answers (includes correct answer id for solo play)
 app.get("/api/quizzes/:id", async (req, res) => {
-  const quizId = req.params.id;
   try {
+    const quizId = req.params.id;
+
+    // get questions
     const qRes = await pool.query(
-      "SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option FROM questions WHERE quiz_id=$1 ORDER BY id",
+      "SELECT id, question_text FROM questions WHERE quiz_id=$1 ORDER BY id",
       [quizId]
     );
+    const qIds = qRes.rows.map(r => r.id);
+    if (qIds.length === 0) return res.json([]);
 
-    const questions = qRes.rows.map(q => ({
-      id: q.id,
-      text: q.question_text,
-      answers: [
-        { id: "A", text: q.option_a },
-        { id: "B", text: q.option_b },
-        { id: "C", text: q.option_c },
-        { id: "D", text: q.option_d },
-      ],
-      correctAnswerId: q.correct_option // e.g. "B"
-    }));
+    // get answers for those questions
+    const aRes = await pool.query(
+      "SELECT id, question_id, answer_text, is_correct FROM answers WHERE question_id = ANY($1::int[]) ORDER BY id",
+      [qIds]
+    );
 
-    res.json(questions);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Failed to fetch quiz questions" });
-  }
+    // group
+    const byQ = {};
+    qRes.rows.forEach(q => byQ[q.id] = { id: q.id, question: q.question_text, answers: [], correctAnswerId: null });
+    aRes.rows.forEach(a => {
+      byQ[a.question_id].answers.push({ id: a.id, text: a.answer_text });
+      if (a.is_correct) byQ[a.question_id].correctAnswerId = a.id;
+    });
+
+    res.json(Object.values(byQ));
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
-
 
 const rooms = new Map(); // code -> {hostId, players:[{id,name,score,lastAnsweredIndex}], questions:[{id,text,answers:[{id,text,is_correct}]}], index}
 
