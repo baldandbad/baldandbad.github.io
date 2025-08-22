@@ -166,11 +166,11 @@ function showQuestion() {
   const q = questions[currentIndex];
   screen.innerHTML = `
     <div class="question">
-      <h2>${q.question_text}</h2>
+      <h2>${q.question}</h2>
     </div>
   `;
 
-  // map options A–D
+  // options come as separate fields: option_a, option_b, ...
   const options = [
     { key: "A", text: q.option_a },
     { key: "B", text: q.option_b },
@@ -179,6 +179,7 @@ function showQuestion() {
   ];
 
   options.forEach(opt => {
+    if (!opt.text) return; // skip empty options
     const btn = document.createElement("button");
     btn.textContent = opt.text;
     btn.onclick = () => {
@@ -197,17 +198,3 @@ function showQuestion() {
   });
 }
 
-    function showResult() {
-      screen.innerHTML = `
-        <h2>Quiz Finished!</h2>
-        <div class="score">Your Score: ${score} / ${questions.length}</div>
-        <button onclick="soloMode()">Play Again</button>
-        <button onclick="showMainMenu()">🏠 Main Menu</button>
-      `;
-    }
-
-    // Start on main menu
-    showMainMenu();
-  </script>
-</body>
-</html>
