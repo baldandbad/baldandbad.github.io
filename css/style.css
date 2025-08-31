@@ -1633,6 +1633,48 @@ li.comment {
   padding: 0;
   margin-right: 8px;
 }
+.introduction {
+  margin: 20px 0;
+  padding: 15px;
+}
+
+.logo-img {
+  width: 320px;
+  height: auto;
+}
+
+.menu {
+  margin-top: 10px;
+  padding: 0;
+}
+
+.menu li {
+  display: inline-block;
+  margin: 0 15px;
+}
+
+.menu a {
+  text-decoration: none;
+  color: #007bff;
+  font-weight: bold;
+}
+
+.intro-title {
+  font-size: 32px;
+  color: #007BFF; /* Bootstrap blue */
+  font-weight: bold;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+}
+
+.intro-text {
+  font-size: 18px;
+  line-height: 1.6;
+  color: #333;
+  font-weight: normal;
+  text-align: justify;
+}
+
 .courses-info .courses-instructor li a i {
   font-size: 18px;
   color: #99a4b3;

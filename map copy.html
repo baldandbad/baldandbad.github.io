@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Bản đồ di tích</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css"/>
+
+  <style>
+    body, html {
+      margin: 0;
+      height: 100%;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    #map {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Search bar */
+    .search-bar {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1200;
+    }
+
+    .search-bar input {
+      padding: 8px 12px;
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+      width: 220px;
+    }
+
+    /* Suggestions dropdown */
+    .suggestions {
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 220px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      z-index: 1200;
+      max-height: 200px;
+      overflow-y: auto;
+      display: none;
+    }
+    .suggestions li {
+      padding: 8px 12px;
+      cursor: pointer;
+      font-size: 14px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .suggestions li:last-child {
+      border-bottom: none;
+    }
+    .suggestions li:hover {
+      background: #f7f7f7;
+    }
+
+    /* Filter button */
+    .filter-toggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 1200;
+      padding: 8px 12px;
+      background: #0078d7;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
+    /* Filter panel (starts completely off-screen) */
+    .filter-panel {
+      position: absolute;
+      top: 0;
+      left: -260px; /* fully outside */
+      width: 250px;
+      height: 100%;
+      background: #fff;
+      box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+      z-index: 1300;
+      padding: 20px;
+      transition: left 0.3s ease;
+    }
+    .filter-panel.active {
+      left: 0;
+    }
+    .filter-panel h3 {
+      margin-top: 0;
+    }
+    .filter-panel button {
+      display: block;
+      margin: 8px 0;
+      padding: 8px;
+      width: 100%;
+      border: none;
+      border-radius: 6px;
+      background: #f0f0f0;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .filter-panel button:hover {
+      background: #ddd;
+    }
+
+    /* Custom popup */
+    .custom-popup {
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .custom-popup h3 {
+      margin: 0 0 5px;
+      font-size: 16px;
+      color: #0078d7;
+    }
+    .popup-btn {
+      display: inline-block;
+      margin-top: 5px;
+      padding: 5px 10px;
+      background: #0078d7;
+      color: white;
+      text-decoration: none;
+      border-radius: 5px;
+      font-size: 13px;
+      transition: background 0.2s;
+    }
+    .popup-btn:hover {
+      background: #005bb5;
+    }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Tìm di tích..."/>
+    <ul id="suggestions" class="suggestions"></ul>
+  </div>
+
+  <div class="filter-toggle">Bộ lọc</div>
+  <div class="filter-panel" id="filterPanel">
+    <h3>Bộ lọc</h3>
+    <button onclick="applyFilter('all')">Tất cả</button>
+    <button onclick="applyFilter('museum')">Bảo tàng</button>
+    <button onclick="applyFilter('temple')">Đền chùa</button>
+    <button onclick="applyFilter('historic')">Di tích lịch sử</button>
+  </div>
+
+  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+  <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+  <script>
+    // --- MAP ---
+    const map = L.map('map', {
+      minZoom: 12,
+      maxZoom: 18
+    }).setView([10.7769, 106.7009], 13);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    // --- MARKERS ---
+    const markerCluster = L.markerClusterGroup({
+      animate: true,
+      spiderfyOnEveryZoom: true,
+      showCoverageOnHover: false
+    });
+    map.addLayer(markerCluster);
+
+    const markerObjects = [
+      { name: "Bảo tàng Lịch sử Việt Nam", coords: [10.786, 106.700], category: "museum", url: "museum1.html" },
+      { name: "Chùa Ngọc Hoàng", coords: [10.789, 106.695], category: "temple", url: "temple1.html" },
+      { name: "Dinh Độc Lập", coords: [10.776, 106.695], category: "historic", url: "historic1.html" }
+    ].map(item => {
+      const marker = L.marker(item.coords);
+      marker.bindPopup(`
+        <div class="custom-popup">
+          <h3>${item.name}</h3>
+          <p>Loại: ${item.category}</p>
+          <a href="${item.url}" class="popup-btn">Xem thêm →</a>
+        </div>
+      `);
+      marker.name = item.name;
+      marker.category = item.category;
+      markerCluster.addLayer(marker);
+      return marker;
+    });
+
+    // --- ACCENT-INSENSITIVE ---
+    function removeAccents(str) {
+      return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    }
+
+    // --- FILTER STATE ---
+    let activeFilter = "all";
+    function applyFilter(category) {
+      activeFilter = category;
+      markerCluster.clearLayers();
+      markerObjects.forEach(m => {
+        if (activeFilter === "all" || m.category === activeFilter) {
+          markerCluster.addLayer(m);
+        }
+      });
+      searchInput.value = "";
+      suggestions.innerHTML = "";
+      suggestions.style.display = "none";
+    }
+
+    // --- SEARCH WITH DROPDOWN ---
+    const searchInput = document.getElementById("searchInput");
+    const suggestions = document.getElementById("suggestions");
+
+    searchInput.addEventListener("input", () => {
+      const query = removeAccents(searchInput.value.trim());
+      suggestions.innerHTML = "";
+      if (!query) {
+        suggestions.style.display = "none";
+        return;
+      }
+
+      const matches = markerObjects.filter(m =>
+        (activeFilter === "all" || m.category === activeFilter) &&
+        removeAccents(m.name).includes(query)
+      );
+
+      if (matches.length) {
+        suggestions.style.display = "block";
+        matches.forEach(m => {
+          const li = document.createElement("li");
+          const regex = new RegExp(`(${query})`, "gi");
+          const highlightedName = m.name.replace(regex, `<strong>$1</strong>`);
+          li.innerHTML = highlightedName;
+          li.addEventListener("click", () => {
+            map.setView(m.getLatLng(), 16, { animate: true });
+            m.openPopup();
+            suggestions.style.display = "none";
+          });
+          suggestions.appendChild(li);
+        });
+      } else {
+        suggestions.style.display = "none";
+      }
+    });
+
+    document.addEventListener("click", (e) => {
+      if (!document.querySelector(".search-bar").contains(e.target)) {
+        suggestions.style.display = "none";
+      }
+    });
+
+    // --- FILTER TOGGLE ---
+    const filterToggle = document.querySelector(".filter-toggle");
+    const filterPanel = document.getElementById("filterPanel");
+    filterToggle.addEventListener("click", () => {
+      filterPanel.classList.toggle("active");
+    });
+  </script>
+</body>
+</html>

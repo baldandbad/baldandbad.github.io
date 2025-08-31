@@ -1558,6 +1558,17 @@ object {
   font-size: 11px;
   color: #555;
 }
+.post-frame {
+  display: inline-block;
+  padding: 6px;
+  border: 3px solid #ccc;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.post-frame img {
+  display: block;
+  border-radius: 8px;
+}
 .checkbox input[type="checkbox"],
 .checkbox input[type="radio"] {
   opacity: 0;
