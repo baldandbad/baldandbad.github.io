@@ -86,10 +86,12 @@
     <h1>Quiz Game</h1>
     <div id="screen"></div>
   </div>
-
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
     const API_URL = "https://baldandbadgithubio-production.up.railway.app"; // backend
     const screen = document.getElementById("screen");
+const socket = io(API_URL); // 👈 connect to backend WebSocket
+
 
     let questions = [];
     let currentIndex = 0;
@@ -129,9 +131,20 @@
     }
 
     async function hostRoom() {
-      screen.innerHTML = `<h2>Hosting Room...</h2><p>Share this Room ID: <b>12345</b></p>`;
-      // You can later replace with backend-generated ID + WebSocket
-    }
+  const res = await fetch(API_URL + "/api/quizzes");
+  const quizzes = await res.json();
+
+  screen.innerHTML = "<h2>Select a Quiz to Host</h2>";
+  quizzes.forEach(q => {
+    const btn = document.createElement("button");
+    btn.textContent = q.title;
+    btn.onclick = () => {
+      socket.emit("createRoom", { quizId: q.id });
+    };
+    screen.appendChild(btn);
+  });
+}
+
 
     function joinRoom() {
       screen.innerHTML = `
@@ -143,9 +156,42 @@
     }
 
     function enterRoom() {
-      const roomId = document.getElementById("roomId").value;
-      screen.innerHTML = `<h2>Joined Room ${roomId}</h2><p>Waiting for host...</p>`;
-    }
+  const roomId = document.getElementById("roomId").value;
+  socket.emit("joinRoom", { roomId });
+}
+
+socket.on("roomJoined", ({ roomId }) => {
+  screen.innerHTML = `<h2>Joined Room ${roomId}</h2><p>Waiting for host...</p>`;
+});
+
+function startMultiplayer() {
+  socket.emit("startGame"); 
+}
+
+socket.on("question", (q) => {
+  screen.innerHTML = `<div class="question"><h2>${q.question}</h2></div>`;
+  q.answers.forEach(opt => {
+    const btn = document.createElement("button");
+    btn.textContent = opt.text;
+    btn.onclick = () => {
+      socket.emit("submitAnswer", { answerId: opt.id });
+    };
+    screen.appendChild(btn);
+  });
+});
+
+socket.on("updateScores", (scores) => {
+  console.log("Scores:", scores);
+});
+
+socket.on("gameOver", ({ scores }) => {
+  screen.innerHTML = `
+    <h2>Game Over!</h2>
+    <pre>${JSON.stringify(scores, null, 2)}</pre>
+    <button onclick="showMainMenu()">🏠 Main Menu</button>
+  `;
+});
+
 
     // Quiz logic
     // Quiz logic
