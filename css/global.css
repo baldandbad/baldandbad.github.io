@@ -235,6 +235,15 @@ th {
   border: 1px solid #ff5722;
   color: #ff5722 !important;
 }
+#map {
+  border: 5px solid transparent;
+  border-radius: 15px;
+  background-image: linear-gradient(white, white),
+                    linear-gradient(45deg, #16a085, #2980b9);
+  background-origin: border-box;
+  background-clip: content-box, border-box;
+}
+
 #main a.btn-link {
   color: #262c38 !important;
 }
@@ -743,7 +752,9 @@ nav.meta-login ul li i {
   -moz-border-radius: 3px;
   border-radius: 3px;
 }
+
 .navbar ul {
+  justify-content: center;
   margin-top: 25px;
 }
 .navbar-nav > li > a {

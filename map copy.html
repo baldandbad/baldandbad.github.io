@@ -142,22 +142,28 @@
   </style>
 </head>
 <body>
-  <div id="map"></div>
+ <div id="map">
+  <!-- Controls must live INSIDE here -->
+  <div class="map-controls">
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Tìm di tích..." />
+      <ul id="suggestions"></ul>
+    </div>
 
-  <div class="search-bar">
-    <input type="text" id="searchInput" placeholder="Tìm di tích..."/>
-    <ul id="suggestions" class="suggestions"></ul>
+    <button id="filter-btn">☰ Bộ lọc</button>
   </div>
 
-  <div class="filter-toggle">Bộ lọc</div>
-  <div class="filter-panel" id="filterPanel">
+  <!-- Slide-in filter panel -->
+  <div id="filter-panel">
     <h3>Bộ lọc</h3>
-    <button onclick="applyFilter('all')">Tất cả</button>
-    <button onclick="applyFilter('museum')">Bảo tàng</button>
-    <button onclick="applyFilter('temple')">Đền chùa</button>
-    <button onclick="applyFilter('historic')">Di tích lịch sử</button>
+    <ul>
+      <li><button onclick="applyFilter('all')">Tất cả</button></li>
+      <li><button onclick="applyFilter('history')">Lịch sử</button></li>
+      <li><button onclick="applyFilter('culture')">Văn hóa</button></li>
+      <li><button onclick="applyFilter('religion')">Tín ngưỡng</button></li>
+    </ul>
   </div>
-
+</div>
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
   <script>
