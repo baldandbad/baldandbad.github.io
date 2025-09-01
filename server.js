@@ -19,16 +19,15 @@ const io = new Server(server, { cors: { origin: "*" } });
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
-console.log("API key loaded?", !!API_KEY);
 
+// AI endpoint
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
-  console.log("User message:", userMsg);
   const payload = {
-    model: "deepseek/deepseek-r1-0528-qwen3-8b:free", // or any model OpenRouter supports
+    model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
     messages: [
       { role: "system", content: "Tiếng Việt" },
-      { role: "user", content: userMsg}
+      { role: "user", content: userMsg }
     ]
   };
 
@@ -37,14 +36,13 @@ app.post("/ask", async (req, res) => {
       method: "POST",
       headers: {
         Authorization: `Bearer ${API_KEY}`,
-        "Content-Type": "application/json", // optional but helps with OpenRouter limits
+        "Content-Type": "application/json",
       },
       body: JSON.stringify(payload),
     });
 
     const data = await openRes.json();
-    console.log("OpenRouter raw response:", data);
-    res.json({ reply: data.choices?.[0]?.message?.content || " No reply." });
+    res.json({ reply: data.choices?.[0]?.message?.content || "No reply." });
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Error talking to OpenRouter" });
@@ -54,21 +52,20 @@ app.post("/ask", async (req, res) => {
 app.use("/comments", commentsRouter);
 
 app.get("/", (req, res) => {
-    res.send("Backend for comments is running ✅");
+  res.send("Backend is running ✅");
 });
 
-app.get('/', (req, res) => {
-  res.send('AI backend is running!');
-});
-
+// get all quizzes
 app.get("/api/quizzes", async (_req, res) => {
   try {
     const { rows } = await pool.query("SELECT id, title FROM quizzes ORDER BY id");
     res.json(rows);
-  } catch (e) { res.status(500).json({ error: e.message }); }
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
 });
 
-// get one quiz with questions+answers (includes correct answer id for solo play)
+// get one quiz
 app.get("/api/quizzes/:id", async (req, res) => {
   try {
     const quizId = req.params.id;
@@ -90,18 +87,18 @@ app.get("/api/quizzes/:id", async (req, res) => {
         { id: "C", text: q.option_c },
         { id: "D", text: q.option_d }
       ],
-      correctAnswerId: q.correct_option // e.g. "A"
+      correctAnswerId: q.correct_option
     }));
 
     res.json(questions);
   } catch (e) {
-    console.error(e);
     res.status(500).json({ error: e.message });
   }
 });
 
+/* ---------- Multiplayer with Socket.IO ---------- */
 
-const rooms = new Map(); // code -> {hostId, players:[{id,name,score,lastAnsweredIndex}], questions:[{id,text,answers:[{id,text,is_correct}]}], index}
+const rooms = new Map();
 
 io.on("connection", (socket) => {
   // host creates a room
@@ -181,8 +178,8 @@ io.on("connection", (socket) => {
     io.to(code).emit("updateScores", room.players.map(p => ({ name: p.name, score: p.score })));
   });
 
+  // cleanup
   socket.on("disconnect", () => {
-    // optional: clean up players / rooms
     for (const [code, room] of rooms.entries()) {
       const before = room.players.length;
       room.players = room.players.filter(p => p.id !== socket.id);
@@ -199,7 +196,6 @@ io.on("connection", (socket) => {
 function emitQuestion(code) {
   const room = rooms.get(code);
   const q = room.questions[room.index];
-  // send without is_correct flags
   io.to(code).emit("question", {
     index: room.index,
     questionId: q.id,

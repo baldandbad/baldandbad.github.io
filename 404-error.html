@@ -108,7 +108,7 @@
     // ---------- SOLO MODE ----------
     async function showSoloMode() {
       try {
-        const res = await fetch("/quizzes");
+        const res = await fetch("https://baldandbadgithubio-production.up.railway.app/quizzes");
         if (!res.ok) throw new Error("Failed to load quizzes");
         const quizzes = await res.json();
 
@@ -128,7 +128,7 @@
     async function startQuiz() {
       const quizId = document.getElementById("quiz-select").value;
       try {
-        const res = await fetch(`/quizzes/${quizId}/questions`);
+        const res = await fetch(`https://baldandbadgithubio-production.up.railway.app/quizzes/${quizId}/questions`);
         if (!res.ok) throw new Error("Failed to load quiz");
         questions = await res.json();
         currentIndex = 0;
