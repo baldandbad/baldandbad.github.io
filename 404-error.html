@@ -2,157 +2,196 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Quiz Game Lobby</title>
+  <title>Quiz App</title>
   <style>
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: linear-gradient(135deg, #667eea, #764ba2);
-      color: #fff;
-      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-    }
-
-    .container {
-      background: #fff;
+      min-height: 100vh;
+      margin: 0;
       color: #333;
-      border-radius: 20px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
-      padding: 30px;
-      width: 400px;
-      max-width: 90%;
-      text-align: center;
-      animation: fadeIn 0.6s ease-in-out;
     }
 
-    h1 {
-      margin-bottom: 20px;
-      font-size: 1.8em;
-      color: #444;
+    #quiz-container {
+      background: #fff;
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+      width: 480px;
+      max-width: 95%;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
     }
 
     h2 {
-      margin: 15px 0 10px;
-      color: #555;
+      margin-bottom: 25px;
+      font-size: 24px;
+      font-weight: bold;
+      color: #444;
     }
 
-    input {
-      width: 80%;
-      padding: 10px;
-      margin: 8px 0;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      font-size: 1em;
+    select, button, input {
+      width: 100%;
+      margin: 12px 0;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s ease;
+    }
+
+    select, input {
+      background: #f4f4f4;
     }
 
     button {
       background: linear-gradient(135deg, #667eea, #764ba2);
       color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1em;
+      font-weight: 600;
       cursor: pointer;
-      margin-top: 10px;
-      transition: 0.2s;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
     }
 
     button:hover {
-      transform: scale(1.05);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 15px rgba(0,0,0,0.2);
     }
 
-    .room {
-      margin: 15px 0;
-      padding: 10px;
-      border-radius: 10px;
-      background: #f5f5f5;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 10px 0;
-    }
-
-    ul li {
-      background: #eee;
-      margin: 5px 0;
-      padding: 8px;
-      border-radius: 8px;
-      transition: transform 0.2s;
-    }
-
-    ul li:hover {
-      transform: scale(1.03);
+    .btn-secondary {
       background: #ddd;
+      color: #333;
+      box-shadow: none;
     }
 
-    hr {
-      margin: 20px 0;
-      border: 0;
-      height: 1px;
+    .btn-secondary:hover {
       background: #ccc;
     }
 
+    .question-option {
+      background: #f9f9f9;
+      border: 2px solid transparent;
+      transition: all 0.2s ease;
+    }
+
+    .question-option:hover {
+      border-color: #667eea;
+      background: #eef0ff;
+    }
+
     @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.95); }
-      to { opacity: 1; transform: scale(1); }
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🎮 Quiz Game</h1>
-    
-    <div id="host">
-      <h2>Host a Game</h2>
-      <button onclick="createRoom()">Create Room</button>
-      <div id="roomCode" class="room"></div>
-      <ul id="players"></ul>
-    </div>
+  <div id="quiz-container"></div>
 
-    <hr>
-
-    <div id="player">
-      <h2>Join a Game</h2>
-      <input type="text" id="name" placeholder="Your Name">
-      <input type="text" id="code" placeholder="Room Code">
-      <button onclick="joinRoom()">Join</button>
-    </div>
-  </div>
-
-  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
-    const socket = io("http://localhost:3000"); // CHANGE to your Railway backend URL
+    let currentIndex = 0;
+    let score = 0;
+    let questions = [];
 
-    function createRoom() {
-      socket.emit("createRoom");
+    // ---------- MODE SELECTION ----------
+    function showModeSelection() {
+      document.getElementById("quiz-container").innerHTML = `
+        <h2>Choose Your Mode</h2>
+        <button onclick="showSoloMode()">🎯 Solo Mode</button>
+        <button onclick="showRoomMode()">👥 Room Mode</button>
+      `;
     }
 
-    socket.on("roomCreated", ({ code }) => {
-      document.getElementById("roomCode").innerText = "Room Code: " + code;
-    });
+    // ---------- SOLO MODE ----------
+    async function showSoloMode() {
+      try {
+        const res = await fetch("/quizzes");
+        if (!res.ok) throw new Error("Failed to load quizzes");
+        const quizzes = await res.json();
+
+        document.getElementById("quiz-container").innerHTML = `
+          <h2>Select a Quiz</h2>
+          <select id="quiz-select">
+            ${quizzes.map(q => `<option value="${q.id}">${q.title}</option>`).join("")}
+          </select>
+          <button onclick="startQuiz()">Start Quiz</button>
+          <button class="btn-secondary" onclick="showModeSelection()">⬅ Back</button>
+        `;
+      } catch (err) {
+        document.getElementById("quiz-container").innerHTML = `<p>Error: ${err.message}</p>`;
+      }
+    }
+
+    async function startQuiz() {
+      const quizId = document.getElementById("quiz-select").value;
+      try {
+        const res = await fetch(`/quizzes/${quizId}/questions`);
+        if (!res.ok) throw new Error("Failed to load quiz");
+        questions = await res.json();
+        currentIndex = 0;
+        score = 0;
+        showQuestion();
+      } catch (err) {
+        document.getElementById("quiz-container").innerHTML = `<p>Error: ${err.message}</p>`;
+      }
+    }
+
+    function showQuestion() {
+      const container = document.getElementById("quiz-container");
+      if (currentIndex >= questions.length) {
+        container.innerHTML = `
+          <h2>🎉 Quiz Finished!</h2>
+          <p>Your Score: <b>${score} / ${questions.length}</b></p>
+          <button onclick="showSoloMode()">Back to Quizzes</button>
+          <button class="btn-secondary" onclick="showModeSelection()">⬅ Main Menu</button>
+        `;
+        return;
+      }
+
+      const q = questions[currentIndex];
+      container.innerHTML = `
+        <h2>${q.question_text}</h2>
+        <button class="question-option" onclick="checkAnswer('a')">${q.option_a}</button>
+        <button class="question-option" onclick="checkAnswer('b')">${q.option_b}</button>
+        <button class="question-option" onclick="checkAnswer('c')">${q.option_c}</button>
+        <button class="question-option" onclick="checkAnswer('d')">${q.option_d}</button>
+      `;
+    }
+
+    function checkAnswer(selected) {
+      const correct = questions[currentIndex].correct_option;
+      if (selected === correct) {
+        score++;
+      }
+      currentIndex++;
+      showQuestion();
+    }
+
+    // ---------- ROOM MODE (placeholder) ----------
+    function showRoomMode() {
+      document.getElementById("quiz-container").innerHTML = `
+        <h2>Room Mode</h2>
+        <input type="text" id="room-code" placeholder="Enter Room Code">
+        <button onclick="joinRoom()">Join Room</button>
+        <button onclick="createRoom()">Create Room</button>
+        <button class="btn-secondary" onclick="showModeSelection()">⬅ Back</button>
+      `;
+    }
 
     function joinRoom() {
-      const name = document.getElementById("name").value;
-      const code = document.getElementById("code").value;
-      socket.emit("joinRoom", { code, name });
+      const code = document.getElementById("room-code").value;
+      alert("Joining room: " + code + " (not implemented yet)");
     }
 
-    socket.on("playerJoined", (player) => {
-      const li = document.createElement("li");
-      li.innerText = player.name;
-      document.getElementById("players").appendChild(li);
-    });
+    function createRoom() {
+      alert("Creating new room (not implemented yet)");
+    }
 
-    socket.on("updateScores", (players) => {
-      console.log("Leaderboard update:", players);
-    });
+    // Load first screen
+    showModeSelection();
   </script>
 </body>
 </html>
