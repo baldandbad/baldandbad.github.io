@@ -184,6 +184,15 @@ socket.on("updateScores", (scores) => {
   console.log("Scores:", scores);
 });
 
+socket.on("roomCreated", ({ roomId }) => {
+  screen.innerHTML = `
+    <h2>Room Created</h2>
+    <p>Room ID: <b>${roomId}</b></p>
+    <button onclick="startMultiplayer()">🚀 Start Game</button>
+    <button onclick="showMainMenu()">🏠 Main Menu</button>
+  `;
+});
+
 socket.on("gameOver", ({ scores }) => {
   screen.innerHTML = `
     <h2>Game Over!</h2>
