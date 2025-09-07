@@ -2415,6 +2415,7 @@ a.fav-load {
   .courses .course_rel {
     left: 25px;
   }
+  
   .home-two-pop-courses .course_rel {
     left: 30px;
   }
@@ -2799,6 +2800,7 @@ a.fav-load {
     margin-right: 0;
   }
 }
+
 @media (max-width: 480px) {
   .site-branding {
     width: 60%;

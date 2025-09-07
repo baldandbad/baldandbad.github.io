@@ -385,6 +385,15 @@ h2.text-center {
 .contact-form h3 {
   background: url(../images/border_bottom.png) no-repeat left bottom;
 }
+
+.merriweather-a {
+  font-family: "Merriweather", serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings:
+    "wdth" 100;
+}
 .head-border-orange {
   background: url(../images/border_bottom_orange.png) no-repeat center bottom;
 }
