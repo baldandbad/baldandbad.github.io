@@ -21,32 +21,225 @@
     <link rel="stylesheet" href="css/kindergarten.css">
   </head>
   <body>
-    <div class="header_meta header_meta_one">
-      <div class="container">
-        <div class="row"></div>
-      </div>
-    </div>
-    <header class="site-header home-one" id="masthead">
-      <div class="container">
-        <div class="row">
-          <div class="site-branding col-xs-12 col-sm-3">
-            <a href="blog-details.html#">
-              <img src="images/logo5.png" />
-            </a>
-          </div>
-         <nav class="main-navigation navbar navbar-default" id="site-navigation">
-<ul class="nav navbar-nav">
-  <li>
-    <a class="btn btn-light navbar-btn" href="home-1.html">Trang Chủ</a>
-  </li>
-  <li>
-    <a class="btn btn-light navbar-btn" href="blog.html">Kho Thông Tin</a>
-  </li>
-  <li>
-    <a class="btn btn-light navbar-btn" href="map.html">Bản Đồ</a>
-  </li>
-</ul>
-          </nav>
+<style>
+  .custom-navbar {
+    width: 100%;
+    background: #fff;
+    box-shadow: 0 2px 16px rgba(44,62,80,0.07), 0 1.5px 0 #f3f3f3;
+    border-bottom: 1.5px solid #f3f3f3;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    font-family: 'Montserrat', 'Open Sans', sans-serif;
+    transition: box-shadow .18s;
+  }
+  .custom-navbar-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 40px;
+    height: 120px;
+  }
+  .custom-navbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    text-decoration: none;
+    background: #fff;
+    border-radius: 12px;
+    padding: 0;
+    transition: box-shadow .18s, border .18s;
+  }
+  .custom-navbar-logo img {
+    height: 96px;
+    width: auto;
+    border-radius: 8px;
+    background: #fff;
+  }
+  .custom-navbar-nav {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .custom-navbar-nav > li {
+    position: relative;
+  }
+  .custom-navbar-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 18px 8px 18px;
+    color: #2f2f2f;
+    font-weight: 600;
+    border-radius: 8px 8px 0 0;
+    background: none;
+    border: none;
+    font-size: 1rem;
+    position: relative;
+    transition: color .18s, background .18s;
+  }
+  .custom-navbar-link::after {
+    content: '';
+    display: block;
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 2px;
+    height: 2.5px;
+    background: linear-gradient(90deg, #e53935 0%, #ff7043 100%);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transition: transform .22s;
+  }
+  .custom-navbar-link:hover, .custom-navbar-link:focus {
+    color: #e53935;
+    background: #f9f9f9;
+  }
+  .custom-navbar-link:hover::after, .custom-navbar-link:focus::after {
+    transform: scaleX(1);
+  }
+  .custom-navbar-dropdown {
+    display: none;
+    position: absolute;
+    left: 0;
+    top: 110%;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+    padding: 8px 0;
+    z-index: 1001;
+    border: 1.5px solid #f3f3f3;
+    animation: fadeIn .18s;
+  }
+  .custom-navbar-nav > li:hover > .custom-navbar-dropdown,
+  .custom-navbar-nav > li:focus-within > .custom-navbar-dropdown {
+    display: block;
+  }
+  .custom-navbar-dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 28px 11px 22px;
+    color: #e53935;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: background .16s, color .16s;
+    font-size: 0.98rem;
+    position: relative;
+  }
+  .custom-navbar-dropdown a:hover {
+    background: #fff3f1;
+    color: #d32f2f;
+  }
+  .custom-navbar-dropdown a::before {
+    content: '\2022';
+    color: #ff7043;
+    font-size: 1.2em;
+    margin-right: 8px;
+    opacity: 0.7;
+  }
+  .custom-navbar-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: #e53935;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-left: 12px;
+    border-radius: 8px;
+    padding: 4px 10px;
+    transition: background .18s;
+  }
+  .custom-navbar-toggle:hover {
+    background: #ffe3de;
+  }
+  @media (max-width: 900px) {
+    .custom-navbar-inner {
+      flex-wrap: wrap;
+      height: auto;
+      padding: 0 10px;
+    }
+    .custom-navbar-nav {
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+      background: #fff;
+      border-radius: 0 0 16px 16px;
+      box-shadow: 0 8px 32px rgba(44,62,80,0.13);
+      margin-top: 8px;
+      display: none;
+      position: absolute;
+      left: 0;
+      top: 72px;
+      z-index: 1002;
+      border-top: 1.5px solid #f3f3f3;
+    }
+    .custom-navbar-nav.show {
+      display: flex;
+    }
+    .custom-navbar-nav > li {
+      width: 100%;
+    }
+    .custom-navbar-link {
+      color: #e53935;
+      background: none;
+      width: 100%;
+      text-align: left;
+      border-radius: 0;
+      padding: 16px 22px 14px 22px;
+    }
+    .custom-navbar-link::after {
+      left: 22px;
+      right: 22px;
+      bottom: 4px;
+    }
+    .custom-navbar-link:hover {
+      background: #fff3f1;
+      color: #d32f2f;
+    }
+    .custom-navbar-dropdown {
+      position: static;
+      box-shadow: none;
+      background: #fff;
+      border-radius: 0;
+      min-width: 100%;
+      padding: 0;
+      border: none;
+    }
+    .custom-navbar-dropdown a {
+      padding: 13px 32px;
+    }
+    .custom-navbar-toggle {
+      display: block;
+    }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+</style>
+<nav class="custom-navbar">
+  <div class="custom-navbar-inner">
+    <a class="custom-navbar-logo" href="home-1.html">
+      <img src="images/logo5.png" alt="Logo" />
+    </a>
+    <button class="custom-navbar-toggle" aria-label="Mở menu" onclick="document.querySelector('.custom-navbar-nav').classList.toggle('show')">
+      <i class="fa fa-bars"></i>
+    </button>
+    <ul class="custom-navbar-nav">
+      <li><a class="custom-navbar-link" href="home-1.html">Trang Chủ</a></li>
+      <li><a class="custom-navbar-link" href="map.html">Bản Đồ</a></li>
+      <li><a class="custom-navbar-link" href="blog.html">Kho Thông Tin</a></li>
+    </ul>
+  </div>
+</nav>
         </div>
       </div>
     </header>
