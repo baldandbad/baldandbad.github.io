@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!--login23:54  -->
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>EducationPress - The Most Complete Education Solution</title>
+
+
+<!--[if lt IE 9]>
+  <script src="js/html5shiv.min.js"></script>
+  <script src="js/respond.min.js"></script>
+<![endif]-->
+
+<link rel="shortcut icon" href="images/favicon.png" />
+
+<link href="css/bootstrap.min.css" rel="stylesheet">
+
+<link rel="stylesheet" href="css/font-awesome.min.css">
+
+<link rel="stylesheet" href="css/linearicons-free.css">
+
+<link rel="stylesheet" href="css/simple-line-icons.css">
+
+<link rel="stylesheet" href="vendor/fancybox/css/fancybox.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.Default.css">
+<link rel="stylesheet" href="css/global.css">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/kindergarten.css">
+<style>
+  body, html {
+    margin: 0;
+    height: 100%;
+  }
+
+  /* make map taller */
+  #map {
+    width: 100%;
+    height: 700px; /* taller */
+    position: relative;
+  }
+
+  /* --- Search bar (on map, top center) --- */
+  .search-bar {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1200;
+    background: white;
+    border: 2px solid #4CAF50;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    padding: 6px;
+    width: 240px;
+  }
+  .search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+  }
+
+  /* Suggestions dropdown */
+  #suggestions {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    background: white;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 1300;
+    max-height: 200px;
+    overflow-y: auto;
+    display: none;
+  }
+  #suggestions li {
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  #suggestions li:hover {
+    background: #f7f7f7;
+  }
+
+  /* --- Filter button (top right) --- */
+  #filter-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 1200;
+    background: white;
+    border: 2px solid #2196F3;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+
+  /* --- Filter panel (slides from right OUTSIDE) --- */
+  #filter-panel {
+    position: absolute;
+    top: 0;
+    right: -260px; /* start fully outside */
+    width: 250px;
+    height: 100%;
+    background: white;
+    border-left: 3px solid #2196F3;
+    box-shadow: -2px 0 8px rgba(0,0,0,0.2);
+    transition: right 0.3s ease;
+    z-index: 1100;
+    padding: 15px;
+  }
+  #filter-panel.active {
+    right: 0; /* slide in */
+  }
+  #filter-panel h3 {
+    margin-top: 0;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+  }
+  #filter-panel button {
+    display: block;
+    margin: 8px 0;
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-radius: 6px;
+    background: #2196F3;
+    color: white;
+    cursor: pointer;
+  }
+  #filter-panel button:hover {
+    background: #1976D2;
+  }
+
+  /* --- Popup style --- */
+  .leaflet-popup-content-wrapper {
+    border-radius: 10px;
+    border: 2px solid #4CAF50;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  }
+  .leaflet-popup-content h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    color: #333;
+  }
+  .leaflet-popup-content p {
+    font-size: 13px;
+    margin: 0 0 10px;
+  }
+  .popup-btn {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #ffffff;
+    color: rgb(0, 0, 0);
+    border-radius: 5px;
+    font-size: 12px;
+    text-decoration: none;
+  }
+  .popup-btn:hover {
+    background: #a50b0b;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header home-one" id="masthead">
+<div class="container">
+<div class="row">
+
+<div class="site-branding col-xs-12 col-sm-3"> <a href="login.html#"><img alt="educationpress" class="brand" src="images/logo5.png" /></a> </div>
+
+
+<nav class="main-navigation navbar navbar-default" id="site-navigation">
+<ul class="nav navbar-nav">
+  <li>
+    <a class="btn btn-light navbar-btn" href="home-1.html">Trang Chủ</a>
+  </li>
+  <li>
+    <a class="btn btn-light navbar-btn" href="blog.html">Kho Thông Tin</a>
+  </li>
+  <li>
+    <a class="btn btn-light navbar-btn" href="map.html">Bản Đồ</a>
+  </li>
+</ul>
+</div> 
+</div>
+</div>
+<div class="page-spacer clearfix">
+<div id="primary" class="content-area">
+<div class="container">
+<div class="row">
+<main id="main" class="site-main col-xs-12">
+  <div id="map">
+    <!-- Search bar -->
+    <div class="search-bar">
+      <input type="text" id="search" placeholder="Tìm di tích..." />
+      <ul id="suggestions"></ul>
+    </div>
+
+    <!-- Filter button -->
+    <button id="filter-btn">☰ Bộ lọc</button>
+
+    <!-- Slide-in filter panel -->
+    <div id="filter-panel">
+  <h3>Bộ lọc</h3>
+  <button onclick="applyFilter('all')">Tất cả</button>
+  <button onclick="applyFilter('thanhpho')">Di tích cấp thành phố</button>
+  <button onclick="applyFilter('quocgia')">Di tích cấp quốc gia</button>
+  <button onclick="applyFilter('dacbiet')">Di tích quốc gia đặc biệt</button>
+  <button onclick="applyFilter('kientruc')">Di tích kiến trúc – nghệ thuật</button>
+  <button onclick="applyFilter('cachmang')">Di tích lịch sử – văn hóa cách mạng</button>
+  <button onclick="applyFilter('baotang')">Bảo tàng / chuyên đề</button>
+  <button onclick="applyFilter('khaoco')">Di tích khảo cổ</button>
+  <button onclick="applyFilter('khu')">Khu dự trữ sinh quyển</button>
+  <button onclick="applyFilter('khac')">Khác</button>
+</div>
+
+  </div>
+</main>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
+<script>
+  fetch('js/hcmc-boundary.geojson')
+  .then(res => res.json())
+  .then(data => {
+    L.geoJSON(data, {
+      style: {
+        color: "#ff5733",
+        weight: 3,
+        fill: false
+      }
+    }).addTo(map);
+  });
+  const filterBtn = document.getElementById("filter-btn");
+  const filterPanel = document.getElementById("filter-panel");
+  filterBtn.addEventListener("click", () => {
+    filterPanel.classList.toggle("active");
+  });
+
+  const map = L.map('map', {
+    minZoom: 10,
+    maxZoom: 15
+  }).setView([10.7769, 106.7009], 10);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  const markerCluster = L.markerClusterGroup({
+    showCoverageOnHover: false,
+    spiderfyOnEveryZoom: true,
+    animate: true
+  });
+  map.addLayer(markerCluster);
+
+  // Example data
+const data = [
+  { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html" },
+  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html" },
+  { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html" },
+  { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html" },
+  { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html" },
+  { name: "Chợ Bến Thành", coords: [10.772562285042808,106.69800620687107], category: "thanhpho", page: "chobenthanh.html" },
+  { name: "Căn Cứ Rừng Sác", coords: [10.407547,106.888519], category: "quocgia", page: "cancurungsac.html" },
+  { name: "Hầm giấu vũ khí biệt động", coords: [10.77215547871409,106.68593350431848], category: "quocgia", page: "cosogiauvukhi.html" },
+  { name: "Khu trại giam Bệnh Viện Chợ Quán", coords: [10.75329276787438,106.67915915593466], category: "quocgia", page: "khugiamtraibenhvientroquan.html" },
+  { name: "Lăng Lê Văn Duyệt", coords: [10.802218698128923,106.69712355857787], category: "quocgia", page: "langlevanduyet.html" },
+  { name: "Lăng mộ Phan Châu Trinh", coords: [10.804371552261498,106.661775396652], category: "quocgia", page: "mophanchautrinh.html" },
+  { name: "Nhà Thờ Đức Bà", coords: [10.779792558304973,106.69901819638865], category: "thanhpho", page: "nhathoducba.html" },
+  { name: "Tịnh xá Ngọc Phương", coords: [10.81534827804912,106.68978491518055], category: "quocgia", page: "tinhxangocphuong.html" },
+  { name: "Đình Phong Phú", coords: [10.832183577842558,106.78359777687334], category: "cachmang", page: "dinhphongphu.html" },
+  { name: "Đình Thông Tây Hội", coords: [10.840034114033681,106.66492442289332], category: "kientruc", page: "dingthongtayhoi.html" },
+  { name: "Địa đạo Củ Chi", coords: [11.141789146277686,106.46135436902648], category: "dacbiet", page: "diadaocuchi.html" },
+  { name: "Địa đạo Phú Thọ Hòa", coords: [10.783885492854845,106.63090098482986], category: "quocgia", page: "diadaophuthohoa.html" },
+  { name: "Nhà hát TPHCM", coords: [10.776713503847871,106.7031885226206], category: "kientruc", page: "nhahattphcm.html" },
+  { name: "Dinh Độc Lập", coords: [10.777067977226276,106.69528064173029], category: "dacbiet", page: "dinhdoclap.html" },
+  { name: "Đình Chí Hòa", coords: [10.78144580194108,106.67316163457637], category: "kientruc", page: "dinhchihoa.html" },
+  { name: "Chùa Giác Viên", coords: [10.76318460966222,106.6398107945002], category: "kientruc", page: "chuagiacvien.html" },
+  { name: "Lò Gốm Cổ Hưng Lợi", coords: [10.725087405329568,106.62630157120653], category: "khaoco", page: "logom.html" },
+  { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html" },
+  { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html" },
+  { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html" },
+];
+
+
+
+const markerObjects = data.map(item => {
+  const marker = L.marker(item.coords).bindPopup(`
+  <div class="popup-content">
+    <h3>${item.name}</h3>
+    <a href="${item.page}" class="popup-btn" target="_blank">Xem thêm</a>
+  </div>
+`);
+
+  
+  marker.category = item.category;
+  marker.name = item.name;
+  markerCluster.addLayer(marker);
+  return marker;
+});
+
+  // --- Filter ---
+  let activeFilter = "all";
+  function applyFilter(category) {
+    activeFilter = category;
+    markerCluster.clearLayers();
+    markerObjects.forEach(m => {
+      if (activeFilter === "all" || m.category === activeFilter) {
+        markerCluster.addLayer(m);
+      }
+    });
+    searchInput.value = "";
+    suggestions.style.display = "none";
+  }
+
+  // --- Search ---
+  const searchInput = document.getElementById("search");
+  const suggestions = document.getElementById("suggestions");
+
+  function removeAccents(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+  }
+
+  searchInput.addEventListener("input", () => {
+    const query = removeAccents(searchInput.value.trim());
+    suggestions.innerHTML = "";
+    if (!query) {
+      suggestions.style.display = "none";
+      return;
+    }
+    const matches = markerObjects.filter(m =>
+      (activeFilter === "all" || m.category === activeFilter) &&
+      removeAccents(m.name).includes(query)
+    );
+    if (matches.length) {
+      suggestions.style.display = "block";
+      matches.forEach(m => {
+        const li = document.createElement("li");
+        const regex = new RegExp(`(${query})`, "gi");
+        const highlightedName = m.name.replace(regex, "<strong>$1</strong>");
+        li.innerHTML = highlightedName;
+        li.addEventListener("click", () => {
+          map.setView(m.getLatLng(), 16, { animate: true });
+          m.openPopup();
+          suggestions.style.display = "none";
+        });
+        suggestions.appendChild(li);
+      });
+    } else {
+      suggestions.style.display = "none";
+    }
+  });
+
+  document.addEventListener("click", (e) => {
+    if (!document.querySelector(".search-bar").contains(e.target)) {
+      suggestions.style.display = "none";
+    }
+  });
+</script>
+</main>
+</div> 
+</div> 
+</div>
+</div>
+<footer class="site-footer" id="colophon">
+<div class="container">
+<div class="row">
+<div class="col-xs-12 col-sm-4"><img src="images/logo5.png" alt="" /></div>
+</div>
+<div class="row">
+<div class="col-xs-12 col-sm-4 footer-widget">
+<aside class="widget widget_text">
+<div class="textwidget">
+The point of using Lorem Ipsum is that it has a more or less normal distribution of letters, as opposed to using
+'Content here, content here', making it look like readable English.
+</div>
+</aside>
+<aside class="widget socialmedia-widget">
+<ul class="social">
+<li><a href="login.html#"><i class="fa fa-twitter"></i></a></li>
+<li><a href="login.html#"><i class="fa fa-facebook-square"></i></a></li>
+<li><a href="login.html#"><i class="fa fa-linkedin-square"></i></a></li>
+<li><a href="login.html#"><i class="fa fa-pinterest"></i></a></li>
+<li><a href="login.html#"><i class="fa fa-instagram"></i></a></li>
+<li><a href="login.html#"><i class="fa fa-youtube"></i></a></li>
+</ul>
+</aside>
+</div>
+<div class="col-xs-12 col-sm-4 footer-widget">
+<aside class="widget widget_nav_menu">
+<ul class="menu">
+<li><a href="login.html#">Home</a></li>
+<li><a href="login.html#">Shortcodes</a></li>
+<li><a href="login.html#">about US</a></li>
+<li><a href="login.html#">Blog</a></li>
+<li><a href="login.html#">classes</a></li>
+<li><a href="login.html#">Contact US</a></li>
+<li><a href="login.html#">Teachers</a></li>
+<li><a href="login.html#">Privacy Policy</a></li>
+<li><a href="login.html#">Events</a></li>
+</ul>
+</aside>
+</div>
+<div class="col-xs-12 col-sm-4 footer-widget">
+<aside class="widget newsletter-widget">
+<h3>Sign up now</h3>
+<p>When an printer took a galley of type and scrambled it to make a type specimen book.</p>
+<form id="newsletter">
+<input type="email" name="email" class="form-control" placeholder="Email" />
+<button type="submit" value="" class="btn btn-orange btn-medium"><i class="lnr lnr-arrow-right"></i></button>
+</form>
+</aside>
+</div>
+</div> 
+</div>
+
+<div class="footer-bottom">
+<div class="container">
+<div class="row">
+<div class="copyright">
+
+<p class="develop col-xs-12 col-sm-4 text-right"><a target="_blank" href="https://www.templateshub.net">Templates Hub</a> </p>
+</div>
+</div>
+</div>
+</div>
+</footer>
+
+
+<div id="login-form" style="display:none;">
+<div class="row">
+<h3>Login</h3>
+<p>Please Login to Create a New Course</p>
+<form id="login" action="login.html#">
+<input name="email" type="text" placeholder="Email or Username">
+<input name="password" type="text" placeholder="Password">
+<div class="row remeber">
+<label><input name="rember" type="checkbox" value=""> Remember Me</label>
+<a href="login.html#">Forgot Password?</a>
+</div>
+<div class="text-center button">
+<input name="Login" type="button" value="Login Now">
+</div>
+</form>
+</div> 
+</div> 
+
+<div id="register-form" style="display:none;">
+<div class="row">
+<h3>Register</h3>
+<p>Please Register to Create a New Account</p>
+<form id="register" action="login.html#">
+<input name="name" type="text" placeholder="Name">
+<input name="username" type="text" placeholder="Username">
+<input name="email" type="text" placeholder="Email">
+<input name="password" type="text" placeholder="Password">
+<input name="confirmpassword" type="text" placeholder="Confirm Password">
+<div class="row new-login">
+Already have an account? <a href="login.html#">Login to your account! </a>
+</div>
+<div class="text-center button">
+<input name="create-account" type="button" value="Create an Account">
+</div>
+</form>
+</div>
+</div>
+
+
+<script src="js/jquery.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
+
+<script src="js/theme.js"></script>
+
+<script type="text/javascript" src="vendor/fancybox/js/jquery.fancybox.js"></script>
+<script type="text/javascript" src="vendor/fancybox/js/custom.fancybox.js"></script>
+<script>
+jQuery.noConflict();
+jQuery('.fancybox').fancybox();
+</script>
+</body>
+
+<!--login23:54  -->
+</html>

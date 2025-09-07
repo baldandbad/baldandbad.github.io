@@ -108,7 +108,7 @@
                 <ul id="comment-list"></ul>
                 <script>
                   window.POST_ID = 21;
-                  const API_URL1 = "https://baldandbadgithubio-production.up.railway.app/comments";
+                  const API_URL1 = "https://baldandbadgithubio-production-030a.up.railway.app/comments";
                   async function loadComments() {
                     const res = await fetch(`${API_URL1}?post_id=${window.POST_ID}`); // API endpoint from your backend
                     const comments = await res.json();
@@ -169,7 +169,7 @@
                 <script>
                   window.POST_ID = 21;
                   const postID = window.POST_ID;
-                  const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
+                  const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app/comments";
 
                   function buildCommentTree(comments) {
                     const map = {};
@@ -269,7 +269,7 @@
                         console.log(name);
                         console.log(message);
                         const created_at = new Date();
-                        await fetch("https://baldandbadgithubio-production.up.railway.app/comments", {
+                        await fetch("https://baldandbadgithubio-production-030a.up.railway.app/comments", {
                           method: "POST",
                           headers: {
                             "Content-Type": "application/json"
@@ -704,7 +704,7 @@ Di sản văn hóa phi vật thể quốc gia.
           addMessage(text, "user");
           input.value = "";
           try {
-            const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+            const res = await fetch("https://baldandbadgithubio-production-030a.up.railway.app/ask", {
               method: "POST",
               headers: {
                 "Content-Type": "application/json"
