@@ -114,28 +114,27 @@ io.on("connection", (socket) => {
     const code = Math.random().toString(36).slice(2, 6).toUpperCase();
 
     const qRes = await pool.query(
-      "SELECT id, question_text FROM questions WHERE quiz_id=$1 ORDER BY id",
+      `SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option
+       FROM questions
+       WHERE quiz_id=$1
+       ORDER BY id`,
       [quizId]
     );
+
     if (qRes.rows.length === 0) {
       return socket.emit("error", "No questions found for this quiz");
     }
 
-    const qIds = qRes.rows.map(r => r.id);
-    const aRes = await pool.query(
-      "SELECT id, question_id, answer_text, is_correct FROM answers WHERE question_id = ANY($1::int[]) ORDER BY id",
-      [qIds]
-    );
-
-    const qMap = {};
-    qRes.rows.forEach(q => qMap[q.id] = { id: q.id, text: q.question_text, answers: [] });
-    aRes.rows.forEach(a => {
-      if (qMap[a.question_id]) {
-        qMap[a.question_id].answers.push({ id: a.id, text: a.answer_text, is_correct: a.is_correct });
-      }
-    });
-
-    const questions = Object.values(qMap);
+    const questions = qRes.rows.map(q => ({
+      id: q.id,
+      text: q.question_text,
+      answers: [
+        { id: "A", text: q.option_a, is_correct: q.correct_option === "A" },
+        { id: "B", text: q.option_b, is_correct: q.correct_option === "B" },
+        { id: "C", text: q.option_c, is_correct: q.correct_option === "C" },
+        { id: "D", text: q.option_d, is_correct: q.correct_option === "D" }
+      ]
+    }));
 
     rooms.set(code, { hostId: socket.id, players: [], questions, index: -1 });
     socket.join(code);
@@ -145,6 +144,7 @@ io.on("connection", (socket) => {
     socket.emit("error", "Failed to create room");
   }
 });
+
 
   // player joins
   socket.on("joinRoom", ({ code, name }) => {
