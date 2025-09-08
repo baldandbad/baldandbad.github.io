@@ -227,12 +227,13 @@ function emitQuestion(code) {
   const room = rooms.get(code);
   const q = room.questions[room.index];
   io.to(code).emit("question", {
-  index: room.index,
-  questionId: q.id,
-  question: q.text,   // 👈 match what client expects
-  answers: q.answers.map(a => ({ id: a.id, text: a.text }))
-});
+    id: q.id,
+    question: q.text, // 👈 matches REST
+    answers: q.answers.map(a => ({ id: a.id, text: a.text })),
+    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null // 👈 so frontend can check
+  });
 }
+
 
 /* -------------------- start -------------------- */
 const PORT = process.env.PORT || 3000;
