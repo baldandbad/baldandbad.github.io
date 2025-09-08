@@ -186,19 +186,20 @@ socket.on("submitAnswer", ({ code, answerId }) => {
   const player = room.players.find(p => p.id === socket.id);
   if (!player) return;
 
-  // prevent multiple answers for same question
+  // prevent multiple answers per question
   if (player.lastAnsweredIndex === room.index) return;
 
   const q = room.questions[room.index];
   if (!q) return;
 
-  // find the chosen answer (A/B/C/D)
+  // find the chosen answer
   const ans = q.answers.find(a => a.id === answerId);
   if (!ans) return;
 
   if (ans.is_correct) {
     player.score += 10;
   }
+
   player.lastAnsweredIndex = room.index;
 
   io.to(code).emit("updateScores", room.players.map(p => ({
@@ -226,11 +227,13 @@ socket.on("submitAnswer", ({ code, answerId }) => {
 function emitQuestion(code) {
   const room = rooms.get(code);
   const q = room.questions[room.index];
+
   io.to(code).emit("question", {
     id: q.id,
-    question: q.text, // 👈 matches REST
-    answers: q.answers.map(a => ({ id: a.id, text: a.text })),
-    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null // 👈 so frontend can check
+    question: q.text, // 👈 consistent with REST
+    answers: q.answers.map(a => ({ id: a.id, text: a.text })), // no is_correct leaked
+    index: room.index + 1,   // 👈 human-friendly (1-based)
+    total: room.questions.length
   });
 }
 
