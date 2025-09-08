@@ -227,11 +227,11 @@ function emitQuestion(code) {
   const room = rooms.get(code);
   const q = room.questions[room.index];
   io.to(code).emit("question", {
-    index: room.index,
-    questionId: q.id,
-    text: q.text,
-    answers: q.answers.map(a => ({ id: a.id, text: a.text }))
-  });
+  index: room.index,
+  questionId: q.id,
+  question: q.text,   // 👈 match what client expects
+  answers: q.answers.map(a => ({ id: a.id, text: a.text }))
+});
 }
 
 /* -------------------- start -------------------- */
