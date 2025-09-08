@@ -17,7 +17,7 @@ app.use(bodyParser.json());
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: ["https://https://baldandbad.github.io/"], // your frontend domain
+    origin: ["https://baldandbad.github.io/"], // your frontend domain
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -231,9 +231,10 @@ function emitQuestion(code) {
   io.to(code).emit("question", {
     id: q.id,
     question: q.text, // 👈 consistent with REST
-    answers: q.answers.map(a => ({ id: a.id, text: a.text })), // no is_correct leaked
-    index: room.index + 1,   // 👈 human-friendly (1-based)
-    total: room.questions.length
+    answers: q.answers.map(a => ({ id: a.id, text: a.text })),
+    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null,
+    index: room.index + 1,               // 👈 add current question number
+    total: room.questions.length         // 👈 add total number of questions
   });
 }
 

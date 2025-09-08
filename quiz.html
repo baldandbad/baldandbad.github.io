@@ -297,14 +297,20 @@ function connectSocket(){
   });
 
   socket.on('playerList', players => updatePlayerPanel(players || []));
-  socket.on('question', q => {
-    if(!q) return;
-    // unify into local questions array (single question)
-    questions = [{ id: q.questionId ?? q.id, question: q.text ?? q.question, answers: (q.answers||[]).map(a=>({id:a.id,text:a.text})) }];
-    currentIndex = q.index ?? 0;
-    inSolo = false;
-    showQuestionCard(q.question ?? 'Live question');
-  });
+socket.on('question', q => {
+  if (!q) return;
+  // use server's question + keep index + total + correctAnswerId
+  questions = [{
+    id: q.id,
+    question: q.question,
+    answers: (q.answers || []).map(a => ({ id: a.id, text: a.text })),
+    correctAnswerId: q.correctAnswerId
+  }];
+  currentIndex = (q.index ?? 1) - 1;  // convert 1-based to 0-based
+  inSolo = false;
+  showQuestionCard();
+});
+
 
   socket.on('updateScores', players => updatePlayerPanel(players || []));
   socket.on('gameOver', payload => {
@@ -469,7 +475,7 @@ function renderQuestion(){
   const q = questions[currentIndex];
   questionTextEl.textContent = q.question || '—';
   questionCountEl.textContent = `Question ${currentIndex+1} / ${total}`;
-  progressBarEl.style.width = `${Math.round(((currentIndex)/Math.max(1,total))*100)}%`;
+  progressBarEl.style.width = `${Math.round(((currentIndex+1)/Math.max(1,total))*100)}%`;
   progressScoreEl.textContent = `Score: ${score}`;
   optionsEl.innerHTML = '';
 
