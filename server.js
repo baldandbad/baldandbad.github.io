@@ -179,23 +179,34 @@ io.on("connection", (socket) => {
   });
 
   // player submits answer
-  socket.on("submitAnswer", ({ code, answerId }) => {
-    const room = rooms.get(code);
-    if (!room) return;
+socket.on("submitAnswer", ({ code, answerId }) => {
+  const room = rooms.get(code);
+  if (!room) return;
 
-    const player = room.players.find(p => p.id === socket.id);
-    if (!player) return;
-    if (player.lastAnsweredIndex === room.index) return; // already answered this question
+  const player = room.players.find(p => p.id === socket.id);
+  if (!player) return;
 
-    const q = room.questions[room.index];
-    const ans = q.answers.find(a => a.id === answerId);
-    if (!ans) return;
+  // prevent multiple answers for same question
+  if (player.lastAnsweredIndex === room.index) return;
 
-    if (ans.is_correct) player.score += 10;
-    player.lastAnsweredIndex = room.index;
+  const q = room.questions[room.index];
+  if (!q) return;
 
-    io.to(code).emit("updateScores", room.players.map(p => ({ name: p.name, score: p.score })));
-  });
+  // find the chosen answer (A/B/C/D)
+  const ans = q.answers.find(a => a.id === answerId);
+  if (!ans) return;
+
+  if (ans.is_correct) {
+    player.score += 10;
+  }
+  player.lastAnsweredIndex = room.index;
+
+  io.to(code).emit("updateScores", room.players.map(p => ({
+    name: p.name,
+    score: p.score
+  })));
+});
+
 
   // cleanup
   socket.on("disconnect", () => {
