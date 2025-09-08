@@ -15,7 +15,14 @@ app.use(express.json());
 app.use(bodyParser.json());
 
 const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const io = new Server(server, {
+  cors: {
+    origin: ["https://https://baldandbad.github.io/"], // your frontend domain
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
 
 const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
