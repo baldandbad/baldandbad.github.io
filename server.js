@@ -110,13 +110,17 @@ const rooms = new Map();
 io.on("connection", (socket) => {
   // host creates a room
   socket.on("createRoom", async ({ quizId }) => {
+  try {
     const code = Math.random().toString(36).slice(2, 6).toUpperCase();
 
-    // load questions+answers including is_correct (kept server-side)
     const qRes = await pool.query(
       "SELECT id, question_text FROM questions WHERE quiz_id=$1 ORDER BY id",
       [quizId]
     );
+    if (qRes.rows.length === 0) {
+      return socket.emit("error", "No questions found for this quiz");
+    }
+
     const qIds = qRes.rows.map(r => r.id);
     const aRes = await pool.query(
       "SELECT id, question_id, answer_text, is_correct FROM answers WHERE question_id = ANY($1::int[]) ORDER BY id",
@@ -125,14 +129,22 @@ io.on("connection", (socket) => {
 
     const qMap = {};
     qRes.rows.forEach(q => qMap[q.id] = { id: q.id, text: q.question_text, answers: [] });
-    aRes.rows.forEach(a => qMap[a.question_id].answers.push({ id: a.id, text: a.answer_text, is_correct: a.is_correct }));
+    aRes.rows.forEach(a => {
+      if (qMap[a.question_id]) {
+        qMap[a.question_id].answers.push({ id: a.id, text: a.answer_text, is_correct: a.is_correct });
+      }
+    });
 
     const questions = Object.values(qMap);
 
     rooms.set(code, { hostId: socket.id, players: [], questions, index: -1 });
     socket.join(code);
     socket.emit("roomCreated", { code });
-  });
+  } catch (err) {
+    console.error("createRoom error:", err.message);
+    socket.emit("error", "Failed to create room");
+  }
+});
 
   // player joins
   socket.on("joinRoom", ({ code, name }) => {
