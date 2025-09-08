@@ -246,39 +246,343 @@
     </ul>
   </div>
 </nav>
+    <!-- NEW HERO - copy this whole block into your page -->
+<section class="hero-neo" aria-label="Trang chủ - Bản đồ Di tích lịch sử">
+  <div class="hero-neo__viewport">
+    <div class="hero-neo__slides" role="list">
+      <article class="hero-neo__slide hero-neo__slide--active"
+               role="listitem"
+               data-bg="images/use_img/banner1.jpg"
+               aria-hidden="false">
+        <div class="hero-neo__overlay" aria-hidden="true"></div>
+        <div class="hero-neo__inner">
+          <h1 class="hero-neo__title">Khám phá<br> Bản đồ Di tích Lịch sử TPHCM</h1>
+          <p class="hero-neo__subtitle">Khám phá quá khứ — hiểu rõ hiện tại</p>
+          <div class="hero-neo__actions">
+            <a class="hero-neo__btn hero-neo__btn--primary" href="map.html">Xem bản đồ</a>
+            <a class="hero-neo__btn hero-neo__btn--ghost" href="blog.html">Tìm hiểu thêm</a>
+          </div>
         </div>
-      </div>
-    </header>
-    <div id="flex" class="flexslider kindergarten">
-      <ul class="slides"> 
-        <li class="blurred-slide" style="background:url(images/use_img/banner1.jpg) no-repeat center; background-size:cover; position: relative;">
-          <div class="container">
-            <div class="row">
-              <div class="slide-caption">
-                <h1 class="merriweather-a" style="color: #ffffff;font-size: 60px;" data-animation="animated bounceInLeft">
-          Khám phá <br>Bản đồ Di tích Lịch sử TPHCM
-</h1>
-                <a href="home-1.html#" data-animation="animated zoomInUp" class="btn btn-medium btn-blue">Xem bản đồ <i class="lnr lnr-arrow-right"></i>
-                </a>
-              </div>
-            </div>
+      </article>
+
+      <article class="hero-neo__slide"
+               role="listitem"
+               data-bg="images/use_img/banner2.jpg"
+               aria-hidden="true">
+        <div class="hero-neo__overlay" aria-hidden="true"></div>
+        <div class="hero-neo__inner">
+          <h1 class="hero-neo__title">Tìm hiểu<br> Lịch sử Sài Gòn<br> qua các Di tích</h1>
+          <p class="hero-neo__subtitle">Câu chuyện của thành phố — được kể qua từng địa điểm</p>
+          <div class="hero-neo__actions">
+            <a class="hero-neo__btn hero-neo__btn--primary" href="blog.html">Bắt đầu</a>
+            <a class="hero-neo__btn hero-neo__btn--ghost" href="quiz.html">Tìm hiểu thêm</a>
           </div>
-        </li>
-        <li class="blurred-slide" style="background:url(images/use_img/banner2.jpg) no-repeat center; background-size:cover; position: relative;">
-          <div class="container">
-            <div class="row">
-              <div class="slide-caption">
-<h1 class="merriweather-a" style="color: #ffffff;font-size: 60px;" data-animation="animated bounceInLeft">
-Tìm hiểu <br> Lịch sử Sài Gòn <br> qua các Di tích
-</h1>
-                <a href="home-1.html#" data-animation="animated zoomInUp" class="btn btn-medium btn-blue">Tìm hiểu thêm <i class="lnr lnr-arrow-right"></i>
-                </a>
-              </div>
-            </div>
-          </div>
-        </li>
-      </ul>
+        </div>
+      </article>
     </div>
+  </div>
+
+  <!-- Controls -->
+  <button class="hero-neo__nav hero-neo__nav--prev" aria-label="Slide trước">&lsaquo;</button>
+  <button class="hero-neo__nav hero-neo__nav--next" aria-label="Slide kế tiếp">&rsaquo;</button>
+
+  <!-- Dots -->
+  <div class="hero-neo__dots" role="tablist" aria-label="Chọn slide"></div>
+</section>
+
+<style>
+/* -------------------------
+   HERO-NEO - Mobile-first
+   ------------------------- */
+:root{
+  --hero-height: min(86vh, 520px);
+  --overlay-dark: rgba(6,10,19,0.55);
+  --accent: #d62828; /* red from logo */
+  --muted: rgba(255,255,255,0.9);
+  --glass: rgba(255,255,255,0.06);
+}
+
+.hero-neo{
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  background: #000;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* viewport keeps a consistent visual area */
+.hero-neo__viewport{
+  height: var(--hero-height);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* slide container */
+.hero-neo__slides{
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* each slide */
+.hero-neo__slide{
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  box-sizing: border-box;
+
+  /* start hidden */
+  opacity: 0;
+  transform: translateY(6%);
+  transition: opacity 700ms cubic-bezier(.2,.9,.2,1), transform 700ms cubic-bezier(.2,.9,.2,1);
+  pointer-events: none;
+}
+
+/* active slide */
+.hero-neo__slide--active{
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* overlay for contrast */
+.hero-neo__overlay{
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, var(--overlay-dark) 70%);
+  backdrop-filter: blur(2px);
+}
+
+/* content wrapper */
+.hero-neo__inner{
+  position: relative;
+  z-index: 2;
+  max-width: 720px;
+  width: 100%;
+  text-align: left;
+  color: var(--muted);
+}
+
+/* titles */
+.hero-neo__title{
+  margin: 0 0 .4rem 0;
+  font-family: "Merriweather", Georgia, serif;
+  font-size: 2rem; /* mobile */
+  line-height: 1.03;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 6px 18px rgba(0,0,0,0.5);
+  letter-spacing: -.02em;
+  animation: heroTitleIn 700ms ease both;
+}
+
+/* subtitle */
+.hero-neo__subtitle{
+  margin: .25rem 0 1rem 0;
+  color: rgba(255,255,255,0.92);
+  font-size: .95rem;
+  opacity: .95;
+  animation: heroSubIn 900ms ease both;
+}
+
+/* buttons */
+.hero-neo__actions{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; margin-top: .6rem; }
+
+.hero-neo__btn{
+  display:inline-flex;
+  align-items:center;
+  gap:.5rem;
+  text-decoration:none;
+  font-weight:600;
+  padding:.6rem 1rem;
+  border-radius:999px;
+  font-size:.95rem;
+  box-shadow: 0 6px 18px rgba(13,18,24,0.36);
+  transition: transform .18s ease, box-shadow .18s ease, opacity .12s ease;
+  will-change: transform;
+}
+
+.hero-neo__btn:focus{ outline:3px solid rgba(255,255,255,0.12); outline-offset:3px; }
+
+.hero-neo__btn--primary{
+  background: linear-gradient(90deg,var(--accent), #ff3b3b 140%);
+  color:#fff;
+  border: none;
+}
+
+.hero-neo__btn--ghost{
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255,255,255,0.14);
+  padding:.56rem .9rem;
+}
+
+/* nav arrows */
+.hero-neo__nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  border: none;
+  background: rgba(0,0,0,0.45);
+  color:#fff;
+  width:44px;
+  height:44px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  cursor:pointer;
+  z-index:5;
+  transition: transform .15s ease, background .15s;
+}
+.hero-neo__nav:hover{ transform: translateY(-50%) scale(1.06); background: rgba(0,0,0,0.6); }
+.hero-neo__nav:active{ transform: translateY(-50%) scale(.98); }
+
+.hero-neo__nav--prev{ left: 12px; }
+.hero-neo__nav--next{ right: 12px; }
+
+/* dots */
+.hero-neo__dots{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: 10px;
+  display:flex;
+  gap:.45rem;
+  z-index:5;
+}
+.hero-neo__dots button{
+  width:10px; height:10px; border-radius:50%;
+  border:none; background: rgba(255,255,255,0.28); cursor:pointer;
+  transition: transform .16s, background .16s;
+}
+.hero-neo__dots button[aria-selected="true"]{ background: #fff; transform: scale(1.25); }
+
+/* animation keyframes */
+@keyframes heroTitleIn{
+  from{ transform: translateY(10%); opacity:0; }
+  to{ transform: translateY(0); opacity:1; }
+}
+@keyframes heroSubIn{
+  from{ transform: translateY(6%); opacity:0; }
+  to{ transform: translateY(0); opacity:.98; }
+}
+
+/* responsive scale up */
+@media (min-width: 640px){
+  .hero-neo__title{ font-size: 2.8rem; }
+  .hero-neo__subtitle{ font-size: 1rem; }
+  .hero-neo__inner{ padding-left: 2rem; padding-right: 1rem; text-align:left; }
+}
+
+@media (min-width: 1024px){
+  .hero-neo__title{ font-size: 3.6rem; }
+  .hero-neo__inner{ padding-left: 4rem; }
+  .hero-neo__viewport{ height: 78vh; }
+}
+
+/* respect reduced motion */
+@media (prefers-reduced-motion: reduce){
+  .hero-neo__slide, .hero-neo__title, .hero-neo__subtitle { transition:none; animation:none; }
+}
+</style>
+
+<script>
+/* HERO-NEO slider behavior
+   - sets backgrounds from data-bg (prevents layout shift)
+   - simple autoplay + prev/next + dots
+   - touch swipe for mobile
+*/
+(function(){
+  const root = document.querySelector('.hero-neo');
+  if (!root) return;
+
+  const slides = Array.from(root.querySelectorAll('.hero-neo__slide'));
+  const prevBtn = root.querySelector('.hero-neo__nav--prev');
+  const nextBtn = root.querySelector('.hero-neo__nav--next');
+  const dotsWrap = root.querySelector('.hero-neo__dots');
+
+  // set background images from data attributes (lazy-like)
+  slides.forEach((s, i) => {
+    const bg = s.dataset.bg || '';
+    if (bg) s.style.backgroundImage = `url("${bg}")`;
+    // create dot
+    const dot = document.createElement('button');
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Slide ${i+1}`);
+    dot.setAttribute('data-index', i);
+    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    dotsWrap.appendChild(dot);
+  });
+
+  let index = 0;
+  const dotButtons = Array.from(dotsWrap.children);
+
+  function setActive(newIndex){
+    if (newIndex === index) return;
+    slides[index].classList.remove('hero-neo__slide--active');
+    slides[index].setAttribute('aria-hidden', 'true');
+    dotButtons[index].setAttribute('aria-selected','false');
+
+    slides[newIndex].classList.add('hero-neo__slide--active');
+    slides[newIndex].setAttribute('aria-hidden', 'false');
+    dotButtons[newIndex].setAttribute('aria-selected','true');
+
+    index = newIndex;
+  }
+
+  // prev/next handlers
+  function prev(){ setActive((index - 1 + slides.length) % slides.length); resetTimer(); }
+  function next(){ setActive((index + 1) % slides.length); resetTimer(); }
+
+  prevBtn?.addEventListener('click', prev);
+  nextBtn?.addEventListener('click', next);
+
+  // dots
+  dotButtons.forEach(d => d.addEventListener('click', (e)=>{
+    const i = Number(e.currentTarget.getAttribute('data-index'));
+    setActive(i);
+    resetTimer();
+  }));
+
+  // autoplay
+  let interval = 6000, timer = null;
+  function startTimer(){ timer = setInterval(()=> setActive((index+1)%slides.length), interval); }
+  function resetTimer(){ clearInterval(timer); startTimer(); }
+
+  startTimer();
+
+  // touch support (swipe)
+  let startX = 0, deltaX = 0;
+  root.addEventListener('touchstart', (e)=> { startX = e.touches[0].clientX; deltaX=0; }, {passive:true});
+  root.addEventListener('touchmove', (e)=> { deltaX = e.touches[0].clientX - startX; }, {passive:true});
+  root.addEventListener('touchend', ()=> {
+    if (Math.abs(deltaX) < 40) return;
+    if (deltaX > 0) prev(); else next();
+  });
+
+  // keyboard left/right navigation
+  root.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft') prev();
+    if (e.key === 'ArrowRight') next();
+  });
+
+  // pause on hover/focus
+  [root, prevBtn, nextBtn, ...dotButtons].forEach(el => {
+    el.addEventListener('mouseenter', ()=> clearInterval(timer));
+    el.addEventListener('mouseleave', startTimer);
+    el.addEventListener('focusin', ()=> clearInterval(timer));
+    el.addEventListener('focusout', startTimer);
+  });
+
+})();
+</script>
+
     <section class="about-with-slide">
       <div class="container">
         <div class="row">
@@ -367,63 +671,173 @@ Tìm hiểu <br> Lịch sử Sài Gòn <br> qua các Di tích
             </h3>
             <ul>
             </ul>
-            <div class="flexslider fun-gallery-slider">
-              <ul class="slides">
-                <li>
-                  <div class="col-xs-12 col-sm-6">
-                    <div class="row">
-                      <img src="images/use_img/gallery_home_main1.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="col-xs-12 col-sm-6 slide-right">
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                    </div>
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="col-xs-12 col-sm-6">
-                    <div class="row">
-                      <img src="images/use_img/gallery_home_main1.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="col-xs-12 col-sm-6 slide-right">
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                    </div>
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                    </div>
-                  </div>
-                </li>
-                <li>
-                  <div class="col-xs-12 col-sm-6">
-                    <div class="row">
-                      <img src="images/use_img/gallery_home_main1.jpg" alt="" />
-                    </div>
-                  </div>
-                  <div class="col-xs-12 col-sm-6 slide-right">
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                    </div>
-                    <div class="col-sm-6">
-                      <img src="images/use_img/gallery_home_thumb2.jpg" alt="" />
-                      <img src="images/use_img/gallery_home_thumb3.jpg" alt="" />
-                    </div>
-                  </div>
-                </li>
-              </ul>
-            </div>
+<style>
+  body{
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    margin:0;
+    background:#fff;
+    color:#111;
+  }
+
+  .custom-gallery-section{
+    padding:20px;
+    max-width:1200px;
+    margin:0 auto;
+  }
+
+  .custom-gallery-title{
+    font-weight:700;
+    font-size:1.2rem;
+    margin-bottom:16px;
+    color:#0077cc;
+  }
+
+  .custom-gallery-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
+    gap:16px;
+  }
+
+  .custom-gallery-grid img{
+    width:100%;
+    height:220px; /* uniform height */
+    object-fit:cover;
+    border-radius:12px;
+    transform-style:preserve-3d;
+    transition:box-shadow 250ms, transform 250ms;
+    will-change:transform;
+    cursor:pointer;
+    display:block;
+  }
+
+  /* Lightbox */
+  .custom-lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.85);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    opacity:0;
+    visibility:hidden;
+    transition:opacity 250ms ease;
+    z-index:1000;
+  }
+  .custom-lightbox.active{
+    opacity:1;
+    visibility:visible;
+  }
+  .custom-lightbox img{
+    max-width:90%;
+    max-height:80%;
+    border-radius:12px;
+    box-shadow:0 12px 40px rgba(0,0,0,0.7);
+  }
+  .custom-lightbox-close{
+    position:absolute;
+    top:20px;
+    right:30px;
+    font-size:2rem;
+    color:#fff;
+    background:none;
+    border:none;
+    cursor:pointer;
+  }
+</style>
+</head>
+<body>
+
+<section class="custom-gallery-section">
+  <div class="custom-gallery-grid">
+    <img src="https://picsum.photos/600/400?random=1" alt="Ảnh 1">
+    <img src="https://picsum.photos/600/400?random=2" alt="Ảnh 2">
+    <img src="https://picsum.photos/600/400?random=3" alt="Ảnh 3">
+    <img src="https://picsum.photos/600/400?random=4" alt="Ảnh 4">
+    <img src="https://picsum.photos/600/400?random=5" alt="Ảnh 5">
+    <img src="https://picsum.photos/600/400?random=6" alt="Ảnh 6">
+    <img src="https://picsum.photos/600/400?random=7" alt="Ảnh 7">
+    <img src="https://picsum.photos/600/400?random=8" alt="Ảnh 8">
+  </div>
+</section>
+
+<!-- Lightbox -->
+<div class="custom-lightbox" id="custom-lightbox">
+  <button class="custom-lightbox-close" aria-label="Close">&times;</button>
+  <img src="" alt="Full view">
+</div>
+
+<script>
+/* 3D Tilt Effect */
+(function(){
+  const maxRotate=25;
+  const imgs=document.querySelectorAll('.custom-gallery-grid img');
+
+  imgs.forEach(img=>{
+    let rafId=null;
+    let current={rx:0,ry:0}, target={rx:0,ry:0};
+    let isPointerOver=false;
+
+    function rect(){ return img.getBoundingClientRect(); }
+    function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
+    function lerp(a,b,t){ return a+(b-a)*t; }
+
+    function onPointerMove(e){
+      isPointerOver=true;
+      const r=rect();
+      const px=((e.clientX-r.left)/r.width)-0.5;
+      const py=((e.clientY-r.top)/r.height)-0.5;
+      target.ry=clamp(px*maxRotate*-1,-maxRotate,maxRotate);
+      target.rx=clamp(py*maxRotate,-maxRotate,maxRotate);
+      startLoop();
+    }
+    function onPointerLeave(){
+      isPointerOver=false;
+      target.rx=0; target.ry=0;
+      startLoop();
+    }
+    function update(){
+      current.rx=lerp(current.rx,target.rx,0.18);
+      current.ry=lerp(current.ry,target.ry,0.18);
+      img.style.transform=`rotateX(${current.rx}deg) rotateY(${current.ry}deg) scale(1.05)`;
+      img.style.boxShadow=`0 12px 25px rgba(0,0,0,0.35)`;
+      if(Math.abs(current.rx-target.rx)<0.2 && Math.abs(current.ry-target.ry)<0.2 && !isPointerOver){
+        cancelLoop();
+        img.style.transform='rotateX(0deg) rotateY(0deg) scale(1)';
+        img.style.boxShadow='';
+        return;
+      }
+      rafId=requestAnimationFrame(update);
+    }
+    function startLoop(){ if(!rafId) rafId=requestAnimationFrame(update); }
+    function cancelLoop(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
+
+    img.addEventListener('pointermove',onPointerMove);
+    img.addEventListener('pointerleave',onPointerLeave);
+    window.addEventListener('pagehide',cancelLoop);
+  });
+})();
+
+/* Lightbox */
+(function(){
+  const lightbox=document.getElementById('custom-lightbox');
+  const lightboxImg=lightbox.querySelector('img');
+  const closeBtn=lightbox.querySelector('.custom-lightbox-close');
+
+  document.querySelectorAll('.custom-gallery-grid img').forEach(img=>{
+    img.addEventListener('click',()=>{
+      lightboxImg.src=img.src;
+      lightbox.classList.add('active');
+    });
+  });
+
+  closeBtn.addEventListener('click',()=> lightbox.classList.remove('active'));
+  lightbox.addEventListener('click',e=>{
+    if(e.target===lightbox){ lightbox.classList.remove('active'); }
+  });
+})();
+</script>
             <div class="text-center col-xs-12">
-              <a href="home-1.html#" data-animation="animated zoomInUp" class="btn btn-medium btn-blue">Xem bản đồ<i class="lnr lnr-arrow-right"></i>
+              <a href="map.html" data-animation="animated zoomInUp" class="btn btn-medium btn-blue">Xem bản đồ<i class="lnr lnr-arrow-right"></i>
               </a>
             </div>
           </div>
@@ -633,7 +1047,6 @@ Tìm hiểu <br> Lịch sử Sài Gòn <br> qua các Di tích
     </div>
   </div>
 </div>
-
         </div>
       </div>
       <div class="footer-bottom">
