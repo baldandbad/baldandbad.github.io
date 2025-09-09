@@ -478,7 +478,10 @@ function updatePlayers(list){
 
 /* After joining/hosting, show lobby card */
 function showLobby(){
-  showLobby(); // ensure visible
+  mainCard.style.display='none';
+  quizCard.style.display='none';
+  lobbyCard.style.display='block';
+
   roomCodeEl.textContent = roomCode || '—';
   hostStartBtn.style.display = amHost ? 'inline-flex' : 'none';
   copyCodeBtn.style.display = 'inline-flex';
