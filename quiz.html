@@ -3,595 +3,515 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Quiz Game — Colorful</title>
+<title>QuizRoom — Mobile & Multiplayer</title>
 <link rel="icon" href="data:," />
 <style>
   :root{
-    --bg-1: #0b1020;
-    --bg-2: #0f1b2d;
-    --card: rgba(255,255,255,0.03);
-    --muted: #cbd5e1;
-    --accent-a: #ff7ab6; /* pink */
-    --accent-b: #6ee7b7; /* mint */
-    --accent-c: #ffd86b; /* yellow */
-    --accent-d: #7dd3fc; /* sky */
-    --green: #34d399;
-    --red: #fb7185;
-    --glass: rgba(255,255,255,0.04);
-    --radius: 12px;
+    --bg1:#0f1724; --bg2:#071029;
+    --card:rgba(255,255,255,0.04);
+    --muted: #a8c0ff;
+    --accent1: linear-gradient(135deg,#ff7ab6,#ffd86b);
+    --accent2: linear-gradient(135deg,#7dd3fc,#6ee7b7);
+    --green:#34d399; --red:#fb7185;
+    --radius:14px;
   }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6f0ff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
+  .app{width:100%;max-width:980px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:14px;display:grid;grid-template-columns:360px 1fr;gap:16px;box-shadow:0 12px 40px rgba(2,6,23,0.6);}
+  /* mobile stack */
+  @media (max-width:900px){ .app{grid-template-columns:1fr;padding:12px} }
 
-  html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
-  body{
-    background:
-      radial-gradient(800px 400px at 10% 10%, rgba(125,211,252,0.06), transparent 6%),
-      radial-gradient(700px 400px at 90% 80%, rgba(255,122,182,0.05), transparent 6%),
-      linear-gradient(180deg,var(--bg-1),var(--bg-2));
-    color:#e9f2ff;
-    display:flex;align-items:center;justify-content:center;padding:28px;
-  }
-
-  .app{width:100%;max-width:1200px;display:grid;grid-template-columns:360px 1fr;gap:20px;align-items:start}
-
-  /* left */
-  .panel{
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
-    border-radius:var(--radius);padding:18px;box-shadow:0 12px 40px rgba(2,6,23,0.6);
-    min-height:560px;overflow:hidden;
-  }
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent-a),var(--accent-b));display:flex;align-items:center;justify-content:center;font-weight:800;color:#041826}
+  /* left panel */
+  .left{padding:12px;min-height:520px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
+  .brand{display:flex;align-items:center;gap:12px}
+  .logo{width:54px;height:54px;border-radius:12px;background:var(--accent1);display:flex;align-items:center;justify-content:center;font-weight:900;color:#081226}
   h1{margin:0;font-size:20px}
-  p.lead{margin:6px 0 14px;color:var(--muted);font-size:13px}
+  p.lead{margin:6px 0 12px;color:var(--muted);font-size:13px}
 
-  .modes{display:flex;flex-direction:column;gap:10px}
-  .mode-btn{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent);cursor:pointer;border:1px solid rgba(255,255,255,0.02)}
-  .mode-btn:hover{transform:translateY(-4px);transition:all .14s}
-  .mode-btn .title{font-weight:700}
-  .mode-btn .meta{color:var(--muted);font-size:13px}
+  .modes{display:flex;gap:10px;flex-direction:column}
+  .mode-btn{padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
+  .mode-btn:hover{transform:translateY(-4px);transition:all .12s}
 
-  /* quiz list (left) */
-  .quiz-list{margin-top:12px;display:flex;flex-direction:column;gap:10px;max-height:220px;overflow:auto;padding-right:6px}
+  .quiz-list{margin-top:12px;max-height:44vh;overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:8px}
   .quiz-card{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
-  .quiz-card:hover{transform:translateX(6px);transition:transform .12s}
-
-  /* player / room area */
-  .players{margin-top:12px;padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);border:1px dashed rgba(255,255,255,0.02);min-height:86px}
+  .quiz-card button{padding:8px 10px;border-radius:8px;border:none;background:var(--accent2);color:#05212a;font-weight:800;cursor:pointer}
 
   /* right content */
-  .content{min-height:560px;border-radius:var(--radius);padding:22px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 12px 40px rgba(2,6,23,0.6);display:flex;flex-direction:column}
-  .content-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
-  .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.02)}
+  .right{padding:14px;border-radius:12px;min-height:520px;display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  .content-header{display:flex;justify-content:space-between;align-items:center}
+  .muted{color:var(--muted);font-size:13px}
 
-  /* quiz area */
-  .question-area{display:flex;flex-direction:column;gap:14px}
-  .question-text{font-size:20px;font-weight:800}
-  .progress{height:10px;border-radius:999px;background:rgba(255,255,255,0.03);overflow:hidden}
-  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent-b),var(--accent-d));width:0%}
+  /* quiz UI */
+  .quiz-area{display:flex;flex-direction:column;gap:10px}
+  .qtext{font-size:18px;font-weight:800}
+  .progress{height:10px;background:rgba(255,255,255,0.02);border-radius:999px;overflow:hidden}
+  .progress > em{display:block;height:100%;width:0%;background:linear-gradient(90deg,#6ee7b7,#7dd3fc)}
 
-  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px}
-  .option{
-    padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);cursor:pointer;border:1px solid rgba(255,255,255,0.02);
-    text-align:left;font-weight:700;transition:transform .12s, box-shadow .12s, background .12s;
-  }
-  .option:hover{transform:translateY(-6px);box-shadow:0 18px 40px rgba(2,6,23,0.6)}
-  .option.disabled{opacity:0.6;cursor:default;transform:none}
-  .option.correct{background:linear-gradient(90deg, rgba(52,211,153,0.12), rgba(125,211,252,0.04));border-color:rgba(52,211,153,0.25)}
-  .option.wrong{background:linear-gradient(90deg, rgba(251,113,133,0.12), rgba(255,122,182,0.02));border-color:rgba(251,113,133,0.18)}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media (max-width:520px){ .options{grid-template-columns:1fr} }
+  .opt{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s}
+  .opt:hover{transform:translateY(-6px)}
+  .opt.correct{background:linear-gradient(90deg, rgba(52,211,153,0.12), rgba(125,211,252,0.04));border-color:rgba(52,211,153,0.2)}
+  .opt.wrong{background:linear-gradient(90deg, rgba(251,113,133,0.12), rgba(255,122,182,0.02));border-color:rgba(251,113,133,0.12)}
 
-  .controls{display:flex;gap:8px;align-items:center;margin-top:10px}
-  .btn{padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,var(--accent-c),var(--accent-a));color:#0b1220;font-weight:800;cursor:pointer}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#081226;font-weight:800;cursor:pointer}
   .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .btn.ghost{background:transparent;color:var(--muted)}
+  .room-code{font-size:20px;font-weight:900;background:linear-gradient(90deg,#ffd86b,#7dd3fc);color:#041826;padding:12px;border-radius:10px;display:inline-block}
 
-  .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:8px;color:var(--muted);font-size:13px}
-
-  /* host card */
-  .chip{display:inline-block;padding:6px 10px;border-radius:8px;background:linear-gradient(90deg, rgba(255,255,255,0.02), transparent);border:1px solid rgba(255,255,255,0.02);font-weight:800}
-
-  /* SOLO QUIZ SELECT modal area scrollable */
-  #soloQuizList{
-    margin-top:12px;
-    max-height:380px; /* <-- scrollable box height */
-    overflow:auto;
-    padding-right:8px;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-  }
-
-  /* Nice custom scrollbar for modern browsers */
-  #soloQuizList::-webkit-scrollbar, .quiz-list::-webkit-scrollbar{width:10px}
-  #soloQuizList::-webkit-scrollbar-thumb, .quiz-list::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--accent-d),var(--accent-a));border-radius:8px}
-  #soloQuizList::-webkit-scrollbar-track{background:transparent}
-
-  /* responsive */
-  @media (max-width:980px){.app{grid-template-columns:1fr;max-width:720px}.panel{order:2}}
+  .players-list{max-height:160px;overflow:auto;padding-top:6px}
+  .player-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
+  .small{font-size:13px;color:var(--muted)}
 </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="panel">
-      <div class="brand">
-        <div class="logo">QZ</div>
-        <div>
-          <h1>QuizRoom</h1>
-          <p class="lead">Colorful quizzes — Solo & Multiplayer</p>
-        </div>
+<div class="app">
+  <div class="left">
+    <div class="brand">
+      <div class="logo">QZ</div>
+      <div>
+        <h1>QuizRoom</h1>
+        <div class="muted">Solo & Live multiplayer — Mobile-first</div>
       </div>
+    </div>
 
-      <div style="margin-top:12px" class="modes">
-        <div class="mode-btn" onclick="soloMode()">
-          <div><div class="title">Solo Mode</div><div class="meta">Practice & leaderboard</div></div>
-          <div class="meta">🎮</div>
-        </div>
-
-        <div class="mode-btn" onclick="roomMode()">
-          <div><div class="title">Room Mode</div><div class="meta">Host & play live</div></div>
-          <div class="meta">👥</div>
-        </div>
+    <div style="margin-top:12px" class="modes">
+      <div class="mode-btn" onclick="showSoloSelect()">
+        <div><strong>Solo</strong><div class="small">Practice & leaderboard</div></div>
+        <div>🎮</div>
       </div>
-
-      <div style="margin-top:14px">
-        <div class="small" style="margin-bottom:8px;color:var(--muted)">Available quizzes</div>
-        <div id="quizList" class="quiz-list"></div>
+      <div class="mode-btn" onclick="showRoomSelect()">
+        <div><strong>Live (Rooms)</strong><div class="small">Host or join friends</div></div>
+        <div>👥</div>
       </div>
+    </div>
 
-      <div class="players">
-        <div style="font-weight:700;font-size:13px">Room / Players</div>
-        <div id="roomInfo" style="margin-top:8px;color:var(--muted)">Not hosting or joined</div>
-        <div id="playerList" style="margin-top:8px"></div>
-      </div>
-    </aside>
-
-    <main class="content">
-      <div class="content-header">
-        <div>
-          <div style="font-size:13px;color:var(--muted)">Connected to</div>
-          <div style="font-weight:800" id="serverUrl">—</div>
-        </div>
-
-        <div style="text-align:right">
-          <div id="statusPing" class="small" style="color:var(--muted)">Socket: disconnected</div>
-          <div style="margin-top:8px"><button class="btn ghost" onclick="refreshQuizzes()">Refresh</button></div>
-        </div>
-      </div>
-
-      <div id="mainArea" class="card">
-        <h2 style="margin:0 0 8px">Welcome to QuizRoom</h2>
-        <div style="color:var(--muted);margin-bottom:12px">Choose Solo to practice or Host a Room for live multiplayer. Select a quiz from the left or press Start Solo.</div>
-        <div style="display:flex;gap:10px">
-          <button class="btn" onclick="soloMode()">Start Solo</button>
-          <button class="btn secondary" onclick="roomMode()">Host / Join</button>
-        </div>
-      </div>
-
-      <div id="quizCard" class="card" style="display:none;margin-top:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div id="quizTitle" style="font-weight:900;font-size:16px">Quiz title</div>
-            <div id="questionCount" style="color:var(--muted);font-size:13px;margin-top:6px">Question 0 / 0</div>
-          </div>
-          <div style="text-align:right">
-            <div id="progressScore" style="font-weight:800">Score: 0</div>
-            <div style="color:var(--muted);font-size:12px">Good luck!</div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px" class="question-area">
-          <div class="progress"><i id="progressBar"></i></div>
-          <div class="question-text" id="questionText">Question text</div>
-          <div id="options" class="options"></div>
-
-          <div class="meta-row">
-            <div id="timer" style="color:var(--muted)">—</div>
-            <div id="hint" style="color:var(--muted)">Tip: choose one answer</div>
-          </div>
-
-          <div class="controls">
-            <button class="btn secondary" id="prevBtn" onclick="prevQuestion()" style="display:none">◀ Prev</button>
-            <button class="btn secondary" id="nextBtn" onclick="nextQuestion()" style="display:none">Next ▶</button>
-            <div style="flex:1"></div>
-            <button class="btn" id="finishBtn" onclick="finishQuiz()" style="display:none">Finish</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="hostCard" class="card" style="display:none;margin-top:14px">
-        <div style="display:flex;justify-content:space-between;align-items:center">
-          <div>
-            <div style="font-weight:900">Host Controls</div>
-            <div style="color:var(--muted);font-size:13px">Manage the live quiz</div>
-          </div>
-          <div><span class="chip" id="roomCodeChip">—</span></div>
-        </div>
-
-        <div id="hostControlsArea" style="margin-top:12px;color:var(--muted);font-size:13px">
-          <div id="hostPlayers">Players: —</div>
-          <div style="margin-top:10px;display:flex;gap:8px">
-            <button class="btn" onclick="emitStart()">Start Game</button>
-            <button class="btn secondary" onclick="emitNext()">Next Question</button>
-            <button class="btn secondary" onclick="endRoom()">End Room</button>
-          </div>
-        </div>
-      </div>
-
-      <div id="resultCard" class="card" style="display:none;margin-top:14px">
-        <h3 style="margin:0 0 8px">Results</h3>
-        <div id="resultList" style="color:var(--muted)"></div>
-        <div style="margin-top:12px;display:flex;gap:8px">
-          <button class="btn" onclick="showMainMenu()">Back to Menu</button>
-          <button class="btn secondary" onclick="saveScore()">Save Score</button>
-        </div>
-      </div>
-    </main>
+    <div style="margin-top:12px">
+      <div class="small" style="margin-bottom:8px">Quick quizzes</div>
+      <div id="quizList" class="quiz-list card"></div>
+    </div>
   </div>
 
+  <div class="right">
+    <div class="card content-header">
+      <div>
+        <div class="small">Server</div>
+        <div id="serverName">—</div>
+      </div>
+      <div style="text-align:right">
+        <div id="socketStatus" class="small">Socket: disconnected</div>
+        <div style="margin-top:8px"><button class="btn secondary" onclick="refreshQuizzes()">Refresh</button></div>
+      </div>
+    </div>
+
+    <div id="mainCard" class="card">
+      <h2 style="margin:0 0 6px">Welcome to QuizRoom</h2>
+      <div class="small">Tap Solo to practice, or Host a Room and share the code with friends.</div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn" onclick="showSoloSelect()">Start Solo</button>
+        <button class="btn secondary" onclick="showRoomSelect()">Host / Join</button>
+      </div>
+    </div>
+
+    <div id="quizCard" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div><strong id="quizTitle">Quiz Title</strong><div id="qmeta" class="small">Question x / y</div></div>
+        <div id="scoreBox" class="small">Score: 0</div>
+      </div>
+
+      <div style="margin-top:10px" class="quiz-area">
+        <div class="progress"><em id="progBar"></em></div>
+        <div class="qtext" id="qtext">Question text</div>
+        <div id="options" class="options"></div>
+
+        <div class="controls">
+          <button class="btn secondary" id="prevBtn" onclick="prevQ()" style="display:none">Prev</button>
+          <button class="btn secondary" id="nextBtn" onclick="nextQ()" style="display:none">Next</button>
+          <div style="flex:1"></div>
+          <button class="btn" id="finishBtn" onclick="finishSolo()" style="display:none">Finish</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="lobbyCard" class="card" style="display:none">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <strong>Lobby</strong>
+          <div id="lobbyHint" class="small">Host or join a lobby</div>
+        </div>
+        <div>
+          <div id="roomCode" class="room-code">—</div>
+        </div>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="small">Players</div>
+        <div id="players" class="players-list"></div>
+
+        <div style="margin-top:10px;display:flex;gap:8px">
+          <button class="btn" id="hostStartBtn" onclick="hostStart()" style="display:none">Start Game</button>
+          <button class="btn secondary" id="copyCodeBtn" onclick="copyRoomCode()" style="display:none">Copy Code</button>
+          <button class="btn secondary" id="leaveBtn" onclick="leaveRoom()" style="display:none">Leave</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- socket.io -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-/* ---------------------------
-   CONFIG
----------------------------- */
-const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app"; // change to your backend
-const SOCKET_URL = API_URL;
+/* =========================
+   CONFIG - change this
+   ========================= */
+const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app"; // <- set to your backend root (no trailing slash)
 
-/* STATE + REFS */
-let quizzesCache = [];
+/* =========================
+   STATE
+   ========================= */
+let quizzes = [];
 let questions = [];
 let currentIndex = 0;
 let score = 0;
 let inSolo = false;
 let inRoom = false;
-let currentRoomCode = null;
-let isHost = false;
+let roomCode = null;
+let amHost = false;
 let socket = null;
 
-const serverUrlEl = document.getElementById('serverUrl');
-const statusPingEl = document.getElementById('statusPing');
+/* DOM refs */
+const serverName = document.getElementById('serverName');
+const socketStatus = document.getElementById('socketStatus');
 const quizListEl = document.getElementById('quizList');
-const screenMain = document.getElementById('mainArea');
 const quizCard = document.getElementById('quizCard');
-const quizTitleEl = document.getElementById('quizTitle');
-const questionCountEl = document.getElementById('questionCount');
-const progressBarEl = document.getElementById('progressBar');
-const questionTextEl = document.getElementById('questionText');
+const quizTitle = document.getElementById('quizTitle');
+const qmeta = document.getElementById('qmeta');
+const qtext = document.getElementById('qtext');
 const optionsEl = document.getElementById('options');
-const progressScoreEl = document.getElementById('progressScore');
-const hostCard = document.getElementById('hostCard');
-const roomInfoEl = document.getElementById('roomInfo');
-const playerListEl = document.getElementById('playerList');
-const roomCodeChip = document.getElementById('roomCodeChip');
-const resultCard = document.getElementById('resultCard');
-const resultList = document.getElementById('resultList');
+const progBar = document.getElementById('progBar');
+const scoreBox = document.getElementById('scoreBox');
+const mainCard = document.getElementById('mainCard');
+const lobbyCard = document.getElementById('lobbyCard');
+const playersEl = document.getElementById('players');
+const roomCodeEl = document.getElementById('roomCode');
+const hostStartBtn = document.getElementById('hostStartBtn');
+const copyCodeBtn = document.getElementById('copyCodeBtn');
+const leaveBtn = document.getElementById('leaveBtn');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const finishBtn = document.getElementById('finishBtn');
 
-/* UTIL */
-function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+/* INIT UI */
+serverName.textContent = API_URL.replace(/^https?:\/\//,'');
 
-/* INIT */
-serverUrlEl.textContent = API_URL.replace(/^https?:\/\//,'');
+/* ------ Socket helpers ------ */
+function connectSocket() {
+  if (socket && socket.connected) return;
+  // pass transports to prefer websocket (helpful on some hosts)
+  socket = io(API_URL, { transports: ['websocket','polling'] });
 
-function connectSocket(){
-  if(socket) return;
-  try{
-    socket = io(SOCKET_URL, { transports:["websocket","polling"] });
-  }catch(e){ console.warn('socket init fail',e); return; }
+  socket.on('connect', () => {
+    socketStatus.textContent = 'Socket: connected';
+    socketStatus.style.color = '#9ae6b4';
+    console.log('socket connected', socket.id);
+  });
 
-  socket.on('connect', ()=>{ statusPingEl.textContent = `Socket: connected (${socket.id})`; statusPingEl.style.color='#9ae6b4'; });
-  socket.on('disconnect', ()=>{ statusPingEl.textContent = 'Socket: disconnected'; statusPingEl.style.color=''; });
+  socket.on('connect_error', (err) => {
+    socketStatus.textContent = 'Socket: conn error';
+    socketStatus.style.color = '#fca5a5';
+    console.error('connect_error', err);
+  });
 
-  socket.on('roomCreated', payload=>{
+  socket.on('disconnect', (reason) => {
+    socketStatus.textContent = 'Socket: disconnected';
+    socketStatus.style.color = '';
+    console.log('socket disconnected', reason);
+  });
+
+  // room created -> server may return { code } or { roomId } (we support both)
+  socket.on('roomCreated', (payload) => {
     const code = payload?.code ?? payload?.roomId ?? payload;
-    currentRoomCode = code; isHost=true; inRoom=true;
-    roomInfoEl.textContent = `Hosting room ${code}`;
-    roomCodeChip.textContent = code;
-    hostCard.style.display = 'block';
-    updatePlayerPanel([]);
+    if (!code) return alert('Invalid room code from server');
+    roomCode = code;
+    amHost = true;
+    inRoom = true;
+    showLobby();
+    updatePlayers([]); // empty initially
+    roomCodeEl.textContent = code;
+    hostStartBtn.style.display = 'inline-flex';
+    copyCodeBtn.style.display = 'inline-flex';
+    leaveBtn.style.display = 'inline-flex';
+    console.log('roomCreated', payload);
   });
 
-  socket.on('roomJoined', payload=>{
+  // someone joined -> server sends playerList
+  socket.on('playerList', (players) => {
+    updatePlayers(players || []);
+  });
+
+  // joined ack (some variants server may emit roomJoined)
+  socket.on('roomJoined', (payload) => {
     const code = payload?.roomId ?? payload?.code ?? payload;
-    currentRoomCode = code; inRoom=true; isHost=false;
-    roomInfoEl.textContent = `Joined room ${code}`;
-    roomCodeChip.textContent = code;
-    hostCard.style.display = 'none';
+    roomCode = code;
+    amHost = false;
+    inRoom = true;
+    showLobby();
+    hostStartBtn.style.display = 'none';
+    copyCodeBtn.style.display = 'inline-flex';
+    leaveBtn.style.display = 'inline-flex';
   });
 
-  socket.on('playerList', players => updatePlayerPanel(players || []));
-socket.on('question', q => {
-  if (!q) return;
-  // use server's question + keep index + total + correctAnswerId
-  questions = [{
-    id: q.id,
-    question: q.question,
-    answers: (q.answers || []).map(a => ({ id: a.id, text: a.text })),
-    correctAnswerId: q.correctAnswerId
-  }];
-  currentIndex = (q.index ?? 1) - 1;  // convert 1-based to 0-based
-  inSolo = false;
-  showQuestionCard();
-});
+  // question incoming for live mode
+  socket.on('question', (q) => {
+    // our server emits { id, question, answers: [{id,text}], correctAnswerId (optional) }
+    if (!q) return;
+    questions = [{ id: q.id ?? q.questionId, question: q.question ?? q.text, answers: q.answers || [], correctAnswerId: q.correctAnswerId ?? null }];
+    currentIndex = q.index ?? 0;
+    inSolo = false;
+    inRoom = true;
+    showQuizCard();
+  });
 
+  // scores update
+  socket.on('updateScores', (players) => {
+    updatePlayers(players || []);
+  });
 
-  socket.on('updateScores', players => updatePlayerPanel(players || []));
-  socket.on('gameOver', payload => {
-    const scores = payload?.scores ?? payload;
-    showResult(scores || []);
-    inRoom = false; isHost=false; currentRoomCode=null;
-    roomInfoEl.textContent = 'Not hosting or joined'; roomCodeChip.textContent='—';
+  // game over
+  socket.on('gameOver', (payload) => {
+    // payload may be array or object
+    const res = payload?.scores ?? payload;
+    console.log('gameOver', res);
+    alert('Game over — check console or lobby');
+    showMain();
+  });
+
+  socket.on('error', (e) => {
+    console.warn('socket error', e);
+    alert('Server error: '+(e.message||String(e)));
   });
 }
 
-/* QUIZ LIST */
+/* ------ UI actions ------ */
 async function refreshQuizzes(){
   try{
-    const res = await fetch(`${API_URL}/api/quizzes`);
-    if(!res.ok) throw new Error(res.status);
-    quizzesCache = await res.json();
+    const r = await fetch(API_URL + '/api/quizzes');
+    if(!r.ok) throw new Error(await r.text());
+    quizzes = await r.json();
     renderQuizList();
   }catch(e){
-    quizListEl.innerHTML = `<div style="color:var(--muted)">Failed to load quizzes (${e.message})</div>`;
+    quizListEl.innerHTML = `<div class="small">Failed to load: ${e.message}</div>`;
+    console.error(e);
   }
 }
 
 function renderQuizList(){
   quizListEl.innerHTML = '';
-  if(!Array.isArray(quizzesCache) || quizzesCache.length===0){
-    quizListEl.innerHTML = `<div style="color:var(--muted)">No quizzes available</div>`;
-    return;
+  if(!Array.isArray(quizzes) || quizzes.length===0){
+    quizListEl.innerHTML = '<div class="small">No quizzes</div>'; return;
   }
-  quizzesCache.forEach(q=>{
-    const el = document.createElement('div');
-    el.className = 'quiz-card';
-    el.innerHTML = `<div style="flex:1"><div style="font-weight:800">${escapeHtml(q.title||('Quiz '+q.id))}</div><div style="color:var(--muted);font-size:13px">ID: ${q.id}</div></div><div><button class="btn secondary" onclick="startQuiz(${q.id})">Play</button></div>`;
-    quizListEl.appendChild(el);
+  quizzes.forEach(q=>{
+    const d = document.createElement('div'); d.className='quiz-card';
+    d.innerHTML = `<div style="flex:1"><div style="font-weight:800">${escapeHtml(q.title||('Quiz '+q.id))}</div><div class="small">ID: ${q.id}</div></div>`;
+    const btn = document.createElement('button'); btn.textContent='Play';
+    btn.addEventListener('click', ()=>startSolo(q.id));
+    d.appendChild(btn);
+    quizListEl.appendChild(d);
   });
 }
 
-/* SOLO MODE (scrollable list) */
-async function soloMode(){
-  inSolo = true; inRoom=false; isHost=false;
-  if(quizzesCache.length===0) await refreshQuizzes();
-  const html = `<h2 style="margin:0 0 8px">Solo — Choose a quiz</h2><div style="color:var(--muted)">Select one to practice. Use the scroll box if there are many quizzes.</div><div id="soloQuizList"></div>`;
-  document.getElementById('mainArea').innerHTML = html;
-  const soloList = document.getElementById('soloQuizList');
-  soloList.id = 'soloQuizList';
-  soloList.style.marginTop = '12px';
-  soloList.style.maxHeight = '380px';
-  soloList.style.overflow = 'auto';
-  quizzesCache.forEach(q=>{
-    const node = document.createElement('div');
-    node.className = 'quiz-card';
-    node.style.display='flex'; node.style.justifyContent='space-between'; node.style.alignItems='center';
-    node.innerHTML = `<div style="flex:1"><div style="font-weight:800">${escapeHtml(q.title)}</div><div style="color:var(--muted);font-size:13px">ID: ${q.id}</div></div><div><button class="btn" onclick="startQuiz(${q.id}, true)">Start</button></div>`;
-    soloList.appendChild(node);
+/* show pages */
+function showMain(){ mainCard.style.display='block'; quizCard.style.display='none'; lobbyCard.style.display='none'; }
+function showQuizCard(){ mainCard.style.display='none'; quizCard.style.display='block'; lobbyCard.style.display='none'; }
+function showLobby(){ mainCard.style.display='none'; quizCard.style.display='none'; lobbyCard.style.display='block'; }
+function showSoloSelect(){ connectSocket(); showMain(); // show modal in right area that lists quizzes
+  // scroll section reused: render a simple list inside mainCard
+  const html = `<h3>Choose a quiz</h3><div id="soloScroll" style="max-height:40vh;overflow:auto;margin-top:8px"></div><div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
+  mainCard.innerHTML = html;
+  const area = document.getElementById('soloScroll');
+  quizzes.forEach(q=>{
+    const r = document.createElement('div'); r.className='quiz-card'; r.style.marginBottom='8px';
+    r.innerHTML = `<div style="flex:1"><strong>${escapeHtml(q.title)}</strong><div class="small">ID ${q.id}</div></div>`;
+    const b = document.createElement('button'); b.textContent='Start'; b.onclick = ()=>startSolo(q.id);
+    r.appendChild(b); area.appendChild(r);
   });
-  // re-add small back button
-  const back = document.createElement('div');
-  back.style.marginTop='12px';
-  back.innerHTML = `<button class="btn secondary" onclick="showMainMenu()">Back</button>`;
-  soloList.parentNode.appendChild(back);
+}
+function showRoomSelect(){ connectSocket(); // show host/join UI
+  const html = `<h3>Room mode</h3>
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <button class="btn" onclick="openHostPicker()">Host</button>
+      <button class="btn secondary" onclick="openJoinBox()">Join</button>
+    </div>
+    <div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
+  mainCard.innerHTML = html;
 }
 
-/* ROOM MODE */
-function roomMode(){
-  inSolo=false;
-  document.getElementById('mainArea').innerHTML = `<h2 style="margin:0 0 8px">Room Mode</h2><div style="color:var(--muted)">Host a room or join a code from a friend.</div><div style="margin-top:12px;display:flex;gap:8px"><button class="btn" onclick="hostRoom()">Host Room</button><button class="btn secondary" onclick="joinRoomPrompt()">Join Room</button></div>`;
+/* Solo flow */
+async function startSolo(quizId){
+  try{
+    const r = await fetch(`${API_URL}/api/quizzes/${quizId}`);
+    if(!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    questions = adaptServerQuestions(data);
+    if(questions.length===0) return alert('No questions returned for that quiz');
+    currentIndex = 0; score = 0; inSolo=true;
+    quizTitle.textContent = quizzes.find(x=>x.id==quizId)?.title || `Quiz ${quizId}`;
+    renderCurrentQuestion();
+    showQuizCard();
+  }catch(e){ alert('Failed to start quiz: '+e.message); console.error(e); }
 }
 
-/* HOST / JOIN */
-async function hostRoom(){
-  if(quizzesCache.length===0) await refreshQuizzes();
-  let html = `<h2 style="margin:0 0 8px">Select quiz to host</h2><div id="hostQuizList" style="margin-top:12px; max-height:380px; overflow:auto; display:flex; flex-direction:column; gap:10px; padding-right:8px;"></div>`;
-  document.getElementById('mainArea').innerHTML = html;
-  const list = document.getElementById('hostQuizList');
-  quizzesCache.forEach(q=>{
-    const node = document.createElement('div');
-    node.className='quiz-card';
-    node.style.display='flex'; node.style.justifyContent='space-between'; node.style.alignItems='center';
-    node.innerHTML = `<div style="flex:1"><div style="font-weight:800">${escapeHtml(q.title)}</div><div style="color:var(--muted);font-size:13px">ID: ${q.id}</div></div><div><button class="btn" onclick="createRoom(${q.id})">Host</button></div>`;
-    list.appendChild(node);
+function adaptServerQuestions(rows){
+  // our server sends questions either:
+  // [{ id, question, answers: [{id,text}], correctAnswerId }]  OR
+  // rows with option_a/option_b...
+  if(!Array.isArray(rows)) return [];
+  if(rows.length && rows[0].answers) return rows.map(r=>({ id:r.id, question:r.question, answers:r.answers, correctAnswerId:r.correctAnswerId || r.correct_option }));
+  return rows.map(r=>({
+    id:r.id,
+    question: r.question_text || r.question,
+    answers:[
+      {id:'A', text:r.option_a},
+      {id:'B', text:r.option_b},
+      {id:'C', text:r.option_c},
+      {id:'D', text:r.option_d}
+    ].filter(x=>x.text),
+    correctAnswerId: r.correct_option || r.correctAnswerId
+  }));
+}
+
+function renderCurrentQuestion(){
+  const q = questions[currentIndex];
+  progBar.style.width = `${Math.round((currentIndex / Math.max(1,questions.length-1))*100)}%`;
+  qtext.textContent = q.question || '—';
+  qmeta.textContent = `Question ${currentIndex+1} / ${questions.length}`;
+  scoreBox.textContent = `Score: ${score}`;
+  optionsEl.innerHTML = '';
+  q.answers.forEach(a=>{
+    const div = document.createElement('div'); div.className='opt';
+    div.innerHTML = `<div>${escapeHtml(a.text)}</div><div class="small" style="margin-top:6px">Choice ${escapeHtml(a.id)}</div>`;
+    div.onclick = ()=>selectAnswer(a.id, div);
+    optionsEl.appendChild(div);
   });
-  // re-add small back button
-  const back = document.createElement('div');
-  back.style.marginTop='12px';
-  back.innerHTML = `<button class="btn secondary" onclick="showMainMenu()">Back</button>`;
-  list.parentNode.appendChild(back);
+  prevBtn.style.display = currentIndex>0 ? 'inline-flex':'none';
+  finishBtn.style.display = (currentIndex>=questions.length-1) ? 'inline-flex':'none';
+}
+
+/* choosing answer (solo) */
+function selectAnswer(answerId, el){
+  // disable others
+  Array.from(optionsEl.children).forEach(ch=>ch.classList.add('disabled'));
+  const q = questions[currentIndex];
+  const correct = String(q.correctAnswerId || q.correct_option || q.correctAnswer);
+  const isCorrect = String(answerId) === String(correct);
+  if(isCorrect){ el.classList.add('correct'); score++; }
+  else { el.classList.add('wrong'); // reveal correct
+    Array.from(optionsEl.children).forEach(ch=>{
+      const meta = ch.querySelector('.small')?.textContent || '';
+      const match = meta.match(/Choice\s*(.+)$/i);
+      if(match && String(match[1]) === String(correct)) ch.classList.add('correct');
+      // fallback: compare text
+      if(!match && (q.answers.find(x=>String(x.id)===String(correct))?.text || '') ){
+        if(ch.textContent.trim().includes(q.answers.find(x=>String(x.id)===String(correct)).text)) ch.classList.add('correct');
+      }
+    });
+  }
+  setTimeout(()=>{
+    currentIndex++;
+    if(currentIndex >= questions.length) finishSolo(); else renderCurrentQuestion();
+  }, 700);
+}
+
+function prevQ(){ if(currentIndex>0) { currentIndex--; renderCurrentQuestion(); } }
+function nextQ(){ if(currentIndex < questions.length-1) { currentIndex++; renderCurrentQuestion(); } }
+function finishSolo(){ inSolo=false; alert(`Quiz done — ${score}/${questions.length}`); showMain(); }
+
+/* ----- Lobby / multiplayer ----- */
+function openHostPicker(){
+  if(quizzes.length===0) refreshQuizzes();
+  // small list to choose quiz to host
+  let html = '<h3>Choose quiz to host</h3><div style="max-height:38vh;overflow:auto;margin-top:8px">';
+  quizzes.forEach(q => {
+    html += `<div class="quiz-card" style="margin-bottom:8px"><div style="flex:1"><strong>${escapeHtml(q.title)}</strong><div class="small">ID ${q.id}</div></div><button onclick="createRoom(${q.id})">Host</button></div>`;
+  });
+  html += '</div><div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>';
+  mainCard.innerHTML = html;
+  connectSocket();
 }
 
 function createRoom(quizId){
   if(!socket) connectSocket();
-  // server expects { quizId } (your server code used that)
   socket.emit('createRoom', { quizId });
-  roomInfoEl.textContent = 'Creating room...';
+  // Wait for roomCreated event
+  console.log('createRoom emitted', quizId);
 }
 
-function joinRoomPrompt(){
-  document.getElementById('mainArea').innerHTML = `<h2 style="margin:0 0 8px">Join a Room</h2><div style="margin-top:10px;display:flex;gap:8px"><input id="joinCode" placeholder="Room code" style="flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:inherit" /><button class="btn" onclick="joinRoom()">Join</button></div><div style="color:var(--muted);margin-top:8px">Get code from the host.</div>`;
+function openJoinBox(){
+  mainCard.innerHTML = `<h3>Join a room</h3>
+    <div style="display:flex;gap:8px;margin-top:8px"><input id="joinInput" placeholder="Room code" style="flex:1;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"/><button class="btn" onclick="joinRoomFromInput()">Join</button></div>
+    <div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
+  connectSocket();
 }
-
-function joinRoom(){
-  const roomId = document.getElementById('joinCode').value.trim();
-  if(!roomId) return alert('Enter room code');
-  if(!socket) connectSocket();
+function joinRoomFromInput(){
+  const v = document.getElementById('joinInput').value.trim();
+  if(!v) return alert('Enter code');
   const name = prompt('Display name (optional)') || 'Player';
-  socket.emit('joinRoom', { code: roomId, name });
-  roomInfoEl.textContent = `Joining ${roomId}...`;
+  socket.emit('joinRoom', { code: v, name });
+  // server should respond with playerList and maybe roomJoined event
+  console.log('joinRoom emitted', v, name);
 }
 
-/* START QUIZ (solo) */
-async function startQuiz(quizId, solo=true){
-  try{
-    const res = await fetch(`${API_URL}/api/quizzes/${quizId}`);
-    if(!res.ok) throw new Error(res.status);
-    const data = await res.json();
-    questions = adaptServerQuestions(data);
-    currentIndex = 0; score = 0;
-    inSolo = !!solo;
-    inRoom = !solo;
-    quizTitleEl.textContent = (quizzesCache.find(q=>q.id==quizId)?.title) || `Quiz ${quizId}`;
-    showQuestionCard();
-  }catch(e){
-    alert('Failed to load quiz: '+e.message);
-  }
-}
-
-function adaptServerQuestions(rows){
-  if(!Array.isArray(rows)) return [];
-  if(rows.length>0 && rows[0].answers){
-    return rows.map(r=>({
-      id:r.id ?? r.questionId,
-      question: r.question ?? r.question_text,
-      answers: (r.answers||[]).map(a=>({id:a.id,text:a.text||a.answer_text})),
-      correctAnswerId: r.correctAnswerId ?? r.correct_option ?? r.correct_answer
-    }));
-  } else {
-    return rows.map(r=>({
-      id:r.id,
-      question: r.question_text ?? r.question,
-      answers: [
-        {id:'A', text:r.option_a},{id:'B',text:r.option_b},{id:'C',text:r.option_c},{id:'D',text:r.option_d}
-      ].filter(a=>a.text),
-      correctAnswerId: r.correct_option ?? r.correctAnswerId ?? r.correct_answer
-    }));
-  }
-}
-
-/* SHOW / RENDER QUESTIONS */
-function showQuestionCard(){
-  screenMain.style.display='none';
-  quizCard.style.display='block';
-  hostCard.style.display = (inRoom && isHost) ? 'block' : 'none';
-  resultCard.style.display='none';
-  renderQuestion();
-}
-
-function renderQuestion(){
-  const total = questions.length;
-  if(total===0){
-    questionTextEl.textContent = 'No questions available.';
-    optionsEl.innerHTML = '';
-    return;
-  }
-  const q = questions[currentIndex];
-  questionTextEl.textContent = q.question || '—';
-  questionCountEl.textContent = `Question ${currentIndex+1} / ${total}`;
-  progressBarEl.style.width = `${Math.round(((currentIndex+1)/Math.max(1,total))*100)}%`;
-  progressScoreEl.textContent = `Score: ${score}`;
-  optionsEl.innerHTML = '';
-
-  (q.answers||[]).forEach(opt=>{
-    const btn = document.createElement('div');
-    btn.className='option';
-    btn.innerHTML = `<div style="font-weight:800">${escapeHtml(opt.text)}</div><div style="color:var(--muted);font-size:12px;margin-top:6px">Choice ${escapeHtml(String(opt.id))}</div>`;
-    btn.onclick = ()=> handleAnswer(opt.id, btn);
-    optionsEl.appendChild(btn);
-  });
-
-  document.getElementById('prevBtn').style.display = currentIndex>0 ? 'inline-flex' : 'none';
-  document.getElementById('nextBtn').style.display = (!inSolo && isHost) ? 'inline-flex' : 'none';
-  document.getElementById('finishBtn').style.display = (currentIndex >= questions.length-1 && inSolo) ? 'inline-flex' : 'none';
-}
-
-/* ANSWER HANDLING */
-function handleAnswer(answerId, btnEl){
-  Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
-  const q = questions[currentIndex];
-  const correct = q.correctAnswerId;
-  const isCorrect = String(answerId) === String(correct);
-  if(isCorrect){ score++; btnEl.classList.add('correct'); }
+/* update players list */
+function updatePlayers(list){
+  playersEl.innerHTML = '';
+  if(!list || list.length===0) playersEl.innerHTML = '<div class="small">No players yet</div>';
   else {
-    btnEl.classList.add('wrong');
-    Array.from(optionsEl.children).forEach(c=>{
-      const meta = c.querySelector('.small') || c.querySelector('div small');
-      // try detect by the "Choice X" text (we put that in small)
-      const small = c.querySelector('.small');
-      if(!small) return;
-      const m = small.textContent.match(/Choice\s*([A-Za-z0-9]+)/i);
-      if(m && String(m[1]) === String(correct)) c.classList.add('correct');
-      else {
-        // fallback: match by answer text
-        const optText = c.textContent || '';
-        const correctTxt = (q.answers||[]).find(a=>String(a.id)===String(correct))?.text;
-        if(correctTxt && optText.includes(correctTxt)) c.classList.add('correct');
-      }
+    list.forEach(p=>{
+      const div = document.createElement('div'); div.className='player-item';
+      div.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}</div>`;
+      playersEl.appendChild(div);
     });
   }
-
-  if(inRoom && !inSolo){
-    if(socket && socket.connected){
-      socket.emit('submitAnswer', { code: currentRoomCode, answerId });
-    }
-  }
-
-  if(inSolo){
-    setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) showResult(); else renderQuestion(); }, 700);
-  }
 }
 
-/* HOST CONTROLS */
-function emitStart(){ if(!currentRoomCode || !socket) return alert('No room code'); socket.emit('startGame',{ code: currentRoomCode }); }
-function emitNext(){ if(!currentRoomCode || !socket) return alert('No room code'); socket.emit('nextQuestion',{ code: currentRoomCode }); }
-function endRoom(){ if(!currentRoomCode || !socket) return alert('No room code'); socket.emit('forceEnd',{ code: currentRoomCode }); currentRoomCode=null; isHost=false; inRoom=false; roomInfoEl.textContent='Not hosting or joined'; hostCard.style.display='none'; }
-
-/* NAV */
-function prevQuestion(){ if(currentIndex>0){ currentIndex--; renderQuestion(); } }
-function nextQuestion(){ if(currentIndex < questions.length-1){ currentIndex++; renderQuestion(); } }
-function finishQuiz(){ showResult(); }
-function showMainMenu(){ quizCard.style.display='none'; hostCard.style.display='none'; resultCard.style.display='none'; screenMain.style.display='block'; refreshQuizzes(); }
-
-/* RESULTS */
-function showResult(playersOrLocal){
-  quizCard.style.display='none'; hostCard.style.display='none'; resultCard.style.display='block';
-  resultList.innerHTML = '';
-  if(inSolo){
-    const pct = Math.round((score / Math.max(1, questions.length))*100);
-    resultList.innerHTML = `<div style="font-weight:800;margin-bottom:8px">You scored ${score} / ${questions.length} — ${pct}%</div><div style="color:var(--muted)">You can save score to leaderboard (if endpoint exists).</div>`;
-  } else {
-    const rows = playersOrLocal || [];
-    if(Array.isArray(rows) && rows.length>0){
-      rows.sort((a,b)=>b.score - a.score);
-      rows.forEach(p => {
-        const div = document.createElement('div');
-        div.style.display='flex';div.style.justifyContent='space-between';div.style.padding='6px 0';
-        div.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div style="color:var(--muted)">${p.score}</div>`;
-        resultList.appendChild(div);
-      });
-    } else {
-      resultList.innerHTML = `<div style="color:var(--muted)">No scores available</div>`;
-    }
-  }
+/* After joining/hosting, show lobby card */
+function showLobby(){
+  showLobby(); // ensure visible
+  roomCodeEl.textContent = roomCode || '—';
+  hostStartBtn.style.display = amHost ? 'inline-flex' : 'none';
+  copyCodeBtn.style.display = 'inline-flex';
+  leaveBtn.style.display = 'inline-flex';
 }
 
-/* SAVE SCORE (optional) */
-async function saveScore(){
-  if(!inSolo && !confirm('Save multiplayer result?')) return;
-  const player = prompt('Your name for leaderboard', 'Player') || 'Player';
-  try{
-    const res = await fetch(`${API_URL}/api/scores`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ player, score }) });
-    if(!res.ok) throw new Error(await res.text());
-    alert('Saved!');
-  }catch(e){ alert('Failed to save: '+e.message); }
+/* host start command */
+function hostStart(){
+  if(!roomCode) return alert('No room'); socket.emit('startGame', { code: roomCode }); }
+
+/* copy room code */
+function copyRoomCode(){
+  if(!roomCode) return;
+  navigator.clipboard?.writeText(roomCode).then(()=> alert('Copied code'));
 }
 
-/* PLAYER PANEL */
-function updatePlayerPanel(players){
-  if(!players || players.length===0){ playerListEl.innerHTML = `<div style="color:var(--muted)">No players</div>`; }
-  else {
-    playerListEl.innerHTML = '';
-    players.forEach(p=>{
-      const d = document.createElement('div');
-      d.style.display='flex';d.style.justifyContent='space-between';d.style.padding='6px 0';
-      d.innerHTML = `<div style="font-weight:700">${escapeHtml(p.name || p.player || 'Player')}</div><div style="color:var(--muted)">${p.score ?? 0}</div>`;
-      playerListEl.appendChild(d);
-    });
-  }
-  if(isHost){ hostCard.style.display='block'; document.getElementById('hostPlayers').textContent = `Players: ${players.length}`; roomCodeChip.textContent = currentRoomCode || '—'; roomInfoEl.textContent = `Hosting room ${currentRoomCode || '—'}`; }
+/* leave */
+function leaveRoom(){
+  // simply reset client UI; server will remove on disconnect
+  roomCode = null; amHost = false; inRoom = false;
+  showMain();
+  // try disconnect socket (optional)
+  if(socket) socket.disconnect();
+  socket = null;
 }
 
-/* STARTUP */
+/* util */
+function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* START */
 refreshQuizzes();
 connectSocket();
-showMainMenu();
+showMain();
 </script>
 </body>
 </html>

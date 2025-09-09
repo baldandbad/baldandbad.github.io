@@ -227,17 +227,13 @@ socket.on("submitAnswer", ({ code, answerId }) => {
 function emitQuestion(code) {
   const room = rooms.get(code);
   const q = room.questions[room.index];
-
   io.to(code).emit("question", {
     id: q.id,
-    question: q.text, // 👈 consistent with REST
+    question: q.text, // 👈 matches REST
     answers: q.answers.map(a => ({ id: a.id, text: a.text })),
-    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null,
-    index: room.index + 1,               // 👈 add current question number
-    total: room.questions.length         // 👈 add total number of questions
+    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null // 👈 so frontend can check
   });
 }
-
 
 /* -------------------- start -------------------- */
 const PORT = process.env.PORT || 3000;
