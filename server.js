@@ -107,12 +107,23 @@ app.get("/api/quizzes/:id", async (req, res) => {
 
 const rooms = new Map();
 
+socket.on("startGame", ({ code }) => {
+  const room = rooms.get(code);
+  if (!room) { socket.emit("error", "Room not found"); return; }
+  room.index = 0;
+  emitQuestion(code);
+  console.log('[room] started', code);
+});
+
+
+
+
 io.on("connection", (socket) => {
   console.log('[socket] connected', socket.id);
 
   socket.on("createRoom", async (payload) => {
   try {
-    const quizId = (payload && (payload.quizId ?? payload.qid)) ?? payload;
+    const quizId = (payload && (payload.quizId || payload.qid)) || payload;
     console.log('[createRoom] from', socket.id, 'quizId=', quizId);
     const code = Math.random().toString(36).slice(2, 6).toUpperCase();
 
@@ -147,6 +158,7 @@ io.on("connection", (socket) => {
     socket.emit("roomCreated", { code });
     // broadcast initial player list (host only for now)
     io.to(code).emit('playerList', room.players.map(p => ({ name: p.name, score: p.score })));
+    setTimeout(() => rooms.delete(code), 30000);
   } catch (err) {
     console.error("createRoom error:", err);
     socket.emit("error", "Failed to create room");
