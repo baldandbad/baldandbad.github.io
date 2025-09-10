@@ -121,119 +121,160 @@ socket.on("startGame", ({ code }) => {
 io.on("connection", (socket) => {
   console.log('[socket] connected', socket.id);
 
+  function extractField(payload, ...keys) {
+    if (!payload) return payload;
+    if (typeof payload === 'object') {
+      for (const k of keys) {
+        if (payload[k] !== undefined) return payload[k];
+      }
+      return undefined;
+    }
+    return payload; // primitive like code string
+  }
+
   socket.on("createRoom", async (payload) => {
-  try {
-    const quizId = (payload && (payload.quizId || payload.qid)) || payload;
-    console.log('[createRoom] from', socket.id, 'quizId=', quizId);
-    const code = Math.random().toString(36).slice(2, 6).toUpperCase();
+    try {
+      const quizId = extractField(payload, 'quizId', 'qid') ?? payload;
+      console.log('[createRoom] from', socket.id, 'quizId=', quizId);
+      const code = Math.random().toString(36).slice(2, 6).toUpperCase();
 
-    const qRes = await pool.query(
-      `SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option
-       FROM questions WHERE quiz_id=$1 ORDER BY id`,
-      [quizId]
-    );
+      const qRes = await pool.query(
+        `SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option
+         FROM questions WHERE quiz_id=$1 ORDER BY id`,
+        [quizId]
+      );
 
-    if (!qRes.rows.length) {
-      socket.emit('error', 'No questions found for this quiz');
+      if (!qRes.rows.length) {
+        socket.emit('error', 'No questions found for this quiz');
+        return;
+      }
+
+      const questions = qRes.rows.map(q => ({
+        id: q.id,
+        text: q.question_text,
+        answers: [
+          { id: "A", text: q.option_a, is_correct: q.correct_option === "A" },
+          { id: "B", text: q.option_b, is_correct: q.correct_option === "B" },
+          { id: "C", text: q.option_c, is_correct: q.correct_option === "C" },
+          { id: "D", text: q.option_d, is_correct: q.correct_option === "D" }
+        ]
+      }));
+
+      const room = { hostId: socket.id, players: [{ id: socket.id, name: 'Host', score: 0, lastAnsweredIndex: -1 }], questions, index: -1, timeoutId: null };
+      rooms.set(code, room);
+      socket.join(code);
+
+      console.log('[createRoom] created', code, 'host=', socket.id);
+      socket.emit("roomCreated", { code });
+      io.to(code).emit('playerList', room.players.map(p => ({ id: p.id, name: p.name, score: p.score })));
+    } catch (err) {
+      console.error("createRoom error:", err);
+      socket.emit("error", "Failed to create room");
+    }
+  });
+
+  socket.on("joinRoom", (payload) => {
+    const code = extractField(payload, 'code', 'roomId') ?? payload;
+    const name = extractField(payload, 'name', 'player') ?? 'Player';
+    console.log('[joinRoom]', socket.id, '->', code, name);
+
+    const room = rooms.get(code);
+    if (!room) {
+      socket.emit('error', 'Room not found: ' + String(code));
       return;
     }
 
-    const questions = qRes.rows.map(q => ({
-      id: q.id,
-      text: q.question_text,
-      answers: [
-        { id: "A", text: q.option_a, is_correct: q.correct_option === "A" },
-        { id: "B", text: q.option_b, is_correct: q.correct_option === "B" },
-        { id: "C", text: q.option_c, is_correct: q.correct_option === "C" },
-        { id: "D", text: q.option_d, is_correct: q.correct_option === "D" }
-      ]
-    }));
-
-    // add host as first player so the host can also play
-    const room = { hostId: socket.id, players: [{ id: socket.id, name: 'Host', score: 0, lastAnsweredIndex: -1 }], questions, index: -1 };
-    rooms.set(code, room);
+    room.players.push({ id: socket.id, name, score: 0, lastAnsweredIndex: -1 });
     socket.join(code);
+    io.to(code).emit("playerList", room.players.map(p => ({ id: p.id, name: p.name, score: p.score })));
+    socket.emit('roomJoined', { code });
+  });
 
-    console.log('[createRoom] created', code, 'host=', socket.id);
-    socket.emit("roomCreated", { code });
-    // broadcast initial player list (host only for now)
-    io.to(code).emit('playerList', room.players.map(p => ({ name: p.name, score: p.score })));
-    setTimeout(() => rooms.delete(code), 30000);
-  } catch (err) {
-    console.error("createRoom error:", err);
-    socket.emit("error", "Failed to create room");
-  }
-});
-
-  // Accept multiple payload shapes (code || roomId || payload)
-  socket.on("joinRoom", (payload) => {
-  const code = (payload && (payload.code ?? payload.roomId)) || payload;
-  const name = payload && (payload.name ?? payload.player) || 'Player';
-  console.log('[joinRoom]', socket.id, '->', code, name);
-
-  const room = rooms.get(code);
-  if (!room) {
-    socket.emit('error', 'Room not found: ' + String(code));
-    return;
-  }
-
-  room.players.push({ id: socket.id, name, score: 0, lastAnsweredIndex: -1 });
-  socket.join(code);
-  io.to(code).emit("playerList", room.players.map(p => ({ name: p.name, score: p.score })));
-  socket.emit('roomJoined', { code });
-});
+  socket.on("startGame", (payload) => {
+    const code = extractField(payload, 'code', 'roomId') ?? payload;
+    const room = rooms.get(code);
+    if (!room) {
+      socket.emit('error', 'Room not found: ' + String(code));
+      return;
+    }
+    // initialize index and emit first question
+    room.index = 0;
+    emitQuestion(code);
+    console.log('[startGame] started', code);
+  });
 
   socket.on("submitAnswer", (payload) => {
-  const code = (payload && (payload.code ?? payload.roomId)) || payload.code || payload.roomId || payload;
-  const answerId = payload && (payload.answerId ?? payload.answer) ?? payload.answerId ?? payload.answer;
-  console.log('[submitAnswer] from', socket.id, 'code=', code, 'answerId=', answerId);
+    const code = extractField(payload, 'code', 'roomId') ?? payload;
+    const answerId = extractField(payload, 'answerId', 'answer');
+    console.log('[submitAnswer] from', socket.id, 'code=', code, 'answerId=', answerId);
 
-  const room = rooms.get(code);
-  if (!room) {
-    socket.emit('error', 'Room not found: ' + String(code));
-    return;
-  }
+    const room = rooms.get(code);
+    if (!room) {
+      socket.emit('error', 'Room not found: ' + String(code));
+      return;
+    }
 
-  const player = room.players.find(p => p.id === socket.id);
-  if (!player) { socket.emit('error', 'You are not in that room'); return; }
+    const player = room.players.find(p => p.id === socket.id);
+    if (!player) { socket.emit('error', 'You are not in that room'); return; }
 
-  // prevent multiple answers for same question
-  if (player.lastAnsweredIndex === room.index) {
-    socket.emit('error', 'Already answered this question');
-    return;
-  }
+    // prevent multiple answers for same question
+    if (player.lastAnsweredIndex === room.index) {
+      socket.emit('error', 'Already answered this question');
+      return;
+    }
 
-  const q = room.questions[room.index];
-  if (!q) { socket.emit('error', 'No active question'); return; }
+    const q = room.questions[room.index];
+    if (!q) { socket.emit('error', 'No active question'); return; }
 
-  const ans = q.answers.find(a => String(a.id) === String(answerId));
-  if (!ans) { socket.emit('error', 'Answer option not found'); return; }
+    const ans = q.answers.find(a => String(a.id) === String(answerId));
+    if (!ans) { socket.emit('error', 'Answer option not found'); return; }
 
-  if (ans.is_correct) player.score += 10;
-  player.lastAnsweredIndex = room.index;
+    if (ans.is_correct) player.score += 10;
+    player.lastAnsweredIndex = room.index;
 
-  // broadcast immediate score update
-  io.to(code).emit("updateScores", room.players.map(p => ({ name: p.name, score: p.score })));
+    // broadcast immediate score update
+    io.to(code).emit("updateScores", room.players.map(p => ({ id: p.id, name: p.name, score: p.score })));
 
-  // check if everyone answered this index -> auto-advance
-  const allAnswered = room.players.length > 0 && room.players.every(p => p.lastAnsweredIndex === room.index);
-  if (allAnswered) {
-    // small delay so clients can show correct/wrong
-    setTimeout(() => {
-      room.index++;
-      if (room.index >= room.questions.length) {
-        io.to(code).emit("gameOver", room.players.map(p => ({ name: p.name, score: p.score })));
-        rooms.delete(code);
-        console.log('[room] gameOver for', code);
-      } else {
-        emitQuestion(code);
+    // check if everyone answered this index -> auto-advance
+    const allAnswered = room.players.length > 0 && room.players.every(p => p.lastAnsweredIndex === room.index);
+    if (allAnswered) {
+      // small delay so clients can show correct/wrong
+      setTimeout(() => {
+        room.index++;
+        if (room.index >= room.questions.length) {
+          io.to(code).emit("gameOver", room.players.map(p => ({ id: p.id, name: p.name, score: p.score })));
+          // keep room around for 30s so clients can view results, then delete
+          setTimeout(() => rooms.delete(code), 30000);
+          console.log('[room] gameOver for', code);
+        } else {
+          // reset per-player lastAnsweredIndex guard for next question if desired (NOT strictly necessary)
+          // NOTE: keep lastAnsweredIndex; submission check uses equality with room.index
+          emitQuestion(code);
+        }
+      }, 1000);
+    }
+  });
+
+  socket.on("disconnect", () => {
+    // Remove player from any rooms they were in
+    for (const [code, room] of rooms.entries()) {
+      const idx = room.players.findIndex(p => p.id === socket.id);
+      if (idx !== -1) {
+        room.players.splice(idx, 1);
+        io.to(code).emit("playerList", room.players.map(p => ({ id: p.id, name: p.name, score: p.score })));
+        // if room empty, delete after short delay
+        if (room.players.length === 0) {
+          setTimeout(() => {
+            const r = rooms.get(code);
+            if (r && r.players.length === 0) rooms.delete(code);
+          }, 30000);
+        }
       }
-    }, 1000);
-  }
+    }
+  });
+
 });
 
-  // ... keep your disconnect handler
-});
 
 
 function emitQuestion(code) {
@@ -244,9 +285,8 @@ function emitQuestion(code) {
     index: room.index,
     total: room.questions.length,
     id: q.id,
-    question: q.text,
-    answers: q.answers.map(a => ({ id: a.id, text: a.text })),
-    // do NOT include is_correct for multiplayer clients
+    text: q.text,
+    answers: q.answers.map(a => ({ id: a.id, text: a.text }))
   });
 }
 
