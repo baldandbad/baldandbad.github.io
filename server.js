@@ -111,102 +111,114 @@ io.on("connection", (socket) => {
   console.log('[socket] connected', socket.id);
 
   socket.on("createRoom", async (payload) => {
-    try {
-      const quizId = (payload && (payload.quizId ?? payload.qid)) || payload;
-      console.log('[createRoom] from', socket.id, 'quizId=', quizId);
-      const code = Math.random().toString(36).slice(2, 6).toUpperCase();
+  try {
+    const quizId = (payload && (payload.quizId ?? payload.qid)) ?? payload;
+    console.log('[createRoom] from', socket.id, 'quizId=', quizId);
+    const code = Math.random().toString(36).slice(2, 6).toUpperCase();
 
-      const qRes = await pool.query(
-        `SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option
-         FROM questions WHERE quiz_id=$1 ORDER BY id`, [quizId]
-      );
+    const qRes = await pool.query(
+      `SELECT id, question_text, option_a, option_b, option_c, option_d, correct_option
+       FROM questions WHERE quiz_id=$1 ORDER BY id`,
+      [quizId]
+    );
 
-      if (!qRes.rows.length) {
-        socket.emit('error', 'No questions found for this quiz');
-        return;
-      }
-
-      const questions = qRes.rows.map(q => ({
-        id: q.id, text: q.question_text,
-        answers: [
-          { id: "A", text: q.option_a, is_correct: q.correct_option === "A" },
-          { id: "B", text: q.option_b, is_correct: q.correct_option === "B" },
-          { id: "C", text: q.option_c, is_correct: q.correct_option === "C" },
-          { id: "D", text: q.option_d, is_correct: q.correct_option === "D" }
-        ]
-      }));
-
-      rooms.set(code, { hostId: socket.id, players: [], questions, index: -1 });
-      socket.join(code);
-      console.log('[createRoom] created', code, 'host=', socket.id);
-      socket.emit("roomCreated", { code });
-    } catch (err) {
-      console.error("createRoom error:", err);
-      socket.emit("error", "Failed to create room");
+    if (!qRes.rows.length) {
+      socket.emit('error', 'No questions found for this quiz');
+      return;
     }
-  });
+
+    const questions = qRes.rows.map(q => ({
+      id: q.id,
+      text: q.question_text,
+      answers: [
+        { id: "A", text: q.option_a, is_correct: q.correct_option === "A" },
+        { id: "B", text: q.option_b, is_correct: q.correct_option === "B" },
+        { id: "C", text: q.option_c, is_correct: q.correct_option === "C" },
+        { id: "D", text: q.option_d, is_correct: q.correct_option === "D" }
+      ]
+    }));
+
+    // add host as first player so the host can also play
+    const room = { hostId: socket.id, players: [{ id: socket.id, name: 'Host', score: 0, lastAnsweredIndex: -1 }], questions, index: -1 };
+    rooms.set(code, room);
+    socket.join(code);
+
+    console.log('[createRoom] created', code, 'host=', socket.id);
+    socket.emit("roomCreated", { code });
+    // broadcast initial player list (host only for now)
+    io.to(code).emit('playerList', room.players.map(p => ({ name: p.name, score: p.score })));
+  } catch (err) {
+    console.error("createRoom error:", err);
+    socket.emit("error", "Failed to create room");
+  }
+});
 
   // Accept multiple payload shapes (code || roomId || payload)
   socket.on("joinRoom", (payload) => {
-    const code = (payload && (payload.code ?? payload.roomId)) || payload;
-    const name = payload && (payload.name ?? payload.player) || 'Player';
-    console.log('[joinRoom] socket=', socket.id, 'code=', code, 'name=', name);
+  const code = (payload && (payload.code ?? payload.roomId)) || payload;
+  const name = payload && (payload.name ?? payload.player) || 'Player';
+  console.log('[joinRoom]', socket.id, '->', code, name);
 
-    const room = rooms.get(code);
-    if (!room) {
-      socket.emit('error', 'Room not found: ' + String(code));
-      return;
-    }
+  const room = rooms.get(code);
+  if (!room) {
+    socket.emit('error', 'Room not found: ' + String(code));
+    return;
+  }
 
-    room.players.push({ id: socket.id, name, score: 0, lastAnsweredIndex: -1 });
-    socket.join(code);
-    io.to(code).emit("playerList", room.players.map(p => ({ name: p.name, score: p.score })));
-    socket.emit('roomJoined', { code });
-  });
-
-  socket.on("startGame", (payload) => {
-    const code = payload && (payload.code ?? payload.roomId) || payload;
-    console.log('[startGame] from', socket.id, 'code=', code);
-    const room = rooms.get(code);
-    if (!room || room.hostId !== socket.id) {
-      socket.emit('error', 'Not authorized to start or room missing');
-      return;
-    }
-    room.index = 0;
-    emitQuestion(code);
-  });
+  room.players.push({ id: socket.id, name, score: 0, lastAnsweredIndex: -1 });
+  socket.join(code);
+  io.to(code).emit("playerList", room.players.map(p => ({ name: p.name, score: p.score })));
+  socket.emit('roomJoined', { code });
+});
 
   socket.on("submitAnswer", (payload) => {
-    const code = payload && (payload.code ?? payload.roomId) || payload;
-    const answerId = payload && (payload.answerId ?? payload.answer) || payload;
-    console.log('[submitAnswer] from', socket.id, 'code=', code, 'answerId=', answerId);
+  const code = (payload && (payload.code ?? payload.roomId)) || payload.code || payload.roomId || payload;
+  const answerId = payload && (payload.answerId ?? payload.answer) ?? payload.answerId ?? payload.answer;
+  console.log('[submitAnswer] from', socket.id, 'code=', code, 'answerId=', answerId);
 
-    const room = rooms.get(code);
-    if (!room) {
-      console.warn('[submitAnswer] room not found', code);
-      socket.emit('error', 'Room not found: ' + String(code));
-      return;
-    }
+  const room = rooms.get(code);
+  if (!room) {
+    socket.emit('error', 'Room not found: ' + String(code));
+    return;
+  }
 
-    const player = room.players.find(p => p.id === socket.id);
-    if (!player) { socket.emit('error', 'You are not in that room'); return; }
+  const player = room.players.find(p => p.id === socket.id);
+  if (!player) { socket.emit('error', 'You are not in that room'); return; }
 
-    if (player.lastAnsweredIndex === room.index) {
-      socket.emit('error', 'Already answered this question');
-      return;
-    }
+  // prevent multiple answers for same question
+  if (player.lastAnsweredIndex === room.index) {
+    socket.emit('error', 'Already answered this question');
+    return;
+  }
 
-    const q = room.questions[room.index];
-    if (!q) { socket.emit('error', 'No active question'); return; }
+  const q = room.questions[room.index];
+  if (!q) { socket.emit('error', 'No active question'); return; }
 
-    const ans = q.answers.find(a => a.id === answerId);
-    if (!ans) { socket.emit('error', 'Answer option not found'); return; }
+  const ans = q.answers.find(a => String(a.id) === String(answerId));
+  if (!ans) { socket.emit('error', 'Answer option not found'); return; }
 
-    if (ans.is_correct) player.score += 10;
-    player.lastAnsweredIndex = room.index;
+  if (ans.is_correct) player.score += 10;
+  player.lastAnsweredIndex = room.index;
 
-    io.to(code).emit("updateScores", room.players.map(p => ({ name: p.name, score: p.score })));
-  });
+  // broadcast immediate score update
+  io.to(code).emit("updateScores", room.players.map(p => ({ name: p.name, score: p.score })));
+
+  // check if everyone answered this index -> auto-advance
+  const allAnswered = room.players.length > 0 && room.players.every(p => p.lastAnsweredIndex === room.index);
+  if (allAnswered) {
+    // small delay so clients can show correct/wrong
+    setTimeout(() => {
+      room.index++;
+      if (room.index >= room.questions.length) {
+        io.to(code).emit("gameOver", room.players.map(p => ({ name: p.name, score: p.score })));
+        rooms.delete(code);
+        console.log('[room] gameOver for', code);
+      } else {
+        emitQuestion(code);
+      }
+    }, 1000);
+  }
+});
 
   // ... keep your disconnect handler
 });
