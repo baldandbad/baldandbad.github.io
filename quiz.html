@@ -45,8 +45,8 @@
   @media(max-width:520px){ .options{grid-template-columns:1fr} }
   .opt{padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s, box-shadow .12s}
   .opt:hover{transform:translateY(-6px)}
-  .opt.correct{box-shadow:0 10px 30px rgba(52,211,153,0.12);border-color: rgba(52,211,153,0.2)}
-  .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12)}
+  .opt.correct{box-shadow:0 10px 30px rgba(52,211,153,0.12);border-color: rgba(52,211,153,0.2);background:rgba(52,211,153,0.06)}
+  .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12);background:rgba(251,113,133,0.04)}
   .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 
   /* right sidebar */
@@ -69,10 +69,8 @@
   .pop{animation:pop .18s}
   @keyframes pop{from{transform:scale(0.96)}to{transform:scale(1)}}
 
-  /* ensure list scrolls on mobile nicely */
   #quizList { max-height: 40vh; overflow:auto; -webkit-overflow-scrolling:touch; padding-right:6px; }
 
-  /* join modal */
   .modal {
     position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,0.6);min-width:260px;
   }
@@ -80,7 +78,6 @@
   .modal .row{display:flex;gap:8px}
   @media(max-width:720px){ .wrap{padding:8px} .stage{min-height:520px} }
 
-  /* small "message" at bottom */
   #message {position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;font-size:13px}
 </style>
 </head>
@@ -173,7 +170,6 @@
 
 <div id="message" class="small hidden"></div>
 
-<!-- Join modal template (hidden until needed) -->
 <div id="joinModal" class="modal hidden" style="display:none">
   <div style="font-weight:900">Join Room</div>
   <input id="joinCode" placeholder="Room code (e.g. AB12)" />
@@ -184,7 +180,6 @@
   </div>
 </div>
 
-<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
 /* ====== CONFIG - set your backend (no trailing slash) ====== */
@@ -209,6 +204,10 @@ let currentMultiQuestion = null;
 let multiplayerIndex = null;
 let multiplayerTotal = null;
 let currentRoomCode = null;
+
+// Submission guard (fix for your error)
+const submittedRef = { current: {} };
+
 const serverName = document.getElementById('serverName');
 const socketStatus = document.getElementById('socketStatus');
 const quizListEl = document.getElementById('quizList');
@@ -235,6 +234,7 @@ function showMsg(t, timeout=2500){
   setTimeout(()=>{ messageEl.classList.add('hidden'); }, timeout);
 }
 
+/* ====== Audio helpers ====== */
 const AudioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
 function playTone(f, t = 0.12, type='sine', gain=0.12){
   if(!AudioCtx) return;
@@ -253,31 +253,6 @@ function correctSound(){ playTone(900,0.06,'sine',0.08); setTimeout(()=>playTone
 function wrongSound(){ playTone(220,0.12,'sawtooth',0.12); }
 function startSound(){ playTone(440,0.12,'sine',0.12); setTimeout(()=>playTone(660,0.08,'sine',0.08),130); }
 function finishSound(){ playTone(520,0.12,'triangle',0.12); setTimeout(()=>playTone(780,0.08,'triangle',0.08),150); }
-
-/* ====== robust socket connect (handles CORS errors nicely) ====== */
-// returns a Promise that resolves to the connected socket
-function attachSocketHandlers() {
-  if (!socket || _handlersAttached) return;
-  _handlersAttached = true;
-
-  // generic debug handlers
-  socket.on('connect', () => console.log('[socket] connect', socket.id));
-  socket.on('disconnect', (reason) => console.log('[socket] disconnect', reason));
-  socket.on('connect_error', (err) => console.warn('[socket] conn error', err && err.message));
-
-socket.on('roomCreated', (payload) => {
-  console.log('[socket] roomCreated', payload);
-  const code = payload?.code ?? payload?.roomId ?? payload;
-  // set both variables so older code/path works too
-  currentRoomCode = code;
-  roomCode = code;
-  amHost = true;
-  roomCodeEl.textContent = code;
-  startBtn.style.display = 'inline-flex';   // show Start
-  leaveBtn.style.display = 'inline-flex';
-  updatePlayers([]);                         // reset lobby player list
-  showMsg(`Room created: ${code}`, 3000);
-});
 
 /* ===== confetti (small canvas particle burst) ===== */
 function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count = 40) {
@@ -306,7 +281,7 @@ function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count 
     for (const p of particles){
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.3; // gravity
+      p.vy += 0.3;
       p.ttl--;
       p.rot += 8;
       ctx.save();
@@ -316,7 +291,6 @@ function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count 
       ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
       ctx.restore();
     }
-    // remove dead ones
     for (let i=particles.length-1;i>=0;i--) if (particles[i].ttl<=0) particles.splice(i,1);
     if (particles.length>0) raf = requestAnimationFrame(draw);
     else { cancelAnimationFrame(raf); canvas.remove(); }
@@ -324,58 +298,100 @@ function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count 
   draw();
 }
 
-socket.on('roomJoined', (payload) => {
-  console.log('[socket] roomJoined', payload);
-  const code = payload?.code ?? payload?.roomId ?? payload;
-  currentRoomCode = code;
-  roomCode = code;
-  roomCodeEl.textContent = code;
-  showMsg('Joined room ' + code, 1800);
-});
+/* ====== Consolidated socket handlers ====== */
+function attachSocketHandlers() {
+  if (!socket || _handlersAttached) return;
+  _handlersAttached = true;
 
+  socket.on('connect', () => { console.log('[socket] connect', socket.id); socketStatus.textContent = 'Socket: connected'; });
+  socket.on('disconnect', (reason) => { console.log('[socket] disconnect', reason); socketStatus.textContent = 'Socket: disconnected'; });
+  socket.on('connect_error', (err) => { console.warn('[socket] conn error', err && err.message); socketStatus.textContent = 'Socket: error'; });
+
+  socket.on('roomCreated', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; amHost = true;
+    roomCodeEl.textContent = code; startBtn.style.display = 'inline-flex'; leaveBtn.style.display = 'inline-flex';
+    updatePlayers([]); showMsg('Room created: '+code, 2400);
+  });
+
+  socket.on('roomJoined', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; roomCodeEl.textContent = code;
+    leaveBtn.style.display = 'inline-flex';
+    showMsg('Joined room ' + code, 1600);
+  });
 
   socket.on('playerList', (list) => {
-    console.log('[socket] playerList', list);
-    updatePlayers && updatePlayers(list || []);
+    updatePlayers(list || []);
   });
 
   socket.on('question', (q) => {
     console.log('[socket] question', q);
-    // normalize incoming question to the shape your UI expects
-    const normalized = {
+    const normal = {
       id: q.id ?? q.questionId ?? q.id,
       question: q.text ?? q.question ?? q.q,
       answers: q.answers ?? q.options ?? [],
       index: (typeof q.index !== 'undefined') ? q.index : null,
       total: (typeof q.total !== 'undefined') ? q.total : null,
-      correctAnswerId: q.correctAnswerId ?? null
+      timeLimit: q.timeLimit ?? 12
     };
-    // store and render - your UI should use currentMultiQuestion if in multiplayer mode
-    currentMultiQuestion = normalized;
-    multiplayerIndex = normalized.index;
-    multiplayerTotal = normalized.total;
+    currentMultiQuestion = normal; multiplayerIndex = normal.index; multiplayerTotal = normal.total;
+    // reset submitted guard for this question
+    submittedRef.current = submittedRef.current || {};
+    submittedRef.current[normal.id] = false;
     mode = 'multi';
-    showQuestion && showQuestion();
+    showQuestion();
+    startSound();
+    startTimer(normal.timeLimit);
+  });
+
+  socket.on('question-ended', (payload) => {
+    console.log('[socket] question-ended', payload);
+    const correctId = payload.correctAnswerId;
+    Array.from(optionsEl.children).forEach(el=>{
+      const meta = el.querySelector('.small')?.textContent || '';
+      const m = meta.match(/Choice\s*(.+)$/i);
+      const choiceId = m ? m[1] : null;
+      el.classList.remove('waiting','disabled');
+      if (choiceId && String(choiceId) === String(correctId)) {
+        el.classList.add('correct');
+      }
+    });
+
+    const meResult = (payload.results || []).find(r => r.playerId === socket.id);
+    if (meResult && meResult.correct) { correctSound(); burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); }
+    else wrongSound();
+
+    const scoreMap = {};
+    (payload.scores || []).forEach(s => scoreMap[s.id] = s.total);
+    updatePlayers((payload.scores || []).map(s=>({ id: s.id, name: s.name, score: s.total})));
+
+    if (socket && socket.id && scoreMap[socket.id] !== undefined) {
+      scoreDisplay.textContent = scoreMap[socket.id];
+    }
+
+    clearInterval(timer);
+    setTimeout(()=> {
+      Array.from(optionsEl.children).forEach(el=>{ el.classList.remove('correct','wrong','waiting','disabled'); el.style.opacity = ''; });
+    }, 900);
   });
 
   socket.on('updateScores', (payload) => {
-    console.log('[socket] updateScores', payload);
-    updatePlayers && updatePlayers(payload || []);
+    updatePlayers(payload || []);
+    playTone(720,0.04,'sine',0.06);
   });
 
   socket.on('gameOver', (payload) => {
     console.log('[socket] gameOver', payload);
-    finishSound && finishSound();
-    showMsg && showMsg('Game over', 2500);
-    // you may show final scoreboard here
+    const scores = payload?.scores ?? payload ?? [];
+    finishSound();
+    burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
+    showMsg('Game over! Check final scores', 3000);
+    updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
   });
 
-  socket.on('error', (e) => {
-    console.warn('[socket] server error', e);
-  });
+  socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
 }
-
-
 
 /* ====== fetch quizzes (REST) ====== */
 async function refreshQuizzes(){
@@ -411,7 +427,7 @@ function renderQuizList(){
 /* ====== SOLO flow ====== */
 async function openSolo(qid){
   mode = 'solo';
-  connectSocket(); // keep socket connection open for later if you want leaderboard
+  await connectSocket(); // optional keep socket for later
   try{
     const r = await fetch(`${API_URL}/api/quizzes/${qid}`);
     if(!r.ok) throw new Error(await r.text());
@@ -419,125 +435,9 @@ async function openSolo(qid){
     questions = adaptRows(data);
     if(questions.length === 0) { showMsg('Quiz has no questions'); return; }
     currentIndex = 0; score = 0; combo = 0;
-    showQuestion(); // will use the solo path
+    showQuestion();
     startSound();
   }catch(e){ showMsg('Failed to load quiz: ' + e.message, 3000); }
-}
-function attachSocketHandlers() {
-  if (!socket || _handlersAttached) return;
-  _handlersAttached = true;
-
-  socket.on('connect', () => { console.log('[socket] connect', socket.id); socketStatus.textContent = 'Socket: connected'; });
-  socket.on('disconnect', (reason) => { console.log('[socket] disconnect', reason); socketStatus.textContent = 'Socket: disconnected'; });
-  socket.on('connect_error', (err) => { console.warn('[socket] conn error', err && err.message); socketStatus.textContent = 'Socket: error'; });
-
-  // room created / joined
-  socket.on('roomCreated', (payload) => {
-    const code = payload?.code ?? payload?.roomId ?? payload;
-    currentRoomCode = code; roomCode = code; amHost = true;
-    roomCodeEl.textContent = code; startBtn.style.display = 'inline-flex'; leaveBtn.style.display = 'inline-flex';
-    updatePlayers([]); showMsg('Room created: '+code, 2400);
-  });
-  socket.on('roomJoined', (payload) => {
-    const code = payload?.code ?? payload?.roomId ?? payload;
-    currentRoomCode = code; roomCode = code; roomCodeEl.textContent = code;
-    leaveBtn.style.display = 'inline-flex';
-    showMsg('Joined room ' + code, 1600);
-  });
-
-  // player list updates
-  socket.on('playerList', (list) => {
-    updatePlayers(list || []);
-  });
-
-  // NEW: question arrives: set up UI + reset submission guard
-  socket.on('question', (q) => {
-    console.log('[socket] question', q);
-    // normalize
-    const normal = {
-      id: q.id ?? q.questionId ?? q.id,
-      question: q.text ?? q.question ?? q.q,
-      answers: q.answers ?? q.options ?? [],
-      index: (typeof q.index !== 'undefined') ? q.index : null,
-      total: (typeof q.total !== 'undefined') ? q.total : null,
-      timeLimit: q.timeLimit ?? 12
-    };
-    currentMultiQuestion = normal; multiplayerIndex = normal.index; multiplayerTotal = normal.total;
-    // reset per-question submitted guard
-    submittedRef.current = submittedRef.current || {};
-    submittedRef.current[normal.id] = false;
-    // set mode and render
-    mode = 'multi';
-    showQuestion(); // will pick up currentMultiQuestion and render
-    startSound();
-    // start local tick for UI (optional)
-    startTimer(normal.timeLimit);
-  });
-
-  // NEW: question ended (server computed results & updated scores)
-  socket.on('question-ended', (payload) => {
-    console.log('[socket] question-ended', payload);
-    // payload: { questionIndex, questionId, correctAnswerId, results: [{playerId,name,choice,correct,points}], scores: [{id,name,total}]}
-    const correctId = payload.correctAnswerId;
-    // show correct/wrong highlights in options
-    Array.from(optionsEl.children).forEach(el=>{
-      const meta = el.querySelector('.small')?.textContent || '';
-      const m = meta.match(/Choice\s*(.+)$/i);
-      const choiceId = m ? m[1] : null;
-      el.classList.remove('waiting','disabled');
-      if (choiceId && String(choiceId) === String(correctId)) {
-        el.classList.add('correct');
-      }
-    });
-
-    // play sounds per the user's correctness (find our player)
-    const meResult = (payload.results || []).find(r => r.playerId === socket.id || r.playerId === (socket && socket.id));
-    if (meResult && meResult.correct) { correctSound(); burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); }
-    else wrongSound();
-
-    // update score display if present in payload.scores; map to UI players
-    const scoreMap = {};
-    (payload.scores || []).forEach(s => scoreMap[s.id] = s.total);
-    // if we have players shown in lobby, update them
-    const players = payload.scores || [];
-    updatePlayers(players.map(p => ({ id: p.id, name: p.name, score: p.total })));
-
-    // also update main scoreboard if we are playing solo-ish
-    if (socket && socket.id && scoreMap[socket.id] !== undefined) {
-      scoreDisplay.textContent = scoreMap[socket.id];
-    }
-
-    // clear local timer
-    clearInterval(timer);
-
-    // schedule next UI reset: remove highlight classes before next question (server will send next question)
-    setTimeout(()=> {
-      Array.from(optionsEl.children).forEach(el=>{ el.classList.remove('correct','wrong','waiting','disabled'); el.style.opacity = ''; });
-    }, 1000);
-  });
-
-  socket.on('updateScores', (payload) => {
-    // payload: array of { id, name, score }
-    updatePlayers(payload || []);
-    playTone(720,0.04,'sine',0.06);
-  });
-
-  socket.on('gameOver', (payload) => {
-    console.log('[socket] gameOver', payload);
-    // payload: { scores: [...] } or array
-    const scores = payload?.scores ?? payload ?? [];
-    // show final scoreboard & confetti
-    finishSound();
-    burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
-    showMsg('Game over! Check final scores', 3000);
-    updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
-    // optionally show leaderboard modal / navigate UI
-  });
-
-  socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
-
-  // mark handlers attached
-  _handlersAttached = true;
 }
 
 function adaptRows(rows){
@@ -555,6 +455,7 @@ function adaptRows(rows){
     correctAnswerId: r.correct_option || r.correctAnswerId
   }));
 }
+
 function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
   optionsEl.innerHTML = '';
   answerArray.forEach(ans => {
@@ -567,7 +468,6 @@ function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
     optionsEl.appendChild(b);
   });
 }
-
 
 /* ====== render question & handle picks ====== */
 function showQuestion(){
@@ -591,10 +491,8 @@ function showQuestion(){
     qtext.textContent = q.question || '...';
     if(typeof multiplayerIndex === 'number' && multiplayerTotal) progressText.textContent = `${multiplayerIndex+1} / ${multiplayerTotal}`;
     else progressText.textContent = 'Multiplayer';
-    // render options but DO NOT display correct locally
     renderOptions(q.answers, null, 'multi');
     startTimer(q.timeLimit ?? 12);
-    // reset per-question submitted state
     submittedRef.current = submittedRef.current || {};
     submittedRef.current[q.id] = false;
     return;
@@ -604,15 +502,12 @@ function showQuestion(){
   optionsEl.innerHTML = '';
 }
 
-
 function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
   if(el.classList.contains('disabled')) return;
-  // disable options locally
   Array.from(optionsEl.children).forEach(c=>{ c.classList.add('disabled'); c.classList.remove('correct','wrong'); });
   clearInterval(timer);
 
   if(playMode === 'solo'){
-    // existing solo logic - keep it
     const q = questions[currentIndex];
     const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
     const isCorrect = String(answerId) === String(correct);
@@ -622,41 +517,38 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
     setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
     return;
   }
+
+  // MULTIPLAYER
   const q = currentMultiQuestion;
   if(!q) { showMsg('No active question', 1500); return; }
   submittedRef.current = submittedRef.current || {};
   if(submittedRef.current[q.id]) { showMsg('Answer already submitted'); return; }
   submittedRef.current[q.id] = true;
 
-  // show optimistic locked-in state
   el.classList.add('waiting');
   el.style.opacity = '0.8';
 
-  // find code
   const codeToSend = currentRoomCode || roomCode || roomCodeEl.textContent || null;
   if(!codeToSend || codeToSend === '—') { showMsg('No room code — join or create a room first'); el.classList.remove('waiting'); return; }
 
-  // emit with ack (if server responds to ack, fine; otherwise this is safe)
   try {
     socket.emit('submitAnswer', { code: codeToSend, answerId });
-    // optimistically show a tick or small animation, real result comes in `question-ended`
   } catch (err) {
-    console.warn('emit failed', err);
+    console.warn('Emit failed', err);
     showMsg('Failed to send answer', 1500);
     el.classList.remove('waiting');
     submittedRef.current[q.id] = false;
   }
+}
 
 function finishRun(){
   clearInterval(timer);
   showMsg(`Run finished! Score ${score}`, 3000);
-  // reset (optionally post score to server here)
   questions = []; currentIndex=0; score=0; combo=0;
   qtext.textContent = 'Hit Solo or Host to play again';
   optionsEl.innerHTML = '';
   scoreDisplay.textContent = '0';
   comboDisplay.textContent = 'combo ×0';
-}
 }
 
 /* ====== timer ====== */
@@ -687,26 +579,46 @@ function onTimeUp(){
     setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) finishRun(); else showQuestion(); }, 900);
     return;
   }
-  // multiplayer: tell server "no answer" or just wait; we'll visually reveal nothing and wait for host
+  // multiplayer: notify server optionally (we just wait for server to end question on timeout)
   showMsg('Time up — waiting for host', 1800);
 }
 
-socket?.off?.('updateScores'); // safe detach
-socket?.on?.('updateScores', (players) => {
-  updatePlayers(players || []);
-  // play small tick sound
-  playTone(720,0.04,'sine',0.06);
-});
-socket?.off?.('gameOver');
-socket?.on?.('gameOver', (payload) => {
-  finishSound();
-  showMsg('Game over! See scores in lobby.', 2500);
-});
+/* ====== socket connection & utils ====== */
+function connectSocket() {
+  if (socket && socket.connected) return Promise.resolve(socket);
+  if (socket && socket.connecting) {
+    return new Promise((resolve) => {
+      socket.once('connect', () => resolve(socket));
+      socket.once('connect_error', () => resolve(socket));
+    });
+  }
 
-/* ====== multiplayer (host & join) ====== */
+  const url = (typeof API_URL === 'string' ? API_URL.replace(/\/+$/, '') : '');
+  console.log('[connectSocket] connecting to', url);
+
+  socket = io(url, {
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 6
+  });
+
+  // attach handlers immediately
+  attachSocketHandlers();
+
+  return new Promise((resolve) => {
+    socket.once('connect', () => {
+      console.log('[connectSocket] connected', socket.id);
+      resolve(socket);
+    });
+    socket.once('connect_error', (err) => {
+      console.warn('[connectSocket] connect_error', err && err.message);
+      resolve(socket);
+    });
+  });
+}
+
+/* ====== multiplayer helpers ====== */
 function openHostList(){
   connectSocket();
-  // quiz list already has Host buttons; also show message
   showMsg('Hit "Host" next to a quiz to create a room (in this UI).', 2500);
 }
 
@@ -717,7 +629,6 @@ async function createRoom(quizId){
   console.log('emit createRoom', quizId);
   socket.emit('createRoom', { quizId });
 }
-
 
 function openJoinModal(){
   joinModal.style.display = 'block'; joinModal.classList.remove('hidden');
@@ -739,71 +650,22 @@ async function submitJoin(){
   showMsg('Joining room ' + code, 1500);
   clickSound();
 }
-function connectSocket() {
-  // If socket already connected -> resolve immediately
-  if (socket && socket.connected) return Promise.resolve(socket);
-
-  // If socket exists and is trying to connect -> return a promise that resolves on connect/error
-  if (socket && socket.connecting) {
-    return new Promise((resolve) => {
-      socket.once('connect', () => resolve(socket));
-      socket.once('connect_error', () => resolve(socket));
-    });
-  }
-
-  // create new socket
-  // NOTE: strip trailing slash from API_URL to avoid double slashes
-  const url = (typeof API_URL === 'string' ? API_URL.replace(/\/+$/, '') : '');
-  console.log('[connectSocket] connecting to', url);
-
-  // create the socket (CDN socket.io client should be loaded)
-  socket = io(url, {
-    transports: ['websocket', 'polling'],
-    reconnectionAttempts: 6,
-    // path: '/socket.io' // only set if your server uses a custom path
-  });
-
-  // attach handlers once
-  attachSocketHandlers();
-
-  // return promise that resolves on connect or connect_error
-  return new Promise((resolve) => {
-    socket.once('connect', () => {
-      console.log('[connectSocket] connected', socket.id);
-      resolve(socket);
-    });
-    socket.once('connect_error', (err) => {
-      console.warn('[connectSocket] connect_error', err && err.message);
-      // resolve with socket anyway (caller can still emit and socket will queue if possible)
-      resolve(socket);
-    });
-  });
-}
-
-/* ====== SOCKET: question handler (multiplayer) ====== */
-window.socket?.off?.('question'); // remove old if exists
-window.socket?.off?.('roomCreated'); // (will be reattached by connectSocket) - if you used the Promise connect version this may not be necessary
 
 function startRoom(){
-  // prefer currentRoomCode (set by server 'roomCreated' handler); fallback to roomCode
   const code = currentRoomCode || roomCode;
-  if(!code){
-    showMsg('No room to start — create or join a room first', 1800);
-    return;
-  }
-  socket.emit('startGame', { code });   // server expects { code }
+  if(!code){ showMsg('No room to start — create or join a room first', 1800); return; }
+  socket.emit('startGame', { code });
   showMsg('Starting game…', 1000);
 }
 
-
 function leaveRoom(){
+  const code = currentRoomCode || roomCode;
   roomCode = null; amHost = false;
   roomCodeEl.textContent = '—';
   playersEl.innerHTML = '';
   startBtn.style.display = 'none';
   leaveBtn.style.display = 'none';
-  if(socket){ try{ socket.emit('leaveRoom', { code: roomCode }); } catch(e){} }
-  // optional: keep socket connected for solo; we won't disconnect to preserve reconnection
+  if(socket && code){ try{ socket.emit('leaveRoom', { code }); } catch(e){} }
   showMsg('Left room', 1200);
 }
 
@@ -811,7 +673,7 @@ function updatePlayers(list){
   playersEl.innerHTML = '';
   (list || []).forEach(p=>{
     const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.padding='6px 0';
-    el.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}</div>`;
+    el.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}${p.answered ? ' ✓' : ''}</div>`;
     playersEl.appendChild(el);
   });
 }
