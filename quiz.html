@@ -279,6 +279,50 @@ socket.on('roomCreated', (payload) => {
   showMsg(`Room created: ${code}`, 3000);
 });
 
+/* ===== confetti (small canvas particle burst) ===== */
+function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count = 40) {
+  const colors = ["#ffd86b","#ff7ab6","#34d399","#60a5fa","#f97316","#a78bfa"];
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.left = 0; canvas.style.top = 0; canvas.style.pointerEvents = 'none';
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  for (let i=0;i<count;i++){
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*8,
+      vy: (Math.random()-1.5)*8,
+      size: 6 + Math.random()*8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      ttl: 60 + Math.random()*50
+    });
+  }
+  let raf;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3; // gravity
+      p.ttl--;
+      p.rot += 8;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    }
+    // remove dead ones
+    for (let i=particles.length-1;i>=0;i--) if (particles[i].ttl<=0) particles.splice(i,1);
+    if (particles.length>0) raf = requestAnimationFrame(draw);
+    else { cancelAnimationFrame(raf); canvas.remove(); }
+  }
+  draw();
+}
 
 socket.on('roomJoined', (payload) => {
   console.log('[socket] roomJoined', payload);
@@ -379,50 +423,123 @@ async function openSolo(qid){
     startSound();
   }catch(e){ showMsg('Failed to load quiz: ' + e.message, 3000); }
 }
-function attachSocketHandlers(){
-  if(!socket) return;
-  socket.off('question');
+function attachSocketHandlers() {
+  if (!socket || _handlersAttached) return;
+  _handlersAttached = true;
+
+  socket.on('connect', () => { console.log('[socket] connect', socket.id); socketStatus.textContent = 'Socket: connected'; });
+  socket.on('disconnect', (reason) => { console.log('[socket] disconnect', reason); socketStatus.textContent = 'Socket: disconnected'; });
+  socket.on('connect_error', (err) => { console.warn('[socket] conn error', err && err.message); socketStatus.textContent = 'Socket: error'; });
+
+  // room created / joined
+  socket.on('roomCreated', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; amHost = true;
+    roomCodeEl.textContent = code; startBtn.style.display = 'inline-flex'; leaveBtn.style.display = 'inline-flex';
+    updatePlayers([]); showMsg('Room created: '+code, 2400);
+  });
+  socket.on('roomJoined', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; roomCodeEl.textContent = code;
+    leaveBtn.style.display = 'inline-flex';
+    showMsg('Joined room ' + code, 1600);
+  });
+
+  // player list updates
+  socket.on('playerList', (list) => {
+    updatePlayers(list || []);
+  });
+
+  // NEW: question arrives: set up UI + reset submission guard
   socket.on('question', (q) => {
-    // q may have many shapes; normalize:
-    const question = {
-      id: q.id ?? q.questionId ?? q.questionId,
-      question: q.question ?? q.text ?? q.question,
+    console.log('[socket] question', q);
+    // normalize
+    const normal = {
+      id: q.id ?? q.questionId ?? q.id,
+      question: q.text ?? q.question ?? q.q,
       answers: q.answers ?? q.options ?? [],
       index: (typeof q.index !== 'undefined') ? q.index : null,
       total: (typeof q.total !== 'undefined') ? q.total : null,
-      correctAnswerId: q.correctAnswerId ?? null
+      timeLimit: q.timeLimit ?? 12
     };
-
-    // multiplayer mode: don't replace the quizzes array (solo uses quizzes array)
-    currentMultiQuestion = question;
-    multiplayerIndex = question.index;
-    multiplayerTotal = question.total;
-    // set UI mode and show:
+    currentMultiQuestion = normal; multiplayerIndex = normal.index; multiplayerTotal = normal.total;
+    // reset per-question submitted guard
+    submittedRef.current = submittedRef.current || {};
+    submittedRef.current[normal.id] = false;
+    // set mode and render
     mode = 'multi';
-    showQuestion(); // showQuestion checks mode and uses currentMultiQuestion
+    showQuestion(); // will pick up currentMultiQuestion and render
     startSound();
+    // start local tick for UI (optional)
+    startTimer(normal.timeLimit);
   });
 
-  socket.off('roomCreated');
-  socket.on('roomCreated', (payload) => {
-  console.log('[socket] roomCreated', payload);
-  const code = payload?.code ?? payload?.roomId ?? payload;
-  currentRoomCode = code;
-  roomCode = code;          // <- set both
-  roomCodeEl.textContent = code;
-  amHost = true;
-  startBtn.style.display = 'inline-flex';
-  leaveBtn.style.display = 'inline-flex';
-  updatePlayers([]); // reset player list
-  showMsg('Room created: ' + code, 2600);
-});
+  // NEW: question ended (server computed results & updated scores)
+  socket.on('question-ended', (payload) => {
+    console.log('[socket] question-ended', payload);
+    // payload: { questionIndex, questionId, correctAnswerId, results: [{playerId,name,choice,correct,points}], scores: [{id,name,total}]}
+    const correctId = payload.correctAnswerId;
+    // show correct/wrong highlights in options
+    Array.from(optionsEl.children).forEach(el=>{
+      const meta = el.querySelector('.small')?.textContent || '';
+      const m = meta.match(/Choice\s*(.+)$/i);
+      const choiceId = m ? m[1] : null;
+      el.classList.remove('waiting','disabled');
+      if (choiceId && String(choiceId) === String(correctId)) {
+        el.classList.add('correct');
+      }
+    });
 
+    // play sounds per the user's correctness (find our player)
+    const meResult = (payload.results || []).find(r => r.playerId === socket.id || r.playerId === (socket && socket.id));
+    if (meResult && meResult.correct) { correctSound(); burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); }
+    else wrongSound();
 
-  // ensure playerList updates
-  socket.off('playerList');
-  socket.on('playerList', list => updatePlayers(list || []));
-  // other handlers left intact...
+    // update score display if present in payload.scores; map to UI players
+    const scoreMap = {};
+    (payload.scores || []).forEach(s => scoreMap[s.id] = s.total);
+    // if we have players shown in lobby, update them
+    const players = payload.scores || [];
+    updatePlayers(players.map(p => ({ id: p.id, name: p.name, score: p.total })));
+
+    // also update main scoreboard if we are playing solo-ish
+    if (socket && socket.id && scoreMap[socket.id] !== undefined) {
+      scoreDisplay.textContent = scoreMap[socket.id];
+    }
+
+    // clear local timer
+    clearInterval(timer);
+
+    // schedule next UI reset: remove highlight classes before next question (server will send next question)
+    setTimeout(()=> {
+      Array.from(optionsEl.children).forEach(el=>{ el.classList.remove('correct','wrong','waiting','disabled'); el.style.opacity = ''; });
+    }, 1000);
+  });
+
+  socket.on('updateScores', (payload) => {
+    // payload: array of { id, name, score }
+    updatePlayers(payload || []);
+    playTone(720,0.04,'sine',0.06);
+  });
+
+  socket.on('gameOver', (payload) => {
+    console.log('[socket] gameOver', payload);
+    // payload: { scores: [...] } or array
+    const scores = payload?.scores ?? payload ?? [];
+    // show final scoreboard & confetti
+    finishSound();
+    burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
+    showMsg('Game over! Check final scores', 3000);
+    updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
+    // optionally show leaderboard modal / navigate UI
+  });
+
+  socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
+
+  // mark handlers attached
+  _handlersAttached = true;
 }
+
 function adaptRows(rows){
   if(!Array.isArray(rows)) return [];
   if(rows.length && rows[0].answers) return rows.map(r=>({ id:r.id, question:r.question, answers:r.answers, correctAnswerId:r.correctAnswerId }));
@@ -454,8 +571,8 @@ function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
 
 /* ====== render question & handle picks ====== */
 function showQuestion(){
-  // stop any previous timer
   clearInterval(timer);
+  timeBonus.textContent = '';
 
   if(mode === 'solo'){
     if(!questions.length){ qtext.textContent = 'No question loaded'; optionsEl.innerHTML=''; return; }
@@ -463,97 +580,72 @@ function showQuestion(){
     qtext.textContent = q.question || '...';
     progressText.textContent = `${currentIndex+1} / ${questions.length}`;
     renderOptions(q.answers, q.correctAnswerId, 'solo');
-    startTimer(timerDuration);
+    startTimer(12);
     scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
     return;
   }
 
-  // multiplayer mode: use currentMultiQuestion
   if(mode === 'multi'){
-    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start the game...'; optionsEl.innerHTML = ''; return; }
+    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start...'; optionsEl.innerHTML = ''; return; }
     const q = currentMultiQuestion;
     qtext.textContent = q.question || '...';
-    // if server provided total, display it, otherwise only index
     if(typeof multiplayerIndex === 'number' && multiplayerTotal) progressText.textContent = `${multiplayerIndex+1} / ${multiplayerTotal}`;
-    else if(typeof multiplayerIndex === 'number') progressText.textContent = `Question ${multiplayerIndex+1}`;
     else progressText.textContent = 'Multiplayer';
-    renderOptions(q.answers, null, 'multi'); // don't show correct locally
-    startTimer(timerDuration);
+    // render options but DO NOT display correct locally
+    renderOptions(q.answers, null, 'multi');
+    startTimer(q.timeLimit ?? 12);
+    // reset per-question submitted state
+    submittedRef.current = submittedRef.current || {};
+    submittedRef.current[q.id] = false;
     return;
   }
 
-  // fallback
   qtext.textContent = 'Select Solo or Host to begin';
   optionsEl.innerHTML = '';
 }
 
+
 function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
   if(el.classList.contains('disabled')) return;
-  Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
+  // disable options locally
+  Array.from(optionsEl.children).forEach(c=>{ c.classList.add('disabled'); c.classList.remove('correct','wrong'); });
   clearInterval(timer);
 
   if(playMode === 'solo'){
+    // existing solo logic - keep it
     const q = questions[currentIndex];
     const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
     const isCorrect = String(answerId) === String(correct);
     if(isCorrect){ correctSound(); const bonus = Math.round(timerRemaining); const gained = 10 + clamp(bonus, 0, timerDuration); score += gained; combo++; el.classList.add('correct'); showMsg('Correct! +' + gained, 1100); }
-    else { wrongSound(); combo = 0; el.classList.add('wrong'); // reveal correct
-      Array.from(optionsEl.children).forEach(ch=>{
-        const meta = ch.querySelector('.small')?.textContent || '';
-        const m = meta.match(/Choice\s*(.+)$/i);
-        if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
-      });
-    }
+    else { wrongSound(); combo = 0; el.classList.add('wrong'); Array.from(optionsEl.children).forEach(ch=>{ const meta = ch.querySelector('.small')?.textContent || ''; const m = meta.match(/Choice\s*(.+)$/i); if(m && String(m[1]) === String(correct)) ch.classList.add('correct'); }); }
     scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
     setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
     return;
   }
-// inside handlePick(...) -> multiplayer branch
-el.classList.add('waiting');
+  const q = currentMultiQuestion;
+  if(!q) { showMsg('No active question', 1500); return; }
+  submittedRef.current = submittedRef.current || {};
+  if(submittedRef.current[q.id]) { showMsg('Answer already submitted'); return; }
+  submittedRef.current[q.id] = true;
 
-// make sure socket exists/connected
-if (!socket) {
-  console.warn('No socket object when trying to submit answer');
-  showMsg('Not connected to server', 2000);
-  return;
-}
-
-// find code in preferential order
-const codeToSend = currentRoomCode || roomCode || roomCodeEl.textContent || null;
-console.log('[submitAnswer] codeToSend, answerId, socket.id:', codeToSend, answerId, socket && socket.id);
-
-if (!codeToSend || codeToSend === '—') {
-  // visible helpful feedback so you know what's wrong
-  showMsg('No room code — join or create a room first', 2000);
-  el.classList.remove('waiting');
-  return;
-}
-
-try {
-  socket.emit('submitAnswer', { code: codeToSend, answerId });
-  // optimistic local feedback while server responds:
-  el.style.opacity = '0.7';
-  setTimeout(() => { el.style.opacity = ''; }, 1200);
-} catch (err) {
-  console.error('Emit failed', err);
-  showMsg('Failed to send answer', 1500);
-  el.classList.remove('waiting');
-}
-
-  // multiplayer mode: send answer to server and wait for server to emit next question/updateScores
-  // client should just disable and show visual feedback while server judges
-  // optimistic local feedback: tint selected choice while waiting
+  // show optimistic locked-in state
   el.classList.add('waiting');
-  // emit answer with room code
-  try{
-    socket.emit('submitAnswer', { code: currentRoomCode || roomCode, answerId });
-  }catch(e){
-    console.warn('emit failed', e);
-  }
-  // Optionally play a click - server will send updateScores or next question
-  // We'll show a short checkmark animation after server responds; server is authoritative for scoring
-}
+  el.style.opacity = '0.8';
 
+  // find code
+  const codeToSend = currentRoomCode || roomCode || roomCodeEl.textContent || null;
+  if(!codeToSend || codeToSend === '—') { showMsg('No room code — join or create a room first'); el.classList.remove('waiting'); return; }
+
+  // emit with ack (if server responds to ack, fine; otherwise this is safe)
+  try {
+    socket.emit('submitAnswer', { code: codeToSend, answerId });
+    // optimistically show a tick or small animation, real result comes in `question-ended`
+  } catch (err) {
+    console.warn('emit failed', err);
+    showMsg('Failed to send answer', 1500);
+    el.classList.remove('waiting');
+    submittedRef.current[q.id] = false;
+  }
 
 function finishRun(){
   clearInterval(timer);
@@ -564,6 +656,7 @@ function finishRun(){
   optionsEl.innerHTML = '';
   scoreDisplay.textContent = '0';
   comboDisplay.textContent = 'combo ×0';
+}
 }
 
 /* ====== timer ====== */
