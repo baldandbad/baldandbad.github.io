@@ -364,7 +364,7 @@ a:hover.read-more {
   display: inherit;
 }
 .about-slide .flex-direction-nav a {
-  background: #ff5722;
+  background: #ffffff;
   width: 160px;
   height: 160px;
   font-size: 0;
@@ -386,7 +386,7 @@ a:hover.read-more {
   text-indent: -9009px;
 }
 .about-slide .flex-control-paging li a {
-  border: 1px solid #ff5722;
+  border: 1px solid #ffffff;
   background: #fff;
   box-shadow: none;
   width: 10px;
@@ -394,8 +394,8 @@ a:hover.read-more {
   outline: none;
 }
 .about-slide .flex-control-paging li a.flex-active {
-  border: 1px solid #ff5722;
-  background: #ff5722;
+  border: 1px solid #ffffff;
+  background: #ffffff;
 }
 .our-features {
   background: #fafafc;

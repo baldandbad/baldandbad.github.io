@@ -493,11 +493,7 @@
 </style>
 
 <script>
-/* HERO-NEO slider behavior
-   - sets backgrounds from data-bg (prevents layout shift)
-   - simple autoplay + prev/next + dots
-   - touch swipe for mobile
-*/
+/* Replace only the setActive + small timing bits in the previous slider script with this block */
 (function(){
   const root = document.querySelector('.hero-neo');
   if (!root) return;
@@ -507,57 +503,89 @@
   const nextBtn = root.querySelector('.hero-neo__nav--next');
   const dotsWrap = root.querySelector('.hero-neo__dots');
 
-  // set background images from data attributes (lazy-like)
+  // build dots & set backgrounds (same as before)
   slides.forEach((s, i) => {
     const bg = s.dataset.bg || '';
     if (bg) s.style.backgroundImage = `url("${bg}")`;
-    // create dot
+    s.setAttribute('aria-hidden','true');
     const dot = document.createElement('button');
     dot.type = 'button';
     dot.setAttribute('aria-label', `Slide ${i+1}`);
     dot.setAttribute('data-index', i);
-    dot.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    dot.setAttribute('aria-selected','false');
+    dot.addEventListener('click', (e) => {
+      const idx = Number(e.currentTarget.getAttribute('data-index'));
+      setActive(idx);
+      resetTimer();
+    });
     dotsWrap.appendChild(dot);
   });
+  if (slides.length === 0) return;
+
+  // initial activation
+  slides[0].classList.add('hero-neo__slide--active');
+  slides[0].setAttribute('aria-hidden','false');
+  const dotButtons = Array.from(dotsWrap.children);
+  if (dotButtons[0]) dotButtons[0].setAttribute('aria-selected','true');
 
   let index = 0;
-  const dotButtons = Array.from(dotsWrap.children);
+  let timer = null;
+  const interval = 6000;
+  let isTransitioning = false;
+  // match this to your CSS transition duration (ms)
+  const TRANSITION_MS = 700;
 
   function setActive(newIndex){
-    if (newIndex === index) return;
-    slides[index].classList.remove('hero-neo__slide--active');
-    slides[index].setAttribute('aria-hidden', 'true');
-    dotButtons[index].setAttribute('aria-selected','false');
+    if (newIndex === index || isTransitioning || newIndex < 0 || newIndex >= slides.length) return;
 
-    slides[newIndex].classList.add('hero-neo__slide--active');
-    slides[newIndex].setAttribute('aria-hidden', 'false');
-    dotButtons[newIndex].setAttribute('aria-selected','true');
+    isTransitioning = true;
+
+    const prev = slides[index];
+    const next = slides[newIndex];
+
+    // remove active from previous to start its fade-out
+    prev.classList.remove('hero-neo__slide--active');
+    prev.setAttribute('aria-hidden','true');
+    if (dotButtons[index]) dotButtons[index].setAttribute('aria-selected','false');
+
+    // Force layout/read (reflow) so the browser will treat the next class addition as a new transition
+    // This avoids some browsers optimizing away the transition when changes happen too quickly.
+    // Using void next.offsetWidth ensures reflow.
+    void next.offsetWidth;
+
+    // add active to next to start its fade-in
+    next.classList.add('hero-neo__slide--active');
+    next.setAttribute('aria-hidden','false');
+    if (dotButtons[newIndex]) dotButtons[newIndex].setAttribute('aria-selected','true');
 
     index = newIndex;
+
+    // release guard after the CSS transition finishes
+    setTimeout(()=> { isTransitioning = false; }, TRANSITION_MS);
   }
 
-  // prev/next handlers
   function prev(){ setActive((index - 1 + slides.length) % slides.length); resetTimer(); }
   function next(){ setActive((index + 1) % slides.length); resetTimer(); }
 
   prevBtn?.addEventListener('click', prev);
   nextBtn?.addEventListener('click', next);
 
-  // dots
-  dotButtons.forEach(d => d.addEventListener('click', (e)=>{
-    const i = Number(e.currentTarget.getAttribute('data-index'));
-    setActive(i);
-    resetTimer();
-  }));
-
-  // autoplay
-  let interval = 6000, timer = null;
-  function startTimer(){ timer = setInterval(()=> setActive((index+1)%slides.length), interval); }
-  function resetTimer(){ clearInterval(timer); startTimer(); }
-
+  function startTimer(){
+    if (timer) clearInterval(timer);
+    timer = setInterval(() => {
+      if (!isTransitioning) setActive((index + 1) % slides.length);
+    }, interval);
+  }
+  function stopTimer(){
+    if (timer) { clearInterval(timer); timer = null; }
+  }
+  function resetTimer(){
+    stopTimer();
+    startTimer();
+  }
   startTimer();
 
-  // touch support (swipe)
+  // touch swipe
   let startX = 0, deltaX = 0;
   root.addEventListener('touchstart', (e)=> { startX = e.touches[0].clientX; deltaX=0; }, {passive:true});
   root.addEventListener('touchmove', (e)=> { deltaX = e.touches[0].clientX - startX; }, {passive:true});
@@ -566,18 +594,19 @@
     if (deltaX > 0) prev(); else next();
   });
 
-  // keyboard left/right navigation
-  root.addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowLeft') prev();
-    if (e.key === 'ArrowRight') next();
+  // pause on hover/focus
+  const interactive = [root, prevBtn, nextBtn, ...dotButtons];
+  interactive.forEach(el => {
+    if (!el) return;
+    el.addEventListener('mouseenter', ()=> stopTimer());
+    el.addEventListener('mouseleave', ()=> startTimer());
+    el.addEventListener('focusin', ()=> stopTimer());
+    el.addEventListener('focusout', ()=> startTimer());
   });
 
-  // pause on hover/focus
-  [root, prevBtn, nextBtn, ...dotButtons].forEach(el => {
-    el.addEventListener('mouseenter', ()=> clearInterval(timer));
-    el.addEventListener('mouseleave', startTimer);
-    el.addEventListener('focusin', ()=> clearInterval(timer));
-    el.addEventListener('focusout', startTimer);
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopTimer();
+    else startTimer();
   });
 
 })();
@@ -749,14 +778,14 @@
 
 <section class="custom-gallery-section">
   <div class="custom-gallery-grid">
-    <img src="images/use_img/gallery1.png" alt="Ảnh 1">
-    <img src="images/use_img/gallery2.png" alt="Ảnh 2">
-    <img src="https://picsum.photos/600/400?random=3" alt="Ảnh 3">
-    <img src="https://picsum.photos/600/400?random=4" alt="Ảnh 4">
-    <img src="https://picsum.photos/600/400?random=5" alt="Ảnh 5">
-    <img src="https://picsum.photos/600/400?random=6" alt="Ảnh 6">
-    <img src="https://picsum.photos/600/400?random=7" alt="Ảnh 7">
-    <img src="https://picsum.photos/600/400?random=8" alt="Ảnh 8">
+    <img src="images/cbtt3.jpg" alt="Ảnh 1">
+    <img src="images/ddl3.jpg" alt="Ảnh 2">
+    <img src="images/bttpchm1.jpg" alt="Ảnh 3">
+    <img src="images/cgv2.jpg" alt="Ảnh 4">
+    <img src="images/csgv2.jpg" alt="Ảnh 5">
+    <img src="images/dtth3.jpg" alt="Ảnh 6">
+    <img src="images/dpp1.jpg" alt="Ảnh 7">
+    <img src="images/ddpth1.jpg" alt="Ảnh 8">
   </div>
 </section>
 
