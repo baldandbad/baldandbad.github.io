@@ -280,13 +280,15 @@ socket.on('roomCreated', (payload) => {
 });
 
 
-  socket.on('roomJoined', (payload) => {
-    console.log('[socket] roomJoined', payload);
-    const code = payload?.code ?? payload?.roomId ?? payload;
-    currentRoomCode = code;
-    roomCodeEl && (roomCodeEl.textContent = code);
-    showMsg && showMsg(`Joined room ${code}`, 2200);
-  });
+socket.on('roomJoined', (payload) => {
+  console.log('[socket] roomJoined', payload);
+  const code = payload?.code ?? payload?.roomId ?? payload;
+  currentRoomCode = code;
+  roomCode = code;
+  roomCodeEl.textContent = code;
+  showMsg('Joined room ' + code, 1800);
+});
+
 
   socket.on('playerList', (list) => {
     console.log('[socket] playerList', list);
@@ -402,15 +404,19 @@ function attachSocketHandlers(){
   });
 
   socket.off('roomCreated');
-  socket.on('roomCreated', (p) => {
-    const c = p?.code ?? p?.roomId ?? p;
-    currentRoomCode = c; amHost = true;
-    roomCodeEl.textContent = currentRoomCode;
-    startBtn.style.display = 'inline-flex';
-    leaveBtn.style.display = 'inline-flex';
-    updatePlayers([]);
-    showMsg('Room created: ' + currentRoomCode, 3000);
-  });
+  socket.on('roomCreated', (payload) => {
+  console.log('[socket] roomCreated', payload);
+  const code = payload?.code ?? payload?.roomId ?? payload;
+  currentRoomCode = code;
+  roomCode = code;          // <- set both
+  roomCodeEl.textContent = code;
+  amHost = true;
+  startBtn.style.display = 'inline-flex';
+  leaveBtn.style.display = 'inline-flex';
+  updatePlayers([]); // reset player list
+  showMsg('Room created: ' + code, 2600);
+});
+
 
   // ensure playerList updates
   socket.off('playerList');
@@ -502,6 +508,37 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
     setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
     return;
   }
+// inside handlePick(...) -> multiplayer branch
+el.classList.add('waiting');
+
+// make sure socket exists/connected
+if (!socket) {
+  console.warn('No socket object when trying to submit answer');
+  showMsg('Not connected to server', 2000);
+  return;
+}
+
+// find code in preferential order
+const codeToSend = currentRoomCode || roomCode || roomCodeEl.textContent || null;
+console.log('[submitAnswer] codeToSend, answerId, socket.id:', codeToSend, answerId, socket && socket.id);
+
+if (!codeToSend || codeToSend === '—') {
+  // visible helpful feedback so you know what's wrong
+  showMsg('No room code — join or create a room first', 2000);
+  el.classList.remove('waiting');
+  return;
+}
+
+try {
+  socket.emit('submitAnswer', { code: codeToSend, answerId });
+  // optimistic local feedback while server responds:
+  el.style.opacity = '0.7';
+  setTimeout(() => { el.style.opacity = ''; }, 1200);
+} catch (err) {
+  console.error('Emit failed', err);
+  showMsg('Failed to send answer', 1500);
+  el.classList.remove('waiting');
+}
 
   // multiplayer mode: send answer to server and wait for server to emit next question/updateScores
   // client should just disable and show visual feedback while server judges
