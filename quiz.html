@@ -43,11 +43,15 @@
   .qtext{font-weight:800;font-size:20px;margin-bottom:10px;min-height:56px}
   .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
   @media(max-width:520px){ .options{grid-template-columns:1fr} }
-  .opt{padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s, box-shadow .12s}
+  .opt{padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s, box-shadow .12s, opacity .12s}
   .opt:hover{transform:translateY(-6px)}
   .opt.correct{box-shadow:0 10px 30px rgba(52,211,153,0.12);border-color: rgba(52,211,153,0.2);background:rgba(52,211,153,0.06)}
   .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12);background:rgba(251,113,133,0.04)}
   .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+
+  /* time bar */
+  .time-wrap{height:10px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:12px}
+  .time-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--accentB),var(--accentA));transform-origin:left;transition:width 0.12s linear}
 
   /* right sidebar */
   .sidebar{display:flex;flex-direction:column;gap:12px}
@@ -79,6 +83,17 @@
   @media(max-width:720px){ .wrap{padding:8px} .stage{min-height:520px} }
 
   #message {position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;font-size:13px}
+
+  /* endscreen overlay */
+  .end-overlay{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(8,19,43,0.6), rgba(4,8,20,0.75));z-index:120;backdrop-filter: blur(6px);padding:16px}
+  .end-card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:18px;border-radius:14px;width:100%;max-width:520px;color:#051226}
+  .end-header{display:flex;justify-content:space-between;align-items:center}
+  .end-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:8px}
+  .end-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04)}
+  .end-winner{border:2px solid rgba(255,255,255,0.12);background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;font-weight:900}
+  .end-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+  .btn.end-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:inherit;padding:8px 12px;border-radius:10px}
+  .btn.end-primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;padding:8px 12px;border-radius:10px;font-weight:900}
 </style>
 </head>
 <body>
@@ -108,6 +123,10 @@
       <div class="question-card card" id="questionCard">
         <div class="qtext" id="qtext">Choose Solo or Host from the right panel to start playing.</div>
 
+        <div class="time-wrap" aria-hidden="true">
+          <div id="timeBar" class="time-bar" style="width:100%;"></div>
+        </div>
+
         <div style="display:flex;align-items:center;gap:12px" class="meta-row">
           <div style="flex:1">
             <div class="small" id="progressText">0 / 0</div>
@@ -115,8 +134,8 @@
           </div>
 
           <div style="width:96px;text-align:right">
-            <div class="small">Time bonus</div>
-            <div id="timeBonus" class="small">0</div>
+            <div class="small">Time left</div>
+            <div id="timeBonus" class="small">0s</div>
           </div>
         </div>
 
@@ -170,6 +189,7 @@
 
 <div id="message" class="small hidden"></div>
 
+<!-- Join modal -->
 <div id="joinModal" class="modal hidden" style="display:none">
   <div style="font-weight:900">Join Room</div>
   <input id="joinCode" placeholder="Room code (e.g. AB12)" />
@@ -177,6 +197,26 @@
   <div style="display:flex;gap:8px;margin-top:8px">
     <button class="btn primary" onclick="submitJoin()">Join</button>
     <button class="btn ghost" onclick="closeJoinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Endscreen overlay -->
+<div id="endScreen" class="end-overlay" style="display:none">
+  <div class="end-card" role="dialog" aria-modal="true" aria-labelledby="endTitle">
+    <div class="end-header">
+      <div>
+        <div id="endTitle" style="font-weight:900;color:#eaf5ff">Final Scores</div>
+        <div class="small" id="endSubtitle">Well played — here are the results</div>
+      </div>
+      <div id="endScoreSummary" style="text-align:right;color:#eaf5ff"></div>
+    </div>
+
+    <div id="endList" class="end-list"></div>
+
+    <div class="end-actions">
+      <button class="btn end-ghost" onclick="closeEndScreen()">Home</button>
+      <button class="btn end-primary" onclick="playAgain()">Play again</button>
+    </div>
   </div>
 </div>
 
@@ -205,7 +245,7 @@ let multiplayerIndex = null;
 let multiplayerTotal = null;
 let currentRoomCode = null;
 
-// Submission guard (fix for your error)
+// Submission guard
 const submittedRef = { current: {} };
 
 const serverName = document.getElementById('serverName');
@@ -218,12 +258,17 @@ const comboDisplay = document.getElementById('comboDisplay');
 const progressText = document.getElementById('progressText');
 const hintText = document.getElementById('hintText');
 const timeBonus = document.getElementById('timeBonus');
+const timeBar = document.getElementById('timeBar');
 const playersEl = document.getElementById('players');
 const roomCodeEl = document.getElementById('roomCode');
 const startBtn = document.getElementById('startBtn');
 const leaveBtn = document.getElementById('leaveBtn');
 const messageEl = document.getElementById('message');
 const joinModal = document.getElementById('joinModal');
+
+const endScreen = document.getElementById('endScreen');
+const endList = document.getElementById('endList');
+const endScoreSummary = document.getElementById('endScoreSummary');
 
 /* show server text */
 serverName.textContent = API_URL.replace(/^https?:\/\//,'');
@@ -388,6 +433,8 @@ function attachSocketHandlers() {
     burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
     showMsg('Game over! Check final scores', 3000);
     updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
+    // show end screen with scores
+    showEndScreen(scores.map(s => ({ id: s.id, name: s.name, total: s.total || s.score || 0 })));
   });
 
   socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
@@ -427,7 +474,7 @@ function renderQuizList(){
 /* ====== SOLO flow ====== */
 async function openSolo(qid){
   mode = 'solo';
-  await connectSocket(); // optional keep socket for later
+  await connectSocket(); // optional keep socket for leaderboard later
   try{
     const r = await fetch(`${API_URL}/api/quizzes/${qid}`);
     if(!r.ok) throw new Error(await r.text());
@@ -472,6 +519,7 @@ function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
 /* ====== render question & handle picks ====== */
 function showQuestion(){
   clearInterval(timer);
+  updateTimeBar(1);
   timeBonus.textContent = '';
 
   if(mode === 'solo'){
@@ -486,7 +534,7 @@ function showQuestion(){
   }
 
   if(mode === 'multi'){
-    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start...'; optionsEl.innerHTML = ''; return; }
+    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start...'; optionsEl.innerHTML = ''; updateTimeBar(0); return; }
     const q = currentMultiQuestion;
     qtext.textContent = q.question || '...';
     if(typeof multiplayerIndex === 'number' && multiplayerTotal) progressText.textContent = `${multiplayerIndex+1} / ${multiplayerTotal}`;
@@ -543,7 +591,11 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
 
 function finishRun(){
   clearInterval(timer);
+  // prepare final score list for solo
+  const scores = [{ id: 'you', name: 'You', total: score }];
   showMsg(`Run finished! Score ${score}`, 3000);
+  // show the endscreen using same UI
+  showEndScreen(scores);
   questions = []; currentIndex=0; score=0; combo=0;
   qtext.textContent = 'Hit Solo or Host to play again';
   optionsEl.innerHTML = '';
@@ -551,20 +603,36 @@ function finishRun(){
   comboDisplay.textContent = 'combo ×0';
 }
 
-/* ====== timer ====== */
+/* ====== timer & time bar ====== */
 function startTimer(seconds){
   clearInterval(timer);
   timerDuration = seconds;
   timerRemaining = seconds;
+  updateTimeBar(1);
   const tick = 0.1;
   timer = setInterval(()=>{
     timerRemaining = Math.max(0, timerRemaining - tick);
-    timeBonus.textContent = Math.round(timerRemaining);
+    timeBonus.textContent = Math.round(timerRemaining) + 's';
+    const frac = Math.max(0, timerRemaining / timerDuration);
+    updateTimeBar(frac);
     if(timerRemaining <= 0){
       clearInterval(timer);
       onTimeUp();
     }
   }, tick*1000);
+}
+function updateTimeBar(fraction){
+  // fraction between 0..1
+  const pct = Math.max(0, Math.min(1, fraction)) * 100;
+  timeBar.style.width = pct + '%';
+  // color shift for urgency
+  if (fraction < 0.25) {
+    timeBar.style.background = 'linear-gradient(90deg,#fb7185,#ff7ab6)';
+  } else if (fraction < 0.6) {
+    timeBar.style.background = 'linear-gradient(90deg,#ffd86b,#ff7ab6)';
+  } else {
+    timeBar.style.background = 'linear-gradient(90deg,#60a5fa,#34d399)';
+  }
 }
 function onTimeUp(){
   Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
@@ -579,7 +647,7 @@ function onTimeUp(){
     setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) finishRun(); else showQuestion(); }, 900);
     return;
   }
-  // multiplayer: notify server optionally (we just wait for server to end question on timeout)
+  // multiplayer: wait for server to end the question (server auto-ends on timeout)
   showMsg('Time up — waiting for host', 1800);
 }
 
@@ -676,6 +744,48 @@ function updatePlayers(list){
     el.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}${p.answered ? ' ✓' : ''}</div>`;
     playersEl.appendChild(el);
   });
+}
+
+/* ===== End screen UI ===== */
+function showEndScreen(scores){
+  // scores: [{ id, name, total }] or [{ id, name, score }] or single-player
+  endList.innerHTML = '';
+  if(!Array.isArray(scores)) scores = [scores];
+  const normalized = scores.map(s => ({ id: s.id || s.name, name: s.name || s.id || 'Player', total: (s.total ?? s.score ?? 0) }));
+
+  normalized.sort((a,b) => (b.total || 0) - (a.total || 0));
+  const top = normalized[0];
+
+  endScoreSummary.innerHTML = `<div style="font-weight:800">${top.name} wins — ${top.total} pts</div>`;
+
+  normalized.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'end-row' + (i===0 ? ' end-winner' : '');
+    row.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div style="font-weight:900">#${i+1}</div><div>${escapeHtml(p.name)}</div></div><div style="font-weight:900">${p.total}</div>`;
+    endList.appendChild(row);
+  });
+
+  endScreen.style.display = 'flex';
+  burstConfetti(window.innerWidth/2, window.innerHeight/3, 120);
+}
+
+function closeEndScreen(){
+  endScreen.style.display = 'none';
+  // reset to home/menu view
+  mode = 'idle';
+  currentMultiQuestion = null;
+  multiplayerIndex = null;
+  multiplayerTotal = null;
+  submittedRef.current = {};
+  updateTimeBar(0);
+  qtext.textContent = 'Choose Solo or Host from the right panel to start playing.';
+  optionsEl.innerHTML = '';
+}
+
+function playAgain(){
+  // simple behavior: go home (user can click Play/Host again)
+  closeEndScreen();
+  showMsg('Ready — start another game', 1400);
 }
 
 /* ====== small helpers ====== */
