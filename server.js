@@ -226,14 +226,18 @@ socket.on("submitAnswer", ({ code, answerId }) => {
 
 function emitQuestion(code) {
   const room = rooms.get(code);
+  if (!room) return;
   const q = room.questions[room.index];
   io.to(code).emit("question", {
+    index: room.index,
+    total: room.questions.length,
     id: q.id,
-    question: q.text, // 👈 matches REST
+    question: q.text,
     answers: q.answers.map(a => ({ id: a.id, text: a.text })),
-    correctAnswerId: q.answers.find(a => a.is_correct)?.id || null // 👈 so frontend can check
+    // do NOT include is_correct for multiplayer clients
   });
 }
+
 
 /* -------------------- start -------------------- */
 const PORT = process.env.PORT || 3000;

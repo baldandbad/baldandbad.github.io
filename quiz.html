@@ -3,298 +3,335 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>QuizRoom — Mobile & Multiplayer</title>
+<title>Quiz MiniGame — Play / Host</title>
 <link rel="icon" href="data:," />
 <style>
   :root{
-    --bg1:#0f1724; --bg2:#071029;
-    --card:rgba(255,255,255,0.04);
-    --muted: #a8c0ff;
-    --accent1: linear-gradient(135deg,#ff7ab6,#ffd86b);
-    --accent2: linear-gradient(135deg,#7dd3fc,#6ee7b7);
-    --green:#34d399; --red:#fb7185;
+    --bg1:#0b1220; --bg2:#08132b;
+    --card: rgba(255,255,255,0.03);
+    --accentA:#ff7ab6; --accentB:#ffd86b;
+    --good:#34d399; --bad:#fb7185;
+    --glass: rgba(255,255,255,0.03);
     --radius:14px;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#e6f0ff;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:16px;}
-  .app{width:100%;max-width:980px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:14px;display:grid;grid-template-columns:360px 1fr;gap:16px;box-shadow:0 12px 40px rgba(2,6,23,0.6);}
-  /* mobile stack */
-  @media (max-width:900px){ .app{grid-template-columns:1fr;padding:12px} }
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf5ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
 
-  /* left panel */
-  .left{padding:12px;min-height:520px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent); }
-  .brand{display:flex;align-items:center;gap:12px}
-  .logo{width:54px;height:54px;border-radius:12px;background:var(--accent1);display:flex;align-items:center;justify-content:center;font-weight:900;color:#081226}
-  h1{margin:0;font-size:20px}
-  p.lead{margin:6px 0 12px;color:var(--muted);font-size:13px}
+  /* container */
+  .wrap{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:12px;display:grid;grid-template-columns:1fr 360px;gap:12px}
+  @media(max-width:920px){ .wrap{grid-template-columns:1fr} }
 
-  .modes{display:flex;gap:10px;flex-direction:column}
-  .mode-btn{padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center}
-  .mode-btn:hover{transform:translateY(-4px);transition:all .12s}
+  /* left-stage */
+  .stage{background:var(--card);border-radius:12px;padding:14px;min-height:560px;display:flex;flex-direction:column;gap:12px;position:relative}
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+  .logo{display:flex;gap:10px;align-items:center}
+  .badge{width:44px;height:44px;border-radius:10px;background:linear-gradient(45deg,var(--accentA),var(--accentB));display:flex;align-items:center;justify-content:center;font-weight:900;color:#051426}
+  .server{font-size:13px;color:#cfe6ff;opacity:.9}
 
-  .quiz-list{margin-top:12px;max-height:44vh;overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:8px}
-  .quiz-card{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent);border:1px solid rgba(255,255,255,0.02)}
-  .quiz-card button{padding:8px 10px;border-radius:8px;border:none;background:var(--accent2);color:#05212a;font-weight:800;cursor:pointer}
-
-  /* right content */
-  .right{padding:14px;border-radius:12px;min-height:520px;display:flex;flex-direction:column;gap:12px}
-  .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
-  .content-header{display:flex;justify-content:space-between;align-items:center}
-  .muted{color:var(--muted);font-size:13px}
-
-  /* quiz UI */
-  .quiz-area{display:flex;flex-direction:column;gap:10px}
-  .qtext{font-size:18px;font-weight:800}
-  .progress{height:10px;background:rgba(255,255,255,0.02);border-radius:999px;overflow:hidden}
-  .progress > em{display:block;height:100%;width:0%;background:linear-gradient(90deg,#6ee7b7,#7dd3fc)}
-
+  .game-area{display:flex;gap:12px;align-items:flex-start}
+  .question-card{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:16px;border-radius:12px;position:relative;overflow:hidden}
+  .qtext{font-weight:800;font-size:20px;margin-bottom:10px;min-height:56px}
   .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-  @media (max-width:520px){ .options{grid-template-columns:1fr} }
-  .opt{padding:12px;border-radius:10px;background:rgba(255,255,255,0.01);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s}
+  @media(max-width:520px){ .options{grid-template-columns:1fr} }
+  .opt{padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s, box-shadow .12s}
   .opt:hover{transform:translateY(-6px)}
-  .opt.correct{background:linear-gradient(90deg, rgba(52,211,153,0.12), rgba(125,211,252,0.04));border-color:rgba(52,211,153,0.2)}
-  .opt.wrong{background:linear-gradient(90deg, rgba(251,113,133,0.12), rgba(255,122,182,0.02));border-color:rgba(251,113,133,0.12)}
+  .opt.correct{box-shadow:0 10px 30px rgba(52,211,153,0.12);border-color: rgba(52,211,153,0.2)}
+  .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12)}
+  .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 
-  .controls{display:flex;gap:8px;align-items:center}
-  .btn{padding:10px 14px;border-radius:10px;border:none;background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#081226;font-weight:800;cursor:pointer}
-  .btn.secondary{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted)}
-  .room-code{font-size:20px;font-weight:900;background:linear-gradient(90deg,#ffd86b,#7dd3fc);color:#041826;padding:12px;border-radius:10px;display:inline-block}
+  /* right sidebar */
+  .sidebar{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  .list{max-height:44vh;overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:8px}
+  .quiz-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:900}
+  .btn.primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#081226}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff}
 
-  .players-list{max-height:160px;overflow:auto;padding-top:6px}
-  .player-item{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px dashed rgba(255,255,255,0.02)}
-  .small{font-size:13px;color:var(--muted)}
+  .scoreboard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent)}
+  .score-number{font-size:28px;font-weight:900}
+  .combo{font-weight:800;color:#ffd86b}
+
+  .small{font-size:13px;color:#a8c0ff}
+  .hidden{display:none}
+  .shake{animation:shake .45s}
+  @keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}}
+  .pop{animation:pop .18s}
+  @keyframes pop{from{transform:scale(0.96)}to{transform:scale(1)}}
+
+  /* ensure list scrolls on mobile nicely */
+  #quizList { max-height: 40vh; overflow:auto; -webkit-overflow-scrolling:touch; padding-right:6px; }
+
+  /* join modal */
+  .modal {
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;background:var(--card);padding:16px;border-radius:12px;box-shadow:0 18px 40px rgba(0,0,0,0.6);min-width:260px;
+  }
+  .modal input{width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0}
+  .modal .row{display:flex;gap:8px}
+  @media(max-width:720px){ .wrap{padding:8px} .stage{min-height:520px} }
+
+  /* small "message" at bottom */
+  #message {position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;font-size:13px}
 </style>
 </head>
 <body>
-<div class="app">
-  <div class="left">
-    <div class="brand">
-      <div class="logo">QZ</div>
-      <div>
-        <h1>QuizRoom</h1>
-        <div class="muted">Solo & Live multiplayer — Mobile-first</div>
+
+<div class="wrap">
+  <!-- LEFT -->
+  <div class="stage" id="stage">
+    <div class="topbar">
+      <div class="logo">
+        <div class="badge">QM</div>
+        <div>
+          <div style="font-weight:900">Quiz MiniGame</div>
+          <div class="server small" id="serverName">server</div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:12px;align-items:center">
+        <div class="scoreboard card">
+          <div class="small">Score</div>
+          <div class="score-number" id="scoreDisplay">0</div>
+          <div class="combo small" id="comboDisplay">combo ×0</div>
+        </div>
       </div>
     </div>
 
-    <div style="margin-top:12px" class="modes">
-      <div class="mode-btn" onclick="showSoloSelect()">
-        <div><strong>Solo</strong><div class="small">Practice & leaderboard</div></div>
-        <div>🎮</div>
-      </div>
-      <div class="mode-btn" onclick="showRoomSelect()">
-        <div><strong>Live (Rooms)</strong><div class="small">Host or join friends</div></div>
-        <div>👥</div>
-      </div>
-    </div>
+    <div class="game-area">
+      <div class="question-card card" id="questionCard">
+        <div class="qtext" id="qtext">Choose Solo or Host from the right panel to start playing.</div>
 
-    <div style="margin-top:12px">
-      <div class="small" style="margin-bottom:8px">Quick quizzes</div>
-      <div id="quizList" class="quiz-list card"></div>
+        <div style="display:flex;align-items:center;gap:12px" class="meta-row">
+          <div style="flex:1">
+            <div class="small" id="progressText">0 / 0</div>
+            <div class="small" id="hintText">Fast answers give a time bonus</div>
+          </div>
+
+          <div style="width:96px;text-align:right">
+            <div class="small">Time bonus</div>
+            <div id="timeBonus" class="small">0</div>
+          </div>
+        </div>
+
+        <div style="margin-top:14px" id="options" class="options"></div>
+      </div>
     </div>
   </div>
 
-  <div class="right">
-    <div class="card content-header">
-      <div>
-        <div class="small">Server</div>
-        <div id="serverName">—</div>
+  <!-- RIGHT -->
+  <div class="sidebar">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div style="font-weight:900" id="titleSide">Play</div>
+          <div class="small">Solo & Multiplayer</div>
+        </div>
+        <div class="small" id="socketStatus">Socket: disconnected</div>
       </div>
-      <div style="text-align:right">
-        <div id="socketStatus" class="small">Socket: disconnected</div>
-        <div style="margin-top:8px"><button class="btn secondary" onclick="refreshQuizzes()">Refresh</button></div>
-      </div>
-    </div>
 
-    <div id="mainCard" class="card">
-      <h2 style="margin:0 0 6px">Welcome to QuizRoom</h2>
-      <div class="small">Tap Solo to practice, or Host a Room and share the code with friends.</div>
       <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn" onclick="showSoloSelect()">Start Solo</button>
-        <button class="btn secondary" onclick="showRoomSelect()">Host / Join</button>
+        <button class="btn primary" onclick="openSolo()">Solo</button>
+        <button class="btn ghost" onclick="openHostList()">Host</button>
+        <button class="btn ghost" onclick="openJoinModal()">Join</button>
       </div>
     </div>
 
-    <div id="quizCard" class="card" style="display:none">
+    <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div><strong id="quizTitle">Quiz Title</strong><div id="qmeta" class="small">Question x / y</div></div>
-        <div id="scoreBox" class="small">Score: 0</div>
+        <div class="small">Quizzes</div>
+        <div><button class="btn ghost" onclick="refreshQuizzes()">Refresh</button></div>
       </div>
-
-      <div style="margin-top:10px" class="quiz-area">
-        <div class="progress"><em id="progBar"></em></div>
-        <div class="qtext" id="qtext">Question text</div>
-        <div id="options" class="options"></div>
-
-        <div class="controls">
-          <button class="btn secondary" id="prevBtn" onclick="prevQ()" style="display:none">Prev</button>
-          <button class="btn secondary" id="nextBtn" onclick="nextQ()" style="display:none">Next</button>
-          <div style="flex:1"></div>
-          <button class="btn" id="finishBtn" onclick="finishSolo()" style="display:none">Finish</button>
-        </div>
-      </div>
+      <div id="quizList" class="list"></div>
     </div>
 
-    <div id="lobbyCard" class="card" style="display:none">
+    <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div>
-          <strong>Lobby</strong>
-          <div id="lobbyHint" class="small">Host or join a lobby</div>
-        </div>
-        <div>
-          <div id="roomCode" class="room-code">—</div>
-        </div>
+        <div class="small">Lobby</div>
+        <div><span class="small" id="roomCode">—</span></div>
       </div>
-
-      <div style="margin-top:10px">
+      <div style="margin-top:8px">
         <div class="small">Players</div>
-        <div id="players" class="players-list"></div>
-
-        <div style="margin-top:10px;display:flex;gap:8px">
-          <button class="btn" id="hostStartBtn" onclick="hostStart()" style="display:none">Start Game</button>
-          <button class="btn secondary" id="copyCodeBtn" onclick="copyRoomCode()" style="display:none">Copy Code</button>
-          <button class="btn secondary" id="leaveBtn" onclick="leaveRoom()" style="display:none">Leave</button>
-        </div>
+        <div id="players" style="max-height:160px;overflow:auto;margin-top:8px"></div>
+      </div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <button class="btn primary" id="startBtn" onclick="startRoom()" style="display:none">Start</button>
+        <button class="btn ghost" id="leaveBtn" onclick="leaveRoom()" style="display:none">Leave</button>
       </div>
     </div>
-
   </div>
 </div>
 
-<!-- socket.io -->
+<div id="message" class="small hidden"></div>
+
+<!-- Join modal template (hidden until needed) -->
+<div id="joinModal" class="modal hidden" style="display:none">
+  <div style="font-weight:900">Join Room</div>
+  <input id="joinCode" placeholder="Room code (e.g. AB12)" />
+  <input id="joinName" placeholder="Your name" />
+  <div style="display:flex;gap:8px;margin-top:8px">
+    <button class="btn primary" onclick="submitJoin()">Join</button>
+    <button class="btn ghost" onclick="closeJoinModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- Socket.IO -->
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-/* =========================
-   CONFIG - change this
-   ========================= */
-const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app"; // <- set to your backend root (no trailing slash)
+/* ====== CONFIG - set your backend (no trailing slash) ====== */
+const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app";
 
-/* =========================
-   STATE
-   ========================= */
+/* ====== state & DOM refs ====== */
+let _handlersAttached = false;
+let socket = null;
 let quizzes = [];
 let questions = [];
 let currentIndex = 0;
 let score = 0;
-let inSolo = false;
-let inRoom = false;
+let combo = 0;
+let timer = null;
+let timerDuration = 12;
+let timerRemaining = 0;
 let roomCode = null;
 let amHost = false;
-let socket = null;
 
-/* DOM refs */
+let mode = 'idle'; // 'solo' or 'multi'
+let currentMultiQuestion = null;
+let multiplayerIndex = null;
+let multiplayerTotal = null;
+let currentRoomCode = null;
 const serverName = document.getElementById('serverName');
 const socketStatus = document.getElementById('socketStatus');
 const quizListEl = document.getElementById('quizList');
-const quizCard = document.getElementById('quizCard');
-const quizTitle = document.getElementById('quizTitle');
-const qmeta = document.getElementById('qmeta');
 const qtext = document.getElementById('qtext');
 const optionsEl = document.getElementById('options');
-const progBar = document.getElementById('progBar');
-const scoreBox = document.getElementById('scoreBox');
-const mainCard = document.getElementById('mainCard');
-const lobbyCard = document.getElementById('lobbyCard');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const comboDisplay = document.getElementById('comboDisplay');
+const progressText = document.getElementById('progressText');
+const hintText = document.getElementById('hintText');
+const timeBonus = document.getElementById('timeBonus');
 const playersEl = document.getElementById('players');
 const roomCodeEl = document.getElementById('roomCode');
-const hostStartBtn = document.getElementById('hostStartBtn');
-const copyCodeBtn = document.getElementById('copyCodeBtn');
+const startBtn = document.getElementById('startBtn');
 const leaveBtn = document.getElementById('leaveBtn');
-const prevBtn = document.getElementById('prevBtn');
-const nextBtn = document.getElementById('nextBtn');
-const finishBtn = document.getElementById('finishBtn');
+const messageEl = document.getElementById('message');
+const joinModal = document.getElementById('joinModal');
 
-/* INIT UI */
+/* show server text */
 serverName.textContent = API_URL.replace(/^https?:\/\//,'');
 
-/* ------ Socket helpers ------ */
-function connectSocket() {
-  if (socket && socket.connected) return;
-  // pass transports to prefer websocket (helpful on some hosts)
-  socket = io(API_URL, { transports: ['websocket','polling'] });
+/* ====== helper: show message ====== */
+function showMsg(t, timeout=2500){
+  messageEl.textContent = t; messageEl.classList.remove('hidden');
+  setTimeout(()=>{ messageEl.classList.add('hidden'); }, timeout);
+}
 
-  socket.on('connect', () => {
-    socketStatus.textContent = 'Socket: connected';
-    socketStatus.style.color = '#9ae6b4';
-    console.log('socket connected', socket.id);
-  });
+const AudioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+function playTone(f, t = 0.12, type='sine', gain=0.12){
+  if(!AudioCtx) return;
+  const o = AudioCtx.createOscillator();
+  const g = AudioCtx.createGain();
+  o.type = type;
+  o.frequency.value = f;
+  g.gain.value = gain;
+  o.connect(g); g.connect(AudioCtx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.0001, AudioCtx.currentTime + t);
+  setTimeout(()=>{ try{ o.stop(); }catch(e){} }, t*1000 + 10);
+}
+function clickSound(){ playTone(880, 0.06, 'sine', 0.06); }
+function correctSound(){ playTone(900,0.06,'sine',0.08); setTimeout(()=>playTone(1200,0.06,'sine',0.06),80); }
+function wrongSound(){ playTone(220,0.12,'sawtooth',0.12); }
+function startSound(){ playTone(440,0.12,'sine',0.12); setTimeout(()=>playTone(660,0.08,'sine',0.08),130); }
+function finishSound(){ playTone(520,0.12,'triangle',0.12); setTimeout(()=>playTone(780,0.08,'triangle',0.08),150); }
 
-  socket.on('connect_error', (err) => {
-    socketStatus.textContent = 'Socket: conn error';
-    socketStatus.style.color = '#fca5a5';
-    console.error('connect_error', err);
-  });
+/* ====== robust socket connect (handles CORS errors nicely) ====== */
+// returns a Promise that resolves to the connected socket
+function attachSocketHandlers() {
+  if (!socket || _handlersAttached) return;
+  _handlersAttached = true;
 
-  socket.on('disconnect', (reason) => {
-    socketStatus.textContent = 'Socket: disconnected';
-    socketStatus.style.color = '';
-    console.log('socket disconnected', reason);
-  });
+  // generic debug handlers
+  socket.on('connect', () => console.log('[socket] connect', socket.id));
+  socket.on('disconnect', (reason) => console.log('[socket] disconnect', reason));
+  socket.on('connect_error', (err) => console.warn('[socket] conn error', err && err.message));
 
-  // room created -> server may return { code } or { roomId } (we support both)
-  socket.on('roomCreated', (payload) => {
-    const code = payload?.code ?? payload?.roomId ?? payload;
-    if (!code) return alert('Invalid room code from server');
-    roomCode = code;
-    amHost = true;
-    inRoom = true;
-    showLobby();
-    updatePlayers([]); // empty initially
-    roomCodeEl.textContent = code;
-    hostStartBtn.style.display = 'inline-flex';
-    copyCodeBtn.style.display = 'inline-flex';
-    leaveBtn.style.display = 'inline-flex';
-    console.log('roomCreated', payload);
-  });
+socket.on('roomCreated', (payload) => {
+  console.log('[socket] roomCreated', payload);
+  const code = payload?.code ?? payload?.roomId ?? payload;
+  // set both variables so older code/path works too
+  currentRoomCode = code;
+  roomCode = code;
+  amHost = true;
+  roomCodeEl.textContent = code;
+  startBtn.style.display = 'inline-flex';   // show Start
+  leaveBtn.style.display = 'inline-flex';
+  updatePlayers([]);                         // reset lobby player list
+  showMsg(`Room created: ${code}`, 3000);
+});
 
-  // someone joined -> server sends playerList
-  socket.on('playerList', (players) => {
-    updatePlayers(players || []);
-  });
 
-  // joined ack (some variants server may emit roomJoined)
   socket.on('roomJoined', (payload) => {
-    const code = payload?.roomId ?? payload?.code ?? payload;
-    roomCode = code;
-    amHost = false;
-    inRoom = true;
-    showLobby();
-    hostStartBtn.style.display = 'none';
-    copyCodeBtn.style.display = 'inline-flex';
-    leaveBtn.style.display = 'inline-flex';
+    console.log('[socket] roomJoined', payload);
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code;
+    roomCodeEl && (roomCodeEl.textContent = code);
+    showMsg && showMsg(`Joined room ${code}`, 2200);
   });
 
-  // question incoming for live mode
+  socket.on('playerList', (list) => {
+    console.log('[socket] playerList', list);
+    updatePlayers && updatePlayers(list || []);
+  });
+
   socket.on('question', (q) => {
-    // our server emits { id, question, answers: [{id,text}], correctAnswerId (optional) }
-    if (!q) return;
-    questions = [{ id: q.id ?? q.questionId, question: q.question ?? q.text, answers: q.answers || [], correctAnswerId: q.correctAnswerId ?? null }];
-    currentIndex = q.index ?? 0;
-    inSolo = false;
-    inRoom = true;
-    showQuizCard();
+    console.log('[socket] question', q);
+    // normalize incoming question to the shape your UI expects
+    const normalized = {
+      id: q.id ?? q.questionId ?? q.id,
+      question: q.text ?? q.question ?? q.q,
+      answers: q.answers ?? q.options ?? [],
+      index: (typeof q.index !== 'undefined') ? q.index : null,
+      total: (typeof q.total !== 'undefined') ? q.total : null,
+      correctAnswerId: q.correctAnswerId ?? null
+    };
+    // store and render - your UI should use currentMultiQuestion if in multiplayer mode
+    currentMultiQuestion = normalized;
+    multiplayerIndex = normalized.index;
+    multiplayerTotal = normalized.total;
+    mode = 'multi';
+    showQuestion && showQuestion();
   });
 
-  // scores update
-  socket.on('updateScores', (players) => {
-    updatePlayers(players || []);
+  socket.on('updateScores', (payload) => {
+    console.log('[socket] updateScores', payload);
+    updatePlayers && updatePlayers(payload || []);
   });
 
-  // game over
   socket.on('gameOver', (payload) => {
-    // payload may be array or object
-    const res = payload?.scores ?? payload;
-    console.log('gameOver', res);
-    alert('Game over — check console or lobby');
-    showMain();
+    console.log('[socket] gameOver', payload);
+    finishSound && finishSound();
+    showMsg && showMsg('Game over', 2500);
+    // you may show final scoreboard here
   });
 
   socket.on('error', (e) => {
-    console.warn('socket error', e);
-    alert('Server error: '+(e.message||String(e)));
+    console.warn('[socket] server error', e);
   });
 }
 
-/* ------ UI actions ------ */
+
+
+/* ====== fetch quizzes (REST) ====== */
 async function refreshQuizzes(){
   try{
     const r = await fetch(API_URL + '/api/quizzes');
@@ -302,219 +339,361 @@ async function refreshQuizzes(){
     quizzes = await r.json();
     renderQuizList();
   }catch(e){
-    quizListEl.innerHTML = `<div class="small">Failed to load: ${e.message}</div>`;
-    console.error(e);
+    quizListEl.innerHTML = `<div class="small">Failed to load quizzes: ${escapeHtml(e.message)}</div>`;
   }
 }
 
 function renderQuizList(){
   quizListEl.innerHTML = '';
-  if(!Array.isArray(quizzes) || quizzes.length===0){
-    quizListEl.innerHTML = '<div class="small">No quizzes</div>'; return;
+  if(!quizzes || quizzes.length===0){
+    quizListEl.innerHTML = '<div class="small">No quizzes (click Refresh)</div>'; return;
   }
   quizzes.forEach(q=>{
-    const d = document.createElement('div'); d.className='quiz-card';
-    d.innerHTML = `<div style="flex:1"><div style="font-weight:800">${escapeHtml(q.title||('Quiz '+q.id))}</div><div class="small">ID: ${q.id}</div></div>`;
-    const btn = document.createElement('button'); btn.textContent='Play';
-    btn.addEventListener('click', ()=>startSolo(q.id));
-    d.appendChild(btn);
-    quizListEl.appendChild(d);
+    const row = document.createElement('div'); row.className='quiz-item';
+    row.innerHTML = `<div><strong>${escapeHtml(q.title||('Quiz '+q.id))}</strong><div class="small">ID ${q.id}</div></div>`;
+    const actions = document.createElement('div');
+    const playBtn = document.createElement('button'); playBtn.className='btn primary'; playBtn.textContent='Play';
+    playBtn.onclick = ()=> openSolo(q.id);
+    const hostBtn = document.createElement('button'); hostBtn.className='btn ghost'; hostBtn.textContent='Host';
+    hostBtn.onclick = ()=> createRoom(q.id);
+    actions.appendChild(playBtn); actions.appendChild(hostBtn);
+    row.appendChild(actions);
+    quizListEl.appendChild(row);
   });
 }
 
-/* show pages */
-function showMain(){ mainCard.style.display='block'; quizCard.style.display='none'; lobbyCard.style.display='none'; }
-function showQuizCard(){ mainCard.style.display='none'; quizCard.style.display='block'; lobbyCard.style.display='none'; }
-function showLobby(){ mainCard.style.display='none'; quizCard.style.display='none'; lobbyCard.style.display='block'; }
-function showSoloSelect(){ connectSocket(); showMain(); // show modal in right area that lists quizzes
-  // scroll section reused: render a simple list inside mainCard
-  const html = `<h3>Choose a quiz</h3><div id="soloScroll" style="max-height:40vh;overflow:auto;margin-top:8px"></div><div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
-  mainCard.innerHTML = html;
-  const area = document.getElementById('soloScroll');
-  quizzes.forEach(q=>{
-    const r = document.createElement('div'); r.className='quiz-card'; r.style.marginBottom='8px';
-    r.innerHTML = `<div style="flex:1"><strong>${escapeHtml(q.title)}</strong><div class="small">ID ${q.id}</div></div>`;
-    const b = document.createElement('button'); b.textContent='Start'; b.onclick = ()=>startSolo(q.id);
-    r.appendChild(b); area.appendChild(r);
-  });
-}
-function showRoomSelect(){ connectSocket(); // show host/join UI
-  const html = `<h3>Room mode</h3>
-    <div style="display:flex;gap:8px;margin-top:10px">
-      <button class="btn" onclick="openHostPicker()">Host</button>
-      <button class="btn secondary" onclick="openJoinBox()">Join</button>
-    </div>
-    <div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
-  mainCard.innerHTML = html;
-}
-
-/* Solo flow */
-async function startSolo(quizId){
+/* ====== SOLO flow ====== */
+async function openSolo(qid){
+  mode = 'solo';
+  connectSocket(); // keep socket connection open for later if you want leaderboard
   try{
-    const r = await fetch(`${API_URL}/api/quizzes/${quizId}`);
+    const r = await fetch(`${API_URL}/api/quizzes/${qid}`);
     if(!r.ok) throw new Error(await r.text());
     const data = await r.json();
-    questions = adaptServerQuestions(data);
-    if(questions.length===0) return alert('No questions returned for that quiz');
-    currentIndex = 0; score = 0; inSolo=true;
-    quizTitle.textContent = quizzes.find(x=>x.id==quizId)?.title || `Quiz ${quizId}`;
-    renderCurrentQuestion();
-    showQuizCard();
-  }catch(e){ alert('Failed to start quiz: '+e.message); console.error(e); }
+    questions = adaptRows(data);
+    if(questions.length === 0) { showMsg('Quiz has no questions'); return; }
+    currentIndex = 0; score = 0; combo = 0;
+    showQuestion(); // will use the solo path
+    startSound();
+  }catch(e){ showMsg('Failed to load quiz: ' + e.message, 3000); }
 }
+function attachSocketHandlers(){
+  if(!socket) return;
+  socket.off('question');
+  socket.on('question', (q) => {
+    // q may have many shapes; normalize:
+    const question = {
+      id: q.id ?? q.questionId ?? q.questionId,
+      question: q.question ?? q.text ?? q.question,
+      answers: q.answers ?? q.options ?? [],
+      index: (typeof q.index !== 'undefined') ? q.index : null,
+      total: (typeof q.total !== 'undefined') ? q.total : null,
+      correctAnswerId: q.correctAnswerId ?? null
+    };
 
-function adaptServerQuestions(rows){
-  // our server sends questions either:
-  // [{ id, question, answers: [{id,text}], correctAnswerId }]  OR
-  // rows with option_a/option_b...
+    // multiplayer mode: don't replace the quizzes array (solo uses quizzes array)
+    currentMultiQuestion = question;
+    multiplayerIndex = question.index;
+    multiplayerTotal = question.total;
+    // set UI mode and show:
+    mode = 'multi';
+    showQuestion(); // showQuestion checks mode and uses currentMultiQuestion
+    startSound();
+  });
+
+  socket.off('roomCreated');
+  socket.on('roomCreated', (p) => {
+    const c = p?.code ?? p?.roomId ?? p;
+    currentRoomCode = c; amHost = true;
+    roomCodeEl.textContent = currentRoomCode;
+    startBtn.style.display = 'inline-flex';
+    leaveBtn.style.display = 'inline-flex';
+    updatePlayers([]);
+    showMsg('Room created: ' + currentRoomCode, 3000);
+  });
+
+  // ensure playerList updates
+  socket.off('playerList');
+  socket.on('playerList', list => updatePlayers(list || []));
+  // other handlers left intact...
+}
+function adaptRows(rows){
   if(!Array.isArray(rows)) return [];
-  if(rows.length && rows[0].answers) return rows.map(r=>({ id:r.id, question:r.question, answers:r.answers, correctAnswerId:r.correctAnswerId || r.correct_option }));
+  if(rows.length && rows[0].answers) return rows.map(r=>({ id:r.id, question:r.question, answers:r.answers, correctAnswerId:r.correctAnswerId }));
   return rows.map(r=>({
-    id:r.id,
-    question: r.question_text || r.question,
-    answers:[
-      {id:'A', text:r.option_a},
-      {id:'B', text:r.option_b},
-      {id:'C', text:r.option_c},
-      {id:'D', text:r.option_d}
+    id: r.id,
+    question: r.question || r.question_text,
+    answers: [
+      { id:'A', text: r.option_a },
+      { id:'B', text: r.option_b },
+      { id:'C', text: r.option_c },
+      { id:'D', text: r.option_d }
     ].filter(x=>x.text),
     correctAnswerId: r.correct_option || r.correctAnswerId
   }));
 }
-
-function renderCurrentQuestion(){
-  const q = questions[currentIndex];
-  progBar.style.width = `${Math.round((currentIndex / Math.max(1,questions.length-1))*100)}%`;
-  qtext.textContent = q.question || '—';
-  qmeta.textContent = `Question ${currentIndex+1} / ${questions.length}`;
-  scoreBox.textContent = `Score: ${score}`;
+function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
   optionsEl.innerHTML = '';
-  q.answers.forEach(a=>{
-    const div = document.createElement('div'); div.className='opt';
-    div.innerHTML = `<div>${escapeHtml(a.text)}</div><div class="small" style="margin-top:6px">Choice ${escapeHtml(a.id)}</div>`;
-    div.onclick = ()=>selectAnswer(a.id, div);
-    optionsEl.appendChild(div);
+  answerArray.forEach(ans => {
+    const b = document.createElement('div'); b.className='opt';
+    b.innerHTML = `<div style="font-weight:800">${escapeHtml(ans.text)}</div><div class="small">Choice ${escapeHtml(ans.id)}</div>`;
+    b.onclick = () => {
+      clickSound();
+      handlePick(ans.id, b, playMode, correctIdIfSolo);
+    };
+    optionsEl.appendChild(b);
   });
-  prevBtn.style.display = currentIndex>0 ? 'inline-flex':'none';
-  finishBtn.style.display = (currentIndex>=questions.length-1) ? 'inline-flex':'none';
 }
 
-/* choosing answer (solo) */
-function selectAnswer(answerId, el){
-  // disable others
-  Array.from(optionsEl.children).forEach(ch=>ch.classList.add('disabled'));
-  const q = questions[currentIndex];
-  const correct = String(q.correctAnswerId || q.correct_option || q.correctAnswer);
-  const isCorrect = String(answerId) === String(correct);
-  if(isCorrect){ el.classList.add('correct'); score++; }
-  else { el.classList.add('wrong'); // reveal correct
+
+/* ====== render question & handle picks ====== */
+function showQuestion(){
+  // stop any previous timer
+  clearInterval(timer);
+
+  if(mode === 'solo'){
+    if(!questions.length){ qtext.textContent = 'No question loaded'; optionsEl.innerHTML=''; return; }
+    const q = questions[currentIndex];
+    qtext.textContent = q.question || '...';
+    progressText.textContent = `${currentIndex+1} / ${questions.length}`;
+    renderOptions(q.answers, q.correctAnswerId, 'solo');
+    startTimer(timerDuration);
+    scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
+    return;
+  }
+
+  // multiplayer mode: use currentMultiQuestion
+  if(mode === 'multi'){
+    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start the game...'; optionsEl.innerHTML = ''; return; }
+    const q = currentMultiQuestion;
+    qtext.textContent = q.question || '...';
+    // if server provided total, display it, otherwise only index
+    if(typeof multiplayerIndex === 'number' && multiplayerTotal) progressText.textContent = `${multiplayerIndex+1} / ${multiplayerTotal}`;
+    else if(typeof multiplayerIndex === 'number') progressText.textContent = `Question ${multiplayerIndex+1}`;
+    else progressText.textContent = 'Multiplayer';
+    renderOptions(q.answers, null, 'multi'); // don't show correct locally
+    startTimer(timerDuration);
+    return;
+  }
+
+  // fallback
+  qtext.textContent = 'Select Solo or Host to begin';
+  optionsEl.innerHTML = '';
+}
+
+function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
+  if(el.classList.contains('disabled')) return;
+  Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
+  clearInterval(timer);
+
+  if(playMode === 'solo'){
+    const q = questions[currentIndex];
+    const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
+    const isCorrect = String(answerId) === String(correct);
+    if(isCorrect){ correctSound(); const bonus = Math.round(timerRemaining); const gained = 10 + clamp(bonus, 0, timerDuration); score += gained; combo++; el.classList.add('correct'); showMsg('Correct! +' + gained, 1100); }
+    else { wrongSound(); combo = 0; el.classList.add('wrong'); // reveal correct
+      Array.from(optionsEl.children).forEach(ch=>{
+        const meta = ch.querySelector('.small')?.textContent || '';
+        const m = meta.match(/Choice\s*(.+)$/i);
+        if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
+      });
+    }
+    scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
+    setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
+    return;
+  }
+
+  // multiplayer mode: send answer to server and wait for server to emit next question/updateScores
+  // client should just disable and show visual feedback while server judges
+  // optimistic local feedback: tint selected choice while waiting
+  el.classList.add('waiting');
+  // emit answer with room code
+  try{
+    socket.emit('submitAnswer', { code: currentRoomCode || roomCode, answerId });
+  }catch(e){
+    console.warn('emit failed', e);
+  }
+  // Optionally play a click - server will send updateScores or next question
+  // We'll show a short checkmark animation after server responds; server is authoritative for scoring
+}
+
+
+function finishRun(){
+  clearInterval(timer);
+  showMsg(`Run finished! Score ${score}`, 3000);
+  // reset (optionally post score to server here)
+  questions = []; currentIndex=0; score=0; combo=0;
+  qtext.textContent = 'Hit Solo or Host to play again';
+  optionsEl.innerHTML = '';
+  scoreDisplay.textContent = '0';
+  comboDisplay.textContent = 'combo ×0';
+}
+
+/* ====== timer ====== */
+function startTimer(seconds){
+  clearInterval(timer);
+  timerDuration = seconds;
+  timerRemaining = seconds;
+  const tick = 0.1;
+  timer = setInterval(()=>{
+    timerRemaining = Math.max(0, timerRemaining - tick);
+    timeBonus.textContent = Math.round(timerRemaining);
+    if(timerRemaining <= 0){
+      clearInterval(timer);
+      onTimeUp();
+    }
+  }, tick*1000);
+}
+function onTimeUp(){
+  Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
+  if(mode === 'solo'){
+    const q = questions[currentIndex]; const correct = String(q.correctAnswerId || '');
     Array.from(optionsEl.children).forEach(ch=>{
       const meta = ch.querySelector('.small')?.textContent || '';
-      const match = meta.match(/Choice\s*(.+)$/i);
-      if(match && String(match[1]) === String(correct)) ch.classList.add('correct');
-      // fallback: compare text
-      if(!match && (q.answers.find(x=>String(x.id)===String(correct))?.text || '') ){
-        if(ch.textContent.trim().includes(q.answers.find(x=>String(x.id)===String(correct)).text)) ch.classList.add('correct');
-      }
+      const m = meta.match(/Choice\s*(.+)$/i);
+      if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
+    });
+    combo = 0;
+    setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) finishRun(); else showQuestion(); }, 900);
+    return;
+  }
+  // multiplayer: tell server "no answer" or just wait; we'll visually reveal nothing and wait for host
+  showMsg('Time up — waiting for host', 1800);
+}
+
+socket?.off?.('updateScores'); // safe detach
+socket?.on?.('updateScores', (players) => {
+  updatePlayers(players || []);
+  // play small tick sound
+  playTone(720,0.04,'sine',0.06);
+});
+socket?.off?.('gameOver');
+socket?.on?.('gameOver', (payload) => {
+  finishSound();
+  showMsg('Game over! See scores in lobby.', 2500);
+});
+
+/* ====== multiplayer (host & join) ====== */
+function openHostList(){
+  connectSocket();
+  // quiz list already has Host buttons; also show message
+  showMsg('Hit "Host" next to a quiz to create a room (in this UI).', 2500);
+}
+
+async function createRoom(quizId){
+  clickSound();
+  await connectSocket();
+  mode = 'multi';
+  console.log('emit createRoom', quizId);
+  socket.emit('createRoom', { quizId });
+}
+
+
+function openJoinModal(){
+  joinModal.style.display = 'block'; joinModal.classList.remove('hidden');
+}
+function closeJoinModal(){
+  joinModal.style.display = 'none'; joinModal.classList.add('hidden');
+}
+
+async function submitJoin(){
+  const code = document.getElementById('joinCode').value?.trim();
+  const name = document.getElementById('joinName').value?.trim() || 'Player';
+  if(!code){ showMsg('Enter room code'); return; }
+  await connectSocket();
+  mode = 'multi';
+  socket.emit('joinRoom', { code, name });
+  closeJoinModal();
+  currentRoomCode = code; roomCodeEl.textContent = currentRoomCode;
+  leaveBtn.style.display = 'inline-flex';
+  showMsg('Joining room ' + code, 1500);
+  clickSound();
+}
+function connectSocket() {
+  // If socket already connected -> resolve immediately
+  if (socket && socket.connected) return Promise.resolve(socket);
+
+  // If socket exists and is trying to connect -> return a promise that resolves on connect/error
+  if (socket && socket.connecting) {
+    return new Promise((resolve) => {
+      socket.once('connect', () => resolve(socket));
+      socket.once('connect_error', () => resolve(socket));
     });
   }
-  setTimeout(()=>{
-    currentIndex++;
-    if(currentIndex >= questions.length) finishSolo(); else renderCurrentQuestion();
-  }, 700);
-}
 
-function prevQ(){ if(currentIndex>0) { currentIndex--; renderCurrentQuestion(); } }
-function nextQ(){ if(currentIndex < questions.length-1) { currentIndex++; renderCurrentQuestion(); } }
-function finishSolo(){ inSolo=false; alert(`Quiz done — ${score}/${questions.length}`); showMain(); }
+  // create new socket
+  // NOTE: strip trailing slash from API_URL to avoid double slashes
+  const url = (typeof API_URL === 'string' ? API_URL.replace(/\/+$/, '') : '');
+  console.log('[connectSocket] connecting to', url);
 
-/* ----- Lobby / multiplayer ----- */
-function openHostPicker(){
-  if(quizzes.length===0) refreshQuizzes();
-  // small list to choose quiz to host
-  let html = '<h3>Choose quiz to host</h3><div style="max-height:38vh;overflow:auto;margin-top:8px">';
-  quizzes.forEach(q => {
-    html += `<div class="quiz-card" style="margin-bottom:8px"><div style="flex:1"><strong>${escapeHtml(q.title)}</strong><div class="small">ID ${q.id}</div></div><button onclick="createRoom(${q.id})">Host</button></div>`;
+  // create the socket (CDN socket.io client should be loaded)
+  socket = io(url, {
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 6,
+    // path: '/socket.io' // only set if your server uses a custom path
   });
-  html += '</div><div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>';
-  mainCard.innerHTML = html;
-  connectSocket();
+
+  // attach handlers once
+  attachSocketHandlers();
+
+  // return promise that resolves on connect or connect_error
+  return new Promise((resolve) => {
+    socket.once('connect', () => {
+      console.log('[connectSocket] connected', socket.id);
+      resolve(socket);
+    });
+    socket.once('connect_error', (err) => {
+      console.warn('[connectSocket] connect_error', err && err.message);
+      // resolve with socket anyway (caller can still emit and socket will queue if possible)
+      resolve(socket);
+    });
+  });
 }
 
-function createRoom(quizId){
-  if(!socket) connectSocket();
-  socket.emit('createRoom', { quizId });
-  // Wait for roomCreated event
-  console.log('createRoom emitted', quizId);
+/* ====== SOCKET: question handler (multiplayer) ====== */
+window.socket?.off?.('question'); // remove old if exists
+window.socket?.off?.('roomCreated'); // (will be reattached by connectSocket) - if you used the Promise connect version this may not be necessary
+
+function startRoom(){
+  // prefer currentRoomCode (set by server 'roomCreated' handler); fallback to roomCode
+  const code = currentRoomCode || roomCode;
+  if(!code){
+    showMsg('No room to start — create or join a room first', 1800);
+    return;
+  }
+  socket.emit('startGame', { code });   // server expects { code }
+  showMsg('Starting game…', 1000);
 }
 
-function openJoinBox(){
-  mainCard.innerHTML = `<h3>Join a room</h3>
-    <div style="display:flex;gap:8px;margin-top:8px"><input id="joinInput" placeholder="Room code" style="flex:1;padding:10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:inherit"/><button class="btn" onclick="joinRoomFromInput()">Join</button></div>
-    <div style="margin-top:12px"><button class="btn secondary" onclick="showMain()">Back</button></div>`;
-  connectSocket();
-}
-function joinRoomFromInput(){
-  const v = document.getElementById('joinInput').value.trim();
-  if(!v) return alert('Enter code');
-  const name = prompt('Display name (optional)') || 'Player';
-  socket.emit('joinRoom', { code: v, name });
-  // server should respond with playerList and maybe roomJoined event
-  console.log('joinRoom emitted', v, name);
+
+function leaveRoom(){
+  roomCode = null; amHost = false;
+  roomCodeEl.textContent = '—';
+  playersEl.innerHTML = '';
+  startBtn.style.display = 'none';
+  leaveBtn.style.display = 'none';
+  if(socket){ try{ socket.emit('leaveRoom', { code: roomCode }); } catch(e){} }
+  // optional: keep socket connected for solo; we won't disconnect to preserve reconnection
+  showMsg('Left room', 1200);
 }
 
-/* update players list */
 function updatePlayers(list){
   playersEl.innerHTML = '';
-  if(!list || list.length===0) playersEl.innerHTML = '<div class="small">No players yet</div>';
-  else {
-    list.forEach(p=>{
-      const div = document.createElement('div'); div.className='player-item';
-      div.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}</div>`;
-      playersEl.appendChild(div);
-    });
-  }
+  (list || []).forEach(p=>{
+    const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.padding='6px 0';
+    el.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}</div>`;
+    playersEl.appendChild(el);
+  });
 }
 
-/* After joining/hosting, show lobby card */
-function showLobby(){
-  mainCard.style.display='none';
-  quizCard.style.display='none';
-  lobbyCard.style.display='block';
+/* ====== small helpers ====== */
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-  roomCodeEl.textContent = roomCode || '—';
-  hostStartBtn.style.display = amHost ? 'inline-flex' : 'none';
-  copyCodeBtn.style.display = 'inline-flex';
-  leaveBtn.style.display = 'inline-flex';
-}
-
-/* host start command */
-function hostStart(){
-  if(!roomCode) return alert('No room'); socket.emit('startGame', { code: roomCode }); }
-
-/* copy room code */
-function copyRoomCode(){
-  if(!roomCode) return;
-  navigator.clipboard?.writeText(roomCode).then(()=> alert('Copied code'));
-}
-
-/* leave */
-function leaveRoom(){
-  // simply reset client UI; server will remove on disconnect
-  roomCode = null; amHost = false; inRoom = false;
-  showMain();
-  // try disconnect socket (optional)
-  if(socket) socket.disconnect();
-  socket = null;
-}
-
-/* util */
-function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-
-/* START */
+/* ====== bootstrap ====== */
 refreshQuizzes();
 connectSocket();
-showMain();
+
 </script>
 </body>
 </html>
