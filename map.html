@@ -123,6 +123,50 @@
   transition: background 0.2s;
 }
 
+/* custom div-icon marker (circle) */
+.marker-div {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  border: 3px solid white;
+}
+
+/* colored variants */
+.marker-cat-thanhpho { background: #ff7043; }
+.marker-cat-quocgia   { background: #d32f2f; }
+.marker-cat-kientruc  { background: #2196f3; }
+.marker-cat-baotang    { background: #f59e0b; }
+.marker-cat-khaoco     { background: #10b981; }
+.marker-cat-dacbiet    { background: #8b5cf6; }
+.marker-cat-default    { background: #6b7280; }
+
+/* active marker: larger ring */
+.marker-active {
+  transform: translate(-50%, -50%) scale(1.6);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+  z-index: 9999;
+}
+
+/* popup image styling */
+.popup-thumb {
+  width: 100%;
+  height: 110px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+/* small controls inside popup */
+.popup-actions { display:flex; gap:6px; margin-top:6px; }
+.popup-actions a, .popup-actions button {
+  padding:6px 10px; font-size:13px; border-radius:6px; text-decoration:none; color:#fff;
+  background:#1f2937; border:none;
+}
+.popup-actions a.directions { background:#ff7043; color:white; }
+.popup-actions button.share { background:#10b981; color:white; }
+
+
 .leaflet-control-zoom a:hover {
   background: #4CAF50 !important;
   color: white !important;
@@ -432,6 +476,72 @@
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
   }
+  .marker-div {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  border: 3px solid white;
+  transform: translate(-50%, -50%); /* center at iconAnchor */
+  pointer-events: auto;
+}
+.marker-cat-thanhpho { background:#ff7043; }
+.marker-cat-quocgia  { background:#d32f2f; }
+.marker-cat-kientruc { background:#2196f3; }
+.marker-cat-baotang  { background:#f59e0b; }
+.marker-cat-khaoco   { background:#10b981; }
+.marker-cat-dacbiet  { background:#8b5cf6; }
+.marker-cat-default  { background:#6b7280; }
+
+.marker-active { transform: translate(-50%, -50%) scale(1.6); box-shadow: 0 6px 18px rgba(0,0,0,0.45); z-index:9999; }
+
+/* tooltip style (optional) */
+.marker-tooltip { background: rgba(255,255,255,0.95); color: #111; border-radius:6px; padding:6px 10px; box-shadow:0 6px 18px rgba(0,0,0,0.16); }
+
+/* Clean, predictable divIcon + dot */
+.my-div-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+}
+
+.my-div-icon .marker-inner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.32);
+  background: #6b7280;
+}
+
+.marker-cat-thanhpho { background:#ff7043 !important; }
+.marker-cat-quocgia  { background:#d32f2f !important; }
+.marker-cat-kientruc { background:#2196f3 !important; }
+.marker-cat-baotang  { background:#f59e0b !important; }
+.marker-cat-khaoco   { background:#10b981 !important; }
+.marker-cat-dacbiet  { background:#8b5cf6 !important; }
+.marker-cat-default  { background:#6b7280 !important; }
+
+.marker-active .marker-inner {
+  transform: scale(1.45);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.42);
+}
+
+.leaflet-tooltip.my-tooltip {
+  transform: translateY(-6px);
+  padding: 6px 10px;
+  border-radius: 6px;
+  background: rgba(255,255,255,0.95);
+  color: #111;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+  font-weight: 600;
+  font-size: 13px;
+}
+
+
 </style>
 <nav class="custom-navbar">
   <div class="custom-navbar-inner">
@@ -486,6 +596,32 @@
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 <script src="https://unpkg.com/leaflet.markercluster/dist/leaflet.markercluster.js"></script>
 <script>
+  // basic escaping for popup injection safety
+function escapeHtml(str){ return (str||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+// to highlight a selected marker
+function setActiveMarker(m) {
+  if (activeMarker && activeMarker.getElement) {
+    const prev = activeMarker.getElement();
+    if (prev) prev.classList.remove('marker-active');
+  }
+  activeMarker = m;
+  if (!m) return;
+  const el = m.getElement();
+  if (el) el.classList.add('marker-active');
+  // bring to front so it's visible above cluster/others
+  if (m._icon) m._icon.style.zIndex = 9999;
+}
+
+// share fallback for browsers
+function sharePlace(name, lat, lng, page) {
+  if (navigator.share) {
+    navigator.share({ title: name, text: name, url: page || window.location.href }).catch(()=>{});
+  } else {
+    const shareUrl = page || `${location.origin}${location.pathname}?lat=${lat}&lng=${lng}`;
+    navigator.clipboard?.writeText(shareUrl).then(()=> alert('URL copied to clipboard'));
+  }
+}
   fetch('js/hcmc-boundary.geojson')
   .then(res => res.json())
   .then(data => {
@@ -553,20 +689,107 @@ const data = [
 
 
 
-const markerObjects = data.map(item => {
-  const marker = L.marker(item.coords).bindPopup(`
-  <div class="popup-content">
-    <h3>${item.name}</h3>
-    <a href="${item.page}" class="popup-btn" target="_blank">Xem thêm</a>
-  </div>
-`);
+// helper: map category -> CSS class
+function categoryClass(cat){
+  return {
+    thanhpho: 'marker-cat-thanhpho',
+    quocgia:  'marker-cat-quocgia',
+    kientruc: 'marker-cat-kientruc',
+    baotang:  'marker-cat-baotang',
+    khaoco:   'marker-cat-khaoco',
+    dacbiet:  'marker-cat-dacbiet',
+    khu:      'marker-cat-kientruc'
+  }[cat] || 'marker-cat-default';
+}
 
-  
+
+// helper: safe slug for thumbnail filename if you have thumbs (optional)
+function slugify(s){ return String(s||'').toLowerCase().replace(/[^\w]+/g,'-'); }
+
+// Keep reference to currently active marker
+let activeMarker = null;
+
+function setActiveMarker(m) {
+  // remove previous
+  if (activeMarker && activeMarker.getElement) {
+    const prev = activeMarker.getElement();
+    if (prev) prev.classList.remove('marker-active');
+  }
+  activeMarker = m;
+  if (!m) return;
+  const el = m.getElement();
+  if (el) el.classList.add('marker-active');
+  // bring to front visually
+  if (m._icon) m._icon.style.zIndex = 1000;
+}
+
+
+const markerObjects = data.map(item => {
+  // sizes must match CSS .my-div-icon
+  const ICON_SIZE = 18;
+  const innerClass = categoryClass(item.category);
+
+  const html = `<div class="marker-inner ${innerClass}" aria-hidden="true"></div>`;
+  const icon = L.divIcon({
+    className: 'my-div-icon',   // container that we sized in CSS
+    html: html,
+    iconSize: [ICON_SIZE, ICON_SIZE],
+    iconAnchor: [ICON_SIZE/2, ICON_SIZE/2]  // center the icon on the coordinate
+  });
+
+  const marker = L.marker(item.coords, { icon });
+
+  const thumbUrl = `images/thumbs/${slugify(item.name)}.jpg`;
+  const popupHtml = `
+    <div style="min-width:220px">
+      <img src="${thumbUrl}" style="width:100%;height:110px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>
+      <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
+      <div style="font-size:13px;color:#444">Loại: ${escapeHtml(item.category)}</div>
+      <div style="margin-top:8px;display:flex;gap:8px">
+        <a class="popup-btn" href="${item.page}" target="_blank">Xem thêm</a>
+        <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank">Chỉ đường</a>
+      </div>
+    </div>
+  `;
+  // offset slightly so popup appears above the dot (negative Y)
+  marker.bindPopup(popupHtml, { minWidth: 220, offset: L.point(0, -ICON_SIZE/2 - 6), autoPan: true, keepInView: true });
+
+  // lightweight tooltip (desktop only)
+  marker.bindTooltip(item.name, { permanent: false, direction: 'top', className: 'my-tooltip', offset: [0, -ICON_SIZE/2 - 8] });
+
+  // metadata for filters/search
   marker.category = item.category;
   marker.name = item.name;
+  marker._page = item.page;
+
+  // highlight + open popup on click
+  marker.on('click', () => {
+    setActiveMarker(marker);
+    marker.openPopup();
+  });
+
+  // show tooltip only on pointer: fine (desktop). avoids popups on touch devices
+  if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
+    marker.on('mouseover', () => marker.openTooltip());
+    marker.on('mouseout',  () => marker.closeTooltip());
+  }
+
+  // accessibility: make container focusable after it's added to the DOM
+  marker.on('add', () => {
+    const el = marker.getElement();
+    if (!el) return;
+    el.setAttribute('tabindex','0');
+    el.setAttribute('role','button');
+    el.setAttribute('aria-label', item.name);
+    el.addEventListener('keydown', (ev) => {
+      if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); marker.fire('click'); }
+    });
+  });
+
   markerCluster.addLayer(marker);
   return marker;
 });
+
 
   // --- Filter ---
   let activeFilter = "all";
