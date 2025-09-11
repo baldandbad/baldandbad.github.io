@@ -33,9 +33,9 @@ const API_KEY = process.env.OPENROUTER_API_KEY;
 app.post("/ask", async (req, res) => {
   const userMsg = req.body.message;
   const payload = {
-    model: "deepseek/deepseek-r1-0528-qwen3-8b:free",
+    model: "deepseek/deepseek-chat-v3.1:free",
     messages: [
-      { role: "system", content: "Tiếng Việt" },
+      { role: "system", content: "Bạn là một Trợ lý AI giúp học sinh về các di tích lịch sử trong TPHCM" },
       { role: "user", content: userMsg }
     ]
   };
