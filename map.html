@@ -790,6 +790,140 @@ const markerObjects = data.map(item => {
   return marker;
 });
 
+/* ----------------- Street View (no API key) — embed with fallback ----------------- */
+/* This code uses public Google Maps URLs (no API key). It will try to embed in a modal iframe.
+   If Google blocks embedding, we fall back to opening the URL in a new tab. */
+
+/* create modal once */
+(function(){
+  if (document.getElementById('sv-modal')) return;
+  const style = document.createElement('style');
+  style.textContent = `
+    #sv-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:14000; }
+    #sv-modal .sv-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.6); }
+    #sv-modal .sv-panel { position:relative; width:min(1100px,94vw); height:min(720px,86vh); background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.5); display:flex; flex-direction:column; }
+    #sv-modal .sv-header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#0b1220; color:#fff; font-weight:700; }
+    #sv-modal .sv-body { flex:1; background:#000; display:flex; }
+    #sv-modal iframe { width:100%; height:100%; border:0; display:block; }
+    #sv-modal .sv-close { background:transparent; color:#fff; border:0; font-size:20px; cursor:pointer; padding:6px 10px; }
+    #sv-modal .sv-fallback { padding:10px; text-align:center; font-size:13px; }
+    .popup-btn.sv { background: #2563eb; } /* small visual tweak for the sv button */
+  `;
+  document.head.appendChild(style);
+
+  const modal = document.createElement('div');
+  modal.id = 'sv-modal';
+  modal.innerHTML = `
+    <div class="sv-backdrop" tabindex="-1"></div>
+    <div class="sv-panel" role="dialog" aria-modal="true" aria-label="Street View">
+      <div class="sv-header">
+        <div class="sv-title">Xem 360</div>
+        <div>
+          <button class="sv-close" title="Đóng">✕</button>
+        </div>
+      </div>
+      <div class="sv-body">
+        <iframe sandbox="allow-scripts allow-same-origin allow-popups" src="about:blank" referrerpolicy="no-referrer"></iframe>
+      </div>
+      <div class="sv-fallback" style="display:none">
+        Xem 360 không thể nhúng ở đây — <a class="sv-open-new" target="_blank" rel="noopener">Mở ở tab mới</a>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+
+  const backdrop = modal.querySelector('.sv-backdrop');
+  const closeBtn = modal.querySelector('.sv-close');
+  const iframe = modal.querySelector('iframe');
+  const fallback = modal.querySelector('.sv-fallback');
+  const openNewLink = modal.querySelector('.sv-open-new');
+
+  function closeModal(){
+    iframe.src = 'about:blank';
+    fallback.style.display = 'none';
+    modal.style.display = 'none';
+  }
+  function openModalWithUrl(url){
+    // try to embed
+    modal.style.display = 'flex';
+    iframe.src = url + '&output=embed';
+    // set fallback link
+    openNewLink.href = url;
+    // after a short delay check if the iframe rendered a Google page or got blocked.
+    // There is no reliable cross-origin check; do a pragmatic fallback: after 900ms if iframe
+    // still has about:blank (rare) or user agent prevents rendering, show fallback.
+    setTimeout(() => {
+      // if iframe still 'about:blank' or has obvious block, show fallback — user can open new tab
+      if (!iframe.src || iframe.src.indexOf('about:blank') !== -1) {
+        fallback.style.display = 'block';
+      } else {
+        // sometimes Google will display a page that visually says "Sorry — we can't show" — user can close and open new tab
+        fallback.style.display = 'none';
+      }
+    }, 900);
+  }
+
+  backdrop.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModal);
+  // escape key
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+  // expose helper
+  window._openStreetViewModal = (lat, lng) => {
+    // build a friendly Google Maps URL that opens at the nearest Street View pano:
+    // use `layer=c&cbll=lat,lng&cbp=11,0,0,0,0`
+    // also provide non-embed variant (without &output=embed) as fallback open-in-new
+    const base = `https://www.google.com/maps?q=&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=11,0,0,0,0`;
+    try {
+      openModalWithUrl(base);
+    } catch (err) {
+      // fallback: just open new tab
+      window.open(base, '_blank', 'noopener');
+    }
+  };
+})();
+
+/* Insert Xem 360 button into popups when popup opens (uses the placeholder span in your popupHtml) */
+map.on('popupopen', (ev) => {
+  try {
+    const popupEl = ev.popup.getElement();
+    if (!popupEl) return;
+    const placeholder = popupEl.querySelector('.sv-placeholder');
+    if (!placeholder) return;
+
+    // Coordinates stored by your popup placeholder attributes
+    const lat = parseFloat(placeholder.dataset.lat);
+    const lng = parseFloat(placeholder.dataset.lng);
+    if (Number.isNaN(lat) || Number.isNaN(lng)) { placeholder.remove(); return; }
+
+    // create button
+    const btn = document.createElement('button');
+    btn.className = 'popup-btn sv';
+    btn.type = 'button';
+    btn.textContent = 'Xem 360';
+    btn.title = 'Mở Street View (không cần API key)';
+
+    btn.addEventListener('click', () => {
+      // Try to embed in modal; if blocked by X-Frame-Options, user can click "Mở ở tab mới"
+      // If modal embedding fails visually, fallback code inside modal will provide open-in-new link.
+      if (window._openStreetViewModal) {
+        window._openStreetViewModal(lat, lng);
+      } else {
+        // final fallback: open new tab directly
+        const url = `https://www.google.com/maps?q=&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=11,0,0,0,0`;
+        window.open(url, '_blank', 'noopener');
+      }
+    });
+
+    // replace placeholder span with the button
+    placeholder.replaceWith(btn);
+
+  } catch (e) {
+    // don't break popup if something goes wrong
+    console.warn('Failed to attach Xem 360 button', e);
+  }
+});
+
+
 
   // --- Filter ---
   let activeFilter = "all";
