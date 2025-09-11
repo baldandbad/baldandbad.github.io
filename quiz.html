@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Quiz MiniGame — Play / Host</title>
-<link rel="icon" href="data:," />
+<title>Bản đồ Di tích lịch sử TPHCM</title>
+<link rel="icon" href="images/favicon.png" />
 <style>
   :root{
     --bg1:#0b1220; --bg2:#08132b;
@@ -103,9 +103,9 @@
   <div class="stage" id="stage">
     <div class="topbar">
       <div class="logo">
-        <div class="badge">QM</div>
+        <div class="badge">Quiz</div>
         <div>
-          <div style="font-weight:900">Quiz MiniGame</div>
+          <div style="font-weight:900">Minigame</div>
           <div class="server small" id="serverName">server</div>
         </div>
       </div>
@@ -121,7 +121,7 @@
 
     <div class="game-area">
       <div class="question-card card" id="questionCard">
-        <div class="qtext" id="qtext">Choose Solo or Host from the right panel to start playing.</div>
+        <div class="qtext" id="qtext">Chọn "Play" để chơi hoặc "Host" để tạo phòng.</div>
 
         <div class="time-wrap" aria-hidden="true">
           <div id="timeBar" class="time-bar" style="width:100%;"></div>
@@ -130,11 +130,11 @@
         <div style="display:flex;align-items:center;gap:12px" class="meta-row">
           <div style="flex:1">
             <div class="small" id="progressText">0 / 0</div>
-            <div class="small" id="hintText">Fast answers give a time bonus</div>
+            <div class="small" id="hintText">Các câu trả lởi nhanh sẽ được thêm điểm.</div>
           </div>
 
           <div style="width:96px;text-align:right">
-            <div class="small">Time left</div>
+            <div class="small">Thời gian còn lại</div>
             <div id="timeBonus" class="small">0s</div>
           </div>
         </div>
@@ -149,16 +149,10 @@
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div>
-          <div style="font-weight:900" id="titleSide">Play</div>
-          <div class="small">Solo & Multiplayer</div>
+          <div style="font-weight:900" id="titleSide">Chơi</div>
+          <div class="small">Tìm hiểu thêm về các Di tích lịch sử</div>
         </div>
         <div class="small" id="socketStatus">Socket: disconnected</div>
-      </div>
-
-      <div style="margin-top:12px;display:flex;gap:8px">
-        <button class="btn primary" onclick="openSolo()">Solo</button>
-        <button class="btn ghost" onclick="openHostList()">Host</button>
-        <button class="btn ghost" onclick="openJoinModal()">Join</button>
       </div>
     </div>
 
@@ -172,16 +166,16 @@
 
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
-        <div class="small">Lobby</div>
+        <div class="small">Phòng</div>
         <div><span class="small" id="roomCode">—</span></div>
       </div>
       <div style="margin-top:8px">
-        <div class="small">Players</div>
+        <div class="small">Người Chơi</div>
         <div id="players" style="max-height:160px;overflow:auto;margin-top:8px"></div>
       </div>
       <div style="margin-top:8px;display:flex;gap:8px">
-        <button class="btn primary" id="startBtn" onclick="startRoom()" style="display:none">Start</button>
-        <button class="btn ghost" id="leaveBtn" onclick="leaveRoom()" style="display:none">Leave</button>
+        <button class="btn primary" id="startBtn" onclick="startRoom()" style="display:none">Bắt đầu</button>
+        <button class="btn ghost" id="leaveBtn" onclick="leaveRoom()" style="display:none">Thoát</button>
       </div>
     </div>
   </div>
@@ -205,8 +199,8 @@
   <div class="end-card" role="dialog" aria-modal="true" aria-labelledby="endTitle">
     <div class="end-header">
       <div>
-        <div id="endTitle" style="font-weight:900;color:#eaf5ff">Final Scores</div>
-        <div class="small" id="endSubtitle">Well played — here are the results</div>
+        <div id="endTitle" style="font-weight:900;color:#eaf5ff">Số điểm</div>
+        <div class="small" id="endSubtitle">Bạn đã hoàn thành trò chơi!</div>
       </div>
       <div id="endScoreSummary" style="text-align:right;color:#eaf5ff"></div>
     </div>
@@ -559,7 +553,7 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
     const q = questions[currentIndex];
     const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
     const isCorrect = String(answerId) === String(correct);
-    if(isCorrect){ correctSound(); const bonus = Math.round(timerRemaining); const gained = 10 + clamp(bonus, 0, timerDuration); score += gained; combo++; el.classList.add('correct'); showMsg('Correct! +' + gained, 1100); }
+    if(isCorrect){ correctSound(); const bonus = Math.round(timerRemaining); const gained = 10 + clamp(bonus, 0, timerDuration); score += gained; combo++; el.classList.add('correct'); showMsg('Correct! +' + gained, 1100); burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);}
     else { wrongSound(); combo = 0; el.classList.add('wrong'); Array.from(optionsEl.children).forEach(ch=>{ const meta = ch.querySelector('.small')?.textContent || ''; const m = meta.match(/Choice\s*(.+)$/i); if(m && String(m[1]) === String(correct)) ch.classList.add('correct'); }); }
     scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
     setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
@@ -592,7 +586,7 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
 function finishRun(){
   clearInterval(timer);
   // prepare final score list for solo
-  const scores = [{ id: 'you', name: 'You', total: score }];
+  const scores = [{ id: 'you', name: 'Bạn', total: score }];
   showMsg(`Run finished! Score ${score}`, 3000);
   // show the endscreen using same UI
   showEndScreen(scores);
@@ -756,7 +750,7 @@ function showEndScreen(scores){
   normalized.sort((a,b) => (b.total || 0) - (a.total || 0));
   const top = normalized[0];
 
-  endScoreSummary.innerHTML = `<div style="font-weight:800">${top.name} wins — ${top.total} pts</div>`;
+  endScoreSummary.innerHTML = `<div style="font-weight:800">${top.name} đã thắng! — ${top.total} pts</div>`;
 
   normalized.forEach((p, i) => {
     const row = document.createElement('div');
@@ -778,7 +772,7 @@ function closeEndScreen(){
   multiplayerTotal = null;
   submittedRef.current = {};
   updateTimeBar(0);
-  qtext.textContent = 'Choose Solo or Host from the right panel to start playing.';
+  qtext.textContent = 'Chọn "Play" để chơi hoặc "Host" để tạo phòng.';
   optionsEl.innerHTML = '';
 }
 
