@@ -744,7 +744,6 @@ const markerObjects = data.map(item => {
     <div style="min-width:220px">
       <img src="${thumbUrl}" style="width:100%;height:110px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>
       <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
-      <div style="font-size:13px;color:#444">Loại: ${escapeHtml(item.category)}</div>
       <div style="margin-top:8px;display:flex;gap:8px">
         <a class="popup-btn" href="${item.page}" target="_blank">Xem thêm</a>
         <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank">Chỉ đường</a>
