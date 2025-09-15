@@ -226,15 +226,27 @@
   }
   .popup-btn {
     display: inline-block;
-    padding: 5px 10px;
-    background: #ffffff;
-    color: rgb(0, 0, 0);
-    border-radius: 5px;
-    font-size: 12px;
+    padding: 8px 18px;
+    background: linear-gradient(90deg, #ff7043 0%, #ffab91 100%);
+    color: #fff;
+    border-radius: 22px;
+    font-size: 14px;
+    font-weight: 600;
     text-decoration: none;
+    border: none;
+    box-shadow: 0 2px 8px rgba(255,112,67,0.10);
+    margin-right: 4px;
+    margin-bottom: 4px;
+    transition: background 0.18s, color 0.18s, box-shadow 0.18s, transform 0.12s;
+    cursor: pointer;
+    outline: none;
   }
-  .popup-btn:hover {
-    background: #a50b0b;
+  .popup-btn:hover, .popup-btn:focus {
+    background: linear-gradient(90deg, #d84315 0%, #ff7043 100%);
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(255,112,67,0.18);
+    transform: translateY(-2px) scale(1.04);
+    text-decoration: none;
   }
   /* --- Fullscreen button --- */
   #fullscreen-btn {
@@ -623,17 +635,182 @@ function sharePlace(name, lat, lng, page) {
     navigator.clipboard?.writeText(shareUrl).then(()=> alert('URL copied to clipboard'));
   }
 }
-  fetch('js/hcmc-boundary.geojson')
+  // ---------- Blur-outside-polygon overlay (replace your prior fetch block) ----------
+let boundaryLayer = null;
+let blurSvg = null;
+let blurMaskId = `blur-mask-${Date.now()}`;
+
+function geoJSONToPathD(geojson, map) {
+  // supports Polygon and MultiPolygon (returns combined path string)
+  function ringToD(coords) {
+    return coords.map(coord => {
+      const p = map.latLngToLayerPoint([coord[1], coord[0]]); // NOTE: GeoJSON is [lng,lat]
+      return `${p.x},${p.y}`;
+    }).join(' ');
+  }
+
+  const geometry = geojson.type === 'Feature' ? geojson.geometry : geojson;
+  let d = '';
+
+  if (geometry.type === 'Polygon') {
+    geometry.coordinates.forEach((ring, i) => {
+      const pts = ring.map(c => map.latLngToLayerPoint([c[1], c[0]]));
+      if (!pts.length) return;
+      d += 'M ' + pts.map(p => `${p.x} ${p.y}`).join(' L ') + ' Z ';
+    });
+  } else if (geometry.type === 'MultiPolygon') {
+    geometry.coordinates.forEach(polygon => {
+      polygon.forEach(ring => {
+        const pts = ring.map(c => map.latLngToLayerPoint([c[1], c[0]]));
+        if (!pts.length) return;
+        d += 'M ' + pts.map(p => `${p.x} ${p.y}`).join(' L ') + ' Z ';
+      });
+    });
+  }
+  return d.trim();
+}
+
+function createOrUpdateBlurOverlay(geojsonFeature) {
+  // Remove old SVG if exists
+  if (blurSvg && blurSvg.parentNode) {
+    blurSvg.parentNode.removeChild(blurSvg);
+    blurSvg = null;
+  }
+
+  // Create SVG element sized to map container (use viewBox to match pixel coords)
+  const size = map.getSize();
+  blurSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  blurSvg.setAttribute('width', size.x);
+  blurSvg.setAttribute('height', size.y);
+  blurSvg.setAttribute('viewBox', `0 0 ${size.x} ${size.y}`);
+  blurSvg.style.position = 'absolute';
+  blurSvg.style.top = '0';
+  blurSvg.style.left = '0';
+  blurSvg.style.pointerEvents = 'none'; // allow clicks through
+  blurSvg.style.zIndex = 400; // overlayPane is below marker pane; adjust if needed
+
+  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+
+  // filter (adjust stdDeviation for stronger/weaker blur)
+  const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
+  const filterId = `gblur-${Date.now()}`;
+  filter.setAttribute('id', filterId);
+  const fe = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
+  fe.setAttribute('in', 'SourceGraphic');
+  fe.setAttribute('stdDeviation', '6'); // <-- change blur strength here
+  filter.appendChild(fe);
+  defs.appendChild(filter);
+
+  // mask: white = show, black = hide. We want outside-blurred so:
+  // mask = white full-rect, then black filled polygon(s) -> polygon area will be transparent (not blurred)
+  const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
+  const maskId = blurMaskId;
+  mask.setAttribute('id', maskId);
+
+  const whiteRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  whiteRect.setAttribute('x', '0');
+  whiteRect.setAttribute('y', '0');
+  whiteRect.setAttribute('width', size.x);
+  whiteRect.setAttribute('height', size.y);
+  whiteRect.setAttribute('fill', 'white');
+  mask.appendChild(whiteRect);
+
+  // compute path d from geojson (in pixel coords)
+  const d = geoJSONToPathD(geojsonFeature, map) || '';
+
+  if (d) {
+    const holePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    holePath.setAttribute('d', d);
+    holePath.setAttribute('fill', 'black'); // black = mask-out (i.e. transparent spot)
+    mask.appendChild(holePath);
+  }
+
+  defs.appendChild(mask);
+  blurSvg.appendChild(defs);
+
+  // the blurred rect uses the filter and the mask we created
+  const blurRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  blurRect.setAttribute('x', '0');
+  blurRect.setAttribute('y', '0');
+  blurRect.setAttribute('width', size.x);
+  blurRect.setAttribute('height', size.y);
+  // apply filter and mask
+  blurRect.setAttribute('filter', `url(#${filterId})`);
+  blurRect.setAttribute('mask', `url(#${maskId})`);
+  // The rect color should be transparent but filter works on its graphic. To ensure a visible blur, fill with translucent white:
+  // You can use rgba to simulate dim + blur; if you want *only* blur (no dim), use fill="transparent" (but some browsers won't blur 'transparent').
+  // Using a semi-transparent white keeps underlying tiles visible but blurred; change opacity as desired.
+  blurRect.setAttribute('fill', 'rgba(255,255,255,0.001)'); // nearly transparent but works with filter
+  blurSvg.appendChild(blurRect);
+
+  // Append svg into Leaflet overlayPane so markers and popups are above it
+  map.getPanes().overlayPane.appendChild(blurSvg);
+}
+
+function refreshBlurMask(geojsonFeature) {
+  if (!geojsonFeature) return;
+  // Update svg size and mask path on view changes
+  if (!blurSvg) {
+    createOrUpdateBlurOverlay(geojsonFeature);
+    return;
+  }
+
+  const size = map.getSize();
+  blurSvg.setAttribute('width', size.x);
+  blurSvg.setAttribute('height', size.y);
+  blurSvg.setAttribute('viewBox', `0 0 ${size.x} ${size.y}`);
+
+  // update existing mask path (assume it's the first <path> in mask)
+  const mask = blurSvg.querySelector('mask');
+  if (!mask) return;
+
+  // Remove existing polygon path(s) then recreate
+  const existingPaths = mask.querySelectorAll('path');
+  existingPaths.forEach(p => p.remove());
+
+  const d = geoJSONToPathD(geojsonFeature, map);
+  if (d) {
+    const holePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    holePath.setAttribute('d', d);
+    holePath.setAttribute('fill', 'black');
+    mask.appendChild(holePath);
+  }
+}
+
+// Fetch boundary geojson, add to map, and create blur overlay
+fetch('js/hcmc-boundary.geojson')
   .then(res => res.json())
   .then(data => {
-    L.geoJSON(data, {
+    // store layer so your other code can still display it if you want
+    boundaryLayer = L.geoJSON(data, {
       style: {
         color: "#ff5733",
         weight: 3,
         fill: false
       }
     }).addTo(map);
-  });
+
+    // Use the first polygon feature (or send whole featurecollection)
+    const feature = (data.type === 'FeatureCollection' && data.features && data.features[0])
+      ? data.features[0]
+      : (data.type === 'Feature' ? data : null);
+
+    if (!feature) {
+      console.warn('No valid polygon feature found in geojson for blur mask');
+      return;
+    }
+
+    // initial create
+    createOrUpdateBlurOverlay(feature);
+
+    // update on map interactions
+    map.on('move zoom viewreset resize', () => refreshBlurMask(feature));
+
+    // when the map's size changes (e.g., fullscreen), refresh a bit later
+    map.on('resize', () => setTimeout(() => refreshBlurMask(feature), 120));
+  })
+  .catch(err => console.error('Failed to load boundary geojson for blur overlay', err));
+// -------------------------------------------------------------------------------
   const filterBtn = document.getElementById("filter-btn");
   const filterPanel = document.getElementById("filter-panel");
   filterBtn.addEventListener("click", () => {
@@ -661,33 +838,32 @@ function sharePlace(name, lat, lng, page) {
 
   // Example data
 const data = [
-  { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html" },
-  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html" },
-  { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html" },
-  { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html" },
-  { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html" },
-  { name: "Chợ Bến Thành", coords: [10.772562285042808,106.69800620687107], category: "thanhpho", page: "chobenthanh.html" },
-  { name: "Căn Cứ Rừng Sác", coords: [10.407547,106.888519], category: "quocgia", page: "cancurungsac.html" },
-  { name: "Hầm giấu vũ khí biệt động", coords: [10.77215547871409,106.68593350431848], category: "quocgia", page: "cosogiauvukhi.html" },
-  { name: "Khu trại giam Bệnh Viện Chợ Quán", coords: [10.75329276787438,106.67915915593466], category: "quocgia", page: "khugiamtraibenhvientroquan.html" },
-  { name: "Lăng Lê Văn Duyệt", coords: [10.802218698128923,106.69712355857787], category: "quocgia", page: "langlevanduyet.html" },
-  { name: "Lăng mộ Phan Châu Trinh", coords: [10.804371552261498,106.661775396652], category: "quocgia", page: "mophanchautrinh.html" },
-  { name: "Nhà Thờ Đức Bà", coords: [10.779792558304973,106.69901819638865], category: "thanhpho", page: "nhathoducba.html" },
-  { name: "Tịnh xá Ngọc Phương", coords: [10.81534827804912,106.68978491518055], category: "quocgia", page: "tinhxangocphuong.html" },
-  { name: "Đình Phong Phú", coords: [10.832183577842558,106.78359777687334], category: "cachmang", page: "dinhphongphu.html" },
-  { name: "Đình Thông Tây Hội", coords: [10.840034114033681,106.66492442289332], category: "kientruc", page: "dingthongtayhoi.html" },
-  { name: "Địa đạo Củ Chi", coords: [11.141789146277686,106.46135436902648], category: "dacbiet", page: "diadaocuchi.html" },
-  { name: "Địa đạo Phú Thọ Hòa", coords: [10.783885492854845,106.63090098482986], category: "quocgia", page: "diadaophuthohoa.html" },
-  { name: "Nhà hát TPHCM", coords: [10.776713503847871,106.7031885226206], category: "kientruc", page: "nhahattphcm.html" },
-  { name: "Dinh Độc Lập", coords: [10.777067977226276,106.69528064173029], category: "dacbiet", page: "dinhdoclap.html" },
-  { name: "Đình Chí Hòa", coords: [10.78144580194108,106.67316163457637], category: "kientruc", page: "dinhchihoa.html" },
-  { name: "Chùa Giác Viên", coords: [10.76318460966222,106.6398107945002], category: "kientruc", page: "chuagiacvien.html" },
-  { name: "Lò Gốm Cổ Hưng Lợi", coords: [10.725087405329568,106.62630157120653], category: "khaoco", page: "logom.html" },
-  { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html" },
-  { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html" },
-  { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html" },
+  { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html", vr: "https://www.360view.vn/gallery/data/projects/vietnam/tp_hcm/baotangtp__05022011/" },
+  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html", vr: "non" },
+  { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_btctct_view_3&startactions=lookat(1.89,0.29,120,0,0);" },
+  { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_13-chua-giac-lam&startactions=lookat(104.09,-1.68,100.93,0,0);" },
+  { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_4_6_2_cho-binh-tay_(1)&startactions=lookat(-98.2,4.81,134.39,0,0);" },
+  { name: "Chợ Bến Thành", coords: [10.772562285042808,106.69800620687107], category: "thanhpho", page: "chobenthanh.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/chobenthanh__022011/index.html?" },
+  { name: "Căn Cứ Rừng Sác", coords: [10.407547,106.888519], category: "quocgia", page: "cancurungsac.html", vr: "non" },
+  { name: "Hầm giấu vũ khí biệt động", coords: [10.77215547871409,106.68593350431848], category: "quocgia", page: "cosogiauvukhi.html", vr: "non" },
+  { name: "Khu trại giam Bệnh Viện Chợ Quán", coords: [10.75329276787438,106.67915915593466], category: "quocgia", page: "khugiamtraibenhvientroquan.html", vr: "non" },
+  { name: "Lăng Lê Văn Duyệt", coords: [10.802218698128923,106.69712355857787], category: "quocgia", page: "langlevanduyet.html", vr: "non" },
+  { name: "Lăng mộ Phan Châu Trinh", coords: [10.804371552261498,106.661775396652], category: "quocgia", page: "mophanchautrinh.html", vr: "non" },
+  { name: "Nhà Thờ Đức Bà", coords: [10.779792558304973,106.69901819638865], category: "thanhpho", page: "nhathoducba.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/nhathoducba__022011/?" },
+  { name: "Tịnh xá Ngọc Phương", coords: [10.81534827804912,106.68978491518055], category: "quocgia", page: "tinhxangocphuong.html", vr: "non" },
+  { name: "Đình Phong Phú", coords: [10.832183577842558,106.78359777687334], category: "cachmang", page: "dinhphongphu.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_37-dinh-tho-dinh-phong-phu-(2)&startactions=lookat(-4.65,2.37,127.05,0,0);" },
+  { name: "Đình Thông Tây Hội", coords: [10.840034114033681,106.66492442289332], category: "kientruc", page: "dingthongtayhoi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_16-dinh-thong-tay-hoi-(2)&startactions=lookat(-99.4,-0.87,127.9,0,0);" },
+  { name: "Địa đạo Củ Chi", coords: [11.141789146277686,106.46135436902648], category: "dacbiet", page: "diadaocuchi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_1_1_2_dia-dao-cu-chi_(1)&startactions=lookat(125.09,-1.77,119.92,0,0);" },
+  { name: "Địa đạo Phú Thọ Hòa", coords: [10.783885492854845,106.63090098482986], category: "quocgia", page: "diadaophuthohoa.html", vr: "non" },
+  { name: "Nhà hát TPHCM", coords: [10.776713503847871,106.7031885226206], category: "kientruc", page: "nhahattphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_nhahattp_view4&startactions=lookat(85.37,-13.8,119.23,0,0);" },
+  { name: "Dinh Độc Lập", coords: [10.777067977226276,106.69528064173029], category: "dacbiet", page: "dinhdoclap.html", vr: "https://vr360.com.vn/projects/dinhdoclap/" },
+  { name: "Đình Chí Hòa", coords: [10.78144580194108,106.67316163457637], category: "kientruc", page: "dinhchihoa.html", vr: "non" },
+  { name: "Chùa Giác Viên", coords: [10.76318460966222,106.6398107945002], category: "kientruc", page: "chuagiacvien.html", vr: "non" },
+  { name: "Lò Gốm Cổ Hưng Lợi", coords: [10.725087405329568,106.62630157120653], category: "khaoco", page: "logom.html", vr: "non" },
+  { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_20-di-tich-lich-su-nga-ba-giong-(1)&startactions=lookat(103.33,-7.81,91.29,0,0);" },
+  { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_ubnd_view1&startactions=lookat(0.9,-20.39,119.83,0,0);" },
+  { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html", vr: "non" },
 ];
-
 
 
 // helper: map category -> CSS class
@@ -742,15 +918,16 @@ const markerObjects = data.map(item => {
 
   const thumbUrl = `images/thumbs/${slugify(item.name)}.jpg`;
   const popupHtml = `
-    <div style="min-width:220px">
-      <img src="${thumbUrl}" style="width:100%;height:110px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>
-      <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
-      <div style="margin-top:8px;display:flex;gap:8px">
-        <a class="popup-btn" href="${item.page}" target="_blank">Xem thêm</a>
-        <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank">Chỉ đường</a>
-      </div>
+  <div style="min-width:220px">
+    <img src="${thumbUrl}" style="width:100%;height:110px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>
+    <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
+    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
+      <a class="popup-btn" href="${item.page}" target="_blank">Xem thêm</a>
+      <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank">Chỉ đường</a>
+      ${item.vr !== "non" ? `<a class="popup-btn" href="${item.vr}" target="_blank">VR360</a>` : ""}
     </div>
-  `;
+  </div>
+`;
   // offset slightly so popup appears above the dot (negative Y)
   marker.bindPopup(popupHtml, { minWidth: 220, offset: L.point(0, -ICON_SIZE/2 - 6), autoPan: true, keepInView: true });
 
@@ -922,7 +1099,6 @@ map.on('popupopen', (ev) => {
     console.warn('Failed to attach Xem 360 button', e);
   }
 });
-
 
 
   // --- Filter ---
