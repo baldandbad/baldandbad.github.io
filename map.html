@@ -95,19 +95,32 @@
   }
 
   /* --- Filter button (top right) --- */
-  #filter-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    z-index: 500;
-    background: white;
-    border: 2px solid #2196F3;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: bold;
-  }
+#filter-btn {
+  position: absolute;
+  top: 10px;
+  left: 10px;    /* moved from right -> left */
+  right: auto;
+  z-index: 502;  /* keep above other controls if needed */
+  background: white;
+  border: 2px solid #2196F3;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  color: #2196F3;               /* text color when idle */
+  transition: background .15s, color .15s, box-shadow .12s;
+  -webkit-tap-highlight-color: transparent;
+}
+#filter-btn:hover {
+  background: #f0f8ff;          /* subtle hover background */
+  color: #0b66c2;
+}
+#filter-btn:focus {
+  outline: none; /* remove default outline */
+  box-shadow: 0 0 0 4px rgba(33,150,243,0.12); /* visible focus ring */
+  color: #2196F3;  /* ensure focus doesn't turn text white */
+}
   /* Zoom control buttons */
 .leaflet-control-zoom {
   border-radius: 8px;
@@ -249,22 +262,23 @@
     text-decoration: none;
   }
   /* --- Fullscreen button --- */
-  #fullscreen-btn {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    z-index: 501;
-    background: white;
-    border: 2px solid #ff7043;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 18px;
-    color: #ff7043;
-    transition: background 0.2s;
-  }
+#fullscreen-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;   /* moved from left -> right */
+  left: auto;
+  z-index: 501;
+  background: white;
+  border: 2px solid #ff7043;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+  padding: 8px 12px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 18px;
+  color: #ff7043;
+  transition: background 0.2s;
+}
   #fullscreen-btn:hover {
     background: #ff7043;
     color: white;
@@ -552,6 +566,77 @@
   font-weight: 600;
   font-size: 13px;
 }
+/* === Pulsing marker (use .pulse on the marker container) === */
+.pulse {
+  position: relative;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff7043;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.32);
+  border: 3px solid white;
+  transform: translate(-50%, -50%);
+}
+.pulse::after {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: 100%; height: 100%;
+  background: rgba(255,112,67,0.45);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  animation: pulse 1.8s infinite;
+  pointer-events: none;
+}
+@keyframes pulse {
+  0% { transform: translate(-50%, -50%) scale(1); opacity: 0.9; }
+  70% { transform: translate(-50%, -50%) scale(2.6); opacity: 0; }
+  100% { opacity: 0; }
+}
+
+/* === Fade-in transition for markers when added === */
+.leaflet-marker-icon {
+  opacity: 0;
+  transform-origin: center center;
+  transition: opacity 420ms ease, transform 420ms cubic-bezier(.2,.9,.2,1);
+}
+.leaflet-marker-icon.visible {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* === Hover scale for pointer devices === */
+.my-div-icon .marker-inner {
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+.my-div-icon:hover .marker-inner,
+.my-div-icon:focus .marker-inner {
+  transform: scale(1.18);
+  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
+}
+
+/* === Popup animation === */
+.leaflet-popup-content-wrapper {
+  transform-origin: center bottom;
+  animation: popup-in 220ms ease;
+}
+@keyframes popup-in {
+  from { transform: translateY(6px) scale(.98); opacity: 0; }
+  to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+/* === Dimmer fade (for mask layer) - we'll toggle 'dim-visible' class on map container === */
+.map-dimmer-fade {
+  transition: opacity 400ms ease;
+}
+
+/* === Cluster icon small pop effect === */
+.leaflet-marker-icon.marker-cluster {
+  transition: transform 220ms cubic-bezier(.2,.9,.2,1);
+}
+.leaflet-marker-icon.marker-cluster.pop {
+  transform: scale(1.08);
+}
 
 
 </style>
@@ -626,107 +711,6 @@ function setActiveMarker(m) {
   if (m._icon) m._icon.style.zIndex = 9999;
 }
 
-// Fetch boundary geojson, add to map, and create blur overlay
-/* ----------------- Dim outside boundary (paste this AFTER your L.tileLayer(...).addTo(map); ) ----------------- */
-
-let dimLayer = null;
-let boundaryLayer = null;
-
-/**
- * Convert GeoJSON Feature (Polygon or MultiPolygon) to an array of rings
- * Each ring returned is [[lat, lng], [lat, lng], ...]
- */
-function geoJsonFeatureToRings(feature) {
-  if (!feature || !feature.geometry) return [];
-  const geom = feature.geometry;
-  const coords = (geom.type === 'Polygon') ? [geom.coordinates]
-               : (geom.type === 'MultiPolygon') ? geom.coordinates
-               : null;
-  if (!coords) return [];
-
-  const rings = [];
-  // coords: array of polygons. Each polygon is array of rings (first = outer, others = holes)
-  coords.forEach(polygon => {
-    polygon.forEach(ring => {
-      // GeoJSON coords are [lng, lat] -> convert to [lat, lng]
-      const converted = ring.map(pt => [pt[1], pt[0]]);
-      rings.push(converted);
-    });
-  });
-  return rings;
-}
-
-/**
- * Add or update the dimmer polygon using the given GeoJSON feature.
- * Draws a huge outer rectangle and uses feature rings as holes.
- */
-function addOrUpdateDimmer(feature) {
-  if (!map) return;
-  if (dimLayer) {
-    try { map.removeLayer(dimLayer); } catch (e) {}
-    dimLayer = null;
-  }
-  if (!feature) return;
-
-  // big outer rectangle that covers world (lat, lng pairs)
-  const outer = [
-    [  90, -180 ],
-    [  90,  180 ],
-    [ -90,  180 ],
-    [ -90, -180 ]
-  ];
-
-  const rings = geoJsonFeatureToRings(feature);
-  if (!rings.length) return;
-
-  // Leaflet expects [ outerRing, hole1, hole2, ... ]
-  const polygonWithHoles = [ outer ].concat(rings);
-
-  dimLayer = L.polygon(polygonWithHoles, {
-    color: '#000',       // stroke color (we'll hide stroke via weight:0)
-    weight: 0,
-    opacity: 0,
-    fillColor: '#000',   // mask color
-    fillOpacity: 0.45,   // tweak this (0 = transparent, 1 = solid)
-    interactive: false,  // let clicks pass through
-    pane: 'overlayPane'  // default; ensures it's under popups
-  }).addTo(map);
-
-  // Keep your boundary and markers above the mask
-  if (boundaryLayer && boundaryLayer.bringToFront) boundaryLayer.bringToFront();
-  // If you want markers above too, ensure marker cluster layer is added after this snippet (you already add it later)
-}
-
-/* Fetch the GeoJSON and wire everything up.
-   NOTE: move this block to after `map` exists (paste it where indicated above). */
-fetch('js/hcmc-boundary.geojson')
-  .then(res => res.json())
-  .then(data => {
-    // create a visible boundary (optional styling)
-    boundaryLayer = L.geoJSON(data, {
-      style: {
-        color: "#ff5733",
-        weight: 3,
-        fill: false
-      }
-    }).addTo(map);
-
-    // pick first meaningful feature (FeatureCollection or single Feature)
-    const feature = (data.type === 'FeatureCollection' && data.features && data.features[0])
-      ? data.features[0]
-      : (data.type === 'Feature' ? data : null);
-
-    if (!feature) {
-      console.warn('No valid polygon feature found in geojson for blur mask');
-      return;
-    }
-
-    // add the dimmer (uses feature geometry)
-    addOrUpdateDimmer(feature);
-
-    // if you expect edits to the boundary, call addOrUpdateDimmer(updatedFeature) after edits
-  })
-  .catch(err => console.error('Failed to load boundary geojson for blur overlay', err));
 
 /* ------------------------------------------------------------------------------------------------------------ */
 
@@ -742,7 +726,7 @@ fetch('js/hcmc-boundary.geojson')
     maxZoom: 15,
     zoomControl: false
   }).setView([10.7769, 106.7009], 10);
-  L.control.zoom({
+  L.control.zoom({ position: 'bottomleft'
   }).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
@@ -754,6 +738,173 @@ fetch('js/hcmc-boundary.geojson')
     animate: true
   });
   map.addLayer(markerCluster);
+  // Fetch boundary geojson, add to map, and create blur overlay
+/* ----------------- Dim outside boundary (paste this AFTER your L.tileLayer(...).addTo(map); ) ----------------- */
+  /* --- Add polished animations & interactions --- */
+
+
+// 2) update setActiveMarker (pulse)
+function setActiveMarker(m) {
+  if (activeMarker && activeMarker.getElement) {
+    const prev = activeMarker.getElement();
+    if (prev) {
+      prev.querySelector('.marker-inner')?.classList.remove('pulse');
+      prev.classList.remove('marker-active');
+    }
+  }
+  activeMarker = m;
+  if (!m) return;
+  const el = m.getElement();
+  if (!el) return;
+  el.querySelector('.marker-inner')?.classList.add('pulse');
+  el.classList.add('marker-active');
+  if (m._icon) m._icon.style.zIndex = 9999;
+}
+
+// 3) cluster pop
+markerCluster.on('clusterclick', (e) => {
+  const el = e.layer.getElement();
+  if (!el) return;
+  el.classList.add('pop');
+  setTimeout(() => el.classList.remove('pop'), 260);
+});
+
+// 4) smooth fly for search suggestions (replace the previous setView)
+function gotoMarker(m) {
+  map.flyTo(m.getLatLng(), 16, { animate: true, duration: 1.0, easeLinearity: 0.25 });
+  m.openPopup();
+  setActiveMarker(m);
+}
+
+/* ---------------- Robust dimmer (paste right after L.tileLayer(...).addTo(map); ) ---------------- */
+
+// create a dedicated pane so ordering is explicit (below markers, above tiles)
+if (!map.getPane('dimmerPane')) {
+  map.createPane('dimmerPane');
+  // choose zIndex between overlayPane (400) and markerPane (600)
+  map.getPane('dimmerPane').style.zIndex = 450;
+  // make sure it doesn't block pointer events (markers above will still be clickable)
+  map.getPane('dimmerPane').style.pointerEvents = 'auto';
+}
+
+let dimLayer = null;
+let boundaryLayer = null;
+
+/** Convert a GeoJSON feature (Polygon / MultiPolygon) to an array of rings.
+ *  Returns an array: [ ring1, ring2, ... ] where each ring = [[lat,lng],...]
+ *  Works across FeatureCollection (we gather all polygons).
+ */
+function geoJsonToRings(geojson) {
+  const features = (geojson.type === 'FeatureCollection') ? geojson.features
+                   : (geojson.type === 'Feature') ? [geojson]
+                   : (Array.isArray(geojson)) ? geojson
+                   : null;
+  if (!features || !features.length) return [];
+
+  const rings = [];
+  features.forEach(f => {
+    if (!f || !f.geometry) return;
+    const g = f.geometry;
+    if (g.type === 'Polygon') {
+      // g.coordinates is [ [ [lng,lat], ... ], [hole...], ... ]
+      g.coordinates.forEach(r => {
+        rings.push(r.map(pt => [pt[1], pt[0]])); // to [lat,lng]
+      });
+    } else if (g.type === 'MultiPolygon') {
+      // g.coordinates is [ polygon1, polygon2, ... ]
+      g.coordinates.forEach(polygon => {
+        polygon.forEach(r => rings.push(r.map(pt => [pt[1], pt[0]])));
+      });
+    }
+  });
+  return rings;
+}
+
+/** Add/update dimmer polygon: draws a giant outer rect and uses geo rings as holes.
+ *  Uses the dedicated 'dimmerPane' so ordering is consistent.
+ */
+function addOrUpdateDimmerFromRings(rings) {
+  if (!map) return;
+  if (dimLayer) {
+    try { map.removeLayer(dimLayer); } catch (e) {}
+    dimLayer = null;
+  }
+  if (!rings || !rings.length) {
+    console.warn('No rings available to create dimmer.');
+    return;
+  }
+
+  const outer = [
+    [  90, -180 ],
+    [  90,  180 ],
+    [ -90,  180 ],
+    [ -90, -180 ]
+  ];
+
+  // Leaflet accepts array: [ outerRing, hole1, hole2, ... ]
+  const polygonWithHoles = [ outer, ...rings ];
+
+  dimLayer = L.polygon(polygonWithHoles, {
+    pane: 'dimmerPane',      // explicit pane
+    color: '#000',
+    weight: 0,
+    opacity: 0,
+    fillColor: '#000',
+    fillOpacity: 0.45,
+    interactive: false
+  }).addTo(map);
+
+  // Ensure other important layers show above the mask
+  if (boundaryLayer && boundaryLayer.bringToFront) boundaryLayer.bringToFront();
+  // marker cluster and markers live in markerPane (zIndex ~600) so they stay above the dimmer
+}
+
+/** Fetch geojson and wire up map layers robustly */
+fetch('js/hcmc-boundary.geojson')
+  .then(r => {
+    if (!r.ok) throw new Error('Network response was not ok');
+    return r.json();
+  })
+  .then(geojson => {
+    // Add a visible boundary (optional)
+    try {
+      boundaryLayer = L.geoJSON(geojson, {
+        style: { color: "#ff5733", weight: 3, fill: false }
+      }).addTo(map);
+    } catch (e) {
+      console.warn('Failed to add boundaryLayer for visibility', e);
+    }
+
+    const rings = geoJsonToRings(geojson);
+    console.log('Dimmer rings count:', rings.length);
+
+    if (!rings.length) {
+      console.warn('GeoJSON contained no polygon rings — check coordinate order or feature types.');
+      return;
+    }
+
+    addOrUpdateDimmerFromRings(rings);
+
+    // Optional: if you want the dimmer to fade in
+    if (dimLayer) {
+      dimLayer.setStyle({ fillOpacity: 0 }); // start transparent
+      // small fade in
+      let step = 0;
+      const steps = 10;
+      const target = 0.45;
+      const tick = () => {
+        step++;
+        dimLayer.setStyle({ fillOpacity: +(target * (step / steps)).toFixed(3) });
+        if (step < steps) setTimeout(tick, 35);
+      };
+      setTimeout(tick, 120);
+    }
+  })
+  .catch(err => {
+    console.error('Failed to load/parse boundary geojson for dimmer:', err);
+  });
+
+/* ------------------------------------------------------------------------------------- */
 
   // Example data
 const data = [
@@ -927,7 +1078,6 @@ const markerObjects = data.map(item => {
     </div>
   `;
   document.body.appendChild(modal);
-
   const backdrop = modal.querySelector('.sv-backdrop');
   const closeBtn = modal.querySelector('.sv-close');
   const iframe = modal.querySelector('iframe');
