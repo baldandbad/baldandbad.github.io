@@ -626,162 +626,83 @@ function setActiveMarker(m) {
   if (m._icon) m._icon.style.zIndex = 9999;
 }
 
-// share fallback for browsers
-function sharePlace(name, lat, lng, page) {
-  if (navigator.share) {
-    navigator.share({ title: name, text: name, url: page || window.location.href }).catch(()=>{});
-  } else {
-    const shareUrl = page || `${location.origin}${location.pathname}?lat=${lat}&lng=${lng}`;
-    navigator.clipboard?.writeText(shareUrl).then(()=> alert('URL copied to clipboard'));
-  }
-}
-  // ---------- Blur-outside-polygon overlay (replace your prior fetch block) ----------
-let boundaryLayer = null;
-let blurSvg = null;
-let blurMaskId = `blur-mask-${Date.now()}`;
-
-function geoJSONToPathD(geojson, map) {
-  // supports Polygon and MultiPolygon (returns combined path string)
-  function ringToD(coords) {
-    return coords.map(coord => {
-      const p = map.latLngToLayerPoint([coord[1], coord[0]]); // NOTE: GeoJSON is [lng,lat]
-      return `${p.x},${p.y}`;
-    }).join(' ');
-  }
-
-  const geometry = geojson.type === 'Feature' ? geojson.geometry : geojson;
-  let d = '';
-
-  if (geometry.type === 'Polygon') {
-    geometry.coordinates.forEach((ring, i) => {
-      const pts = ring.map(c => map.latLngToLayerPoint([c[1], c[0]]));
-      if (!pts.length) return;
-      d += 'M ' + pts.map(p => `${p.x} ${p.y}`).join(' L ') + ' Z ';
-    });
-  } else if (geometry.type === 'MultiPolygon') {
-    geometry.coordinates.forEach(polygon => {
-      polygon.forEach(ring => {
-        const pts = ring.map(c => map.latLngToLayerPoint([c[1], c[0]]));
-        if (!pts.length) return;
-        d += 'M ' + pts.map(p => `${p.x} ${p.y}`).join(' L ') + ' Z ';
-      });
-    });
-  }
-  return d.trim();
-}
-
-function createOrUpdateBlurOverlay(geojsonFeature) {
-  // Remove old SVG if exists
-  if (blurSvg && blurSvg.parentNode) {
-    blurSvg.parentNode.removeChild(blurSvg);
-    blurSvg = null;
-  }
-
-  // Create SVG element sized to map container (use viewBox to match pixel coords)
-  const size = map.getSize();
-  blurSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  blurSvg.setAttribute('width', size.x);
-  blurSvg.setAttribute('height', size.y);
-  blurSvg.setAttribute('viewBox', `0 0 ${size.x} ${size.y}`);
-  blurSvg.style.position = 'absolute';
-  blurSvg.style.top = '0';
-  blurSvg.style.left = '0';
-  blurSvg.style.pointerEvents = 'none'; // allow clicks through
-  blurSvg.style.zIndex = 400; // overlayPane is below marker pane; adjust if needed
-
-  const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
-
-  // filter (adjust stdDeviation for stronger/weaker blur)
-  const filter = document.createElementNS('http://www.w3.org/2000/svg', 'filter');
-  const filterId = `gblur-${Date.now()}`;
-  filter.setAttribute('id', filterId);
-  const fe = document.createElementNS('http://www.w3.org/2000/svg', 'feGaussianBlur');
-  fe.setAttribute('in', 'SourceGraphic');
-  fe.setAttribute('stdDeviation', '6'); // <-- change blur strength here
-  filter.appendChild(fe);
-  defs.appendChild(filter);
-
-  // mask: white = show, black = hide. We want outside-blurred so:
-  // mask = white full-rect, then black filled polygon(s) -> polygon area will be transparent (not blurred)
-  const mask = document.createElementNS('http://www.w3.org/2000/svg', 'mask');
-  const maskId = blurMaskId;
-  mask.setAttribute('id', maskId);
-
-  const whiteRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  whiteRect.setAttribute('x', '0');
-  whiteRect.setAttribute('y', '0');
-  whiteRect.setAttribute('width', size.x);
-  whiteRect.setAttribute('height', size.y);
-  whiteRect.setAttribute('fill', 'white');
-  mask.appendChild(whiteRect);
-
-  // compute path d from geojson (in pixel coords)
-  const d = geoJSONToPathD(geojsonFeature, map) || '';
-
-  if (d) {
-    const holePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    holePath.setAttribute('d', d);
-    holePath.setAttribute('fill', 'black'); // black = mask-out (i.e. transparent spot)
-    mask.appendChild(holePath);
-  }
-
-  defs.appendChild(mask);
-  blurSvg.appendChild(defs);
-
-  // the blurred rect uses the filter and the mask we created
-  const blurRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-  blurRect.setAttribute('x', '0');
-  blurRect.setAttribute('y', '0');
-  blurRect.setAttribute('width', size.x);
-  blurRect.setAttribute('height', size.y);
-  // apply filter and mask
-  blurRect.setAttribute('filter', `url(#${filterId})`);
-  blurRect.setAttribute('mask', `url(#${maskId})`);
-  // The rect color should be transparent but filter works on its graphic. To ensure a visible blur, fill with translucent white:
-  // You can use rgba to simulate dim + blur; if you want *only* blur (no dim), use fill="transparent" (but some browsers won't blur 'transparent').
-  // Using a semi-transparent white keeps underlying tiles visible but blurred; change opacity as desired.
-  blurRect.setAttribute('fill', 'rgba(255,255,255,0.001)'); // nearly transparent but works with filter
-  blurSvg.appendChild(blurRect);
-
-  // Append svg into Leaflet overlayPane so markers and popups are above it
-  map.getPanes().overlayPane.appendChild(blurSvg);
-}
-
-function refreshBlurMask(geojsonFeature) {
-  if (!geojsonFeature) return;
-  // Update svg size and mask path on view changes
-  if (!blurSvg) {
-    createOrUpdateBlurOverlay(geojsonFeature);
-    return;
-  }
-
-  const size = map.getSize();
-  blurSvg.setAttribute('width', size.x);
-  blurSvg.setAttribute('height', size.y);
-  blurSvg.setAttribute('viewBox', `0 0 ${size.x} ${size.y}`);
-
-  // update existing mask path (assume it's the first <path> in mask)
-  const mask = blurSvg.querySelector('mask');
-  if (!mask) return;
-
-  // Remove existing polygon path(s) then recreate
-  const existingPaths = mask.querySelectorAll('path');
-  existingPaths.forEach(p => p.remove());
-
-  const d = geoJSONToPathD(geojsonFeature, map);
-  if (d) {
-    const holePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    holePath.setAttribute('d', d);
-    holePath.setAttribute('fill', 'black');
-    mask.appendChild(holePath);
-  }
-}
-
 // Fetch boundary geojson, add to map, and create blur overlay
+/* ----------------- Dim outside boundary (paste this AFTER your L.tileLayer(...).addTo(map); ) ----------------- */
+
+let dimLayer = null;
+let boundaryLayer = null;
+
+/**
+ * Convert GeoJSON Feature (Polygon or MultiPolygon) to an array of rings
+ * Each ring returned is [[lat, lng], [lat, lng], ...]
+ */
+function geoJsonFeatureToRings(feature) {
+  if (!feature || !feature.geometry) return [];
+  const geom = feature.geometry;
+  const coords = (geom.type === 'Polygon') ? [geom.coordinates]
+               : (geom.type === 'MultiPolygon') ? geom.coordinates
+               : null;
+  if (!coords) return [];
+
+  const rings = [];
+  // coords: array of polygons. Each polygon is array of rings (first = outer, others = holes)
+  coords.forEach(polygon => {
+    polygon.forEach(ring => {
+      // GeoJSON coords are [lng, lat] -> convert to [lat, lng]
+      const converted = ring.map(pt => [pt[1], pt[0]]);
+      rings.push(converted);
+    });
+  });
+  return rings;
+}
+
+/**
+ * Add or update the dimmer polygon using the given GeoJSON feature.
+ * Draws a huge outer rectangle and uses feature rings as holes.
+ */
+function addOrUpdateDimmer(feature) {
+  if (!map) return;
+  if (dimLayer) {
+    try { map.removeLayer(dimLayer); } catch (e) {}
+    dimLayer = null;
+  }
+  if (!feature) return;
+
+  // big outer rectangle that covers world (lat, lng pairs)
+  const outer = [
+    [  90, -180 ],
+    [  90,  180 ],
+    [ -90,  180 ],
+    [ -90, -180 ]
+  ];
+
+  const rings = geoJsonFeatureToRings(feature);
+  if (!rings.length) return;
+
+  // Leaflet expects [ outerRing, hole1, hole2, ... ]
+  const polygonWithHoles = [ outer ].concat(rings);
+
+  dimLayer = L.polygon(polygonWithHoles, {
+    color: '#000',       // stroke color (we'll hide stroke via weight:0)
+    weight: 0,
+    opacity: 0,
+    fillColor: '#000',   // mask color
+    fillOpacity: 0.45,   // tweak this (0 = transparent, 1 = solid)
+    interactive: false,  // let clicks pass through
+    pane: 'overlayPane'  // default; ensures it's under popups
+  }).addTo(map);
+
+  // Keep your boundary and markers above the mask
+  if (boundaryLayer && boundaryLayer.bringToFront) boundaryLayer.bringToFront();
+  // If you want markers above too, ensure marker cluster layer is added after this snippet (you already add it later)
+}
+
+/* Fetch the GeoJSON and wire everything up.
+   NOTE: move this block to after `map` exists (paste it where indicated above). */
 fetch('js/hcmc-boundary.geojson')
   .then(res => res.json())
   .then(data => {
-    // store layer so your other code can still display it if you want
+    // create a visible boundary (optional styling)
     boundaryLayer = L.geoJSON(data, {
       style: {
         color: "#ff5733",
@@ -790,7 +711,7 @@ fetch('js/hcmc-boundary.geojson')
       }
     }).addTo(map);
 
-    // Use the first polygon feature (or send whole featurecollection)
+    // pick first meaningful feature (FeatureCollection or single Feature)
     const feature = (data.type === 'FeatureCollection' && data.features && data.features[0])
       ? data.features[0]
       : (data.type === 'Feature' ? data : null);
@@ -800,16 +721,15 @@ fetch('js/hcmc-boundary.geojson')
       return;
     }
 
-    // initial create
-    createOrUpdateBlurOverlay(feature);
+    // add the dimmer (uses feature geometry)
+    addOrUpdateDimmer(feature);
 
-    // update on map interactions
-    map.on('move zoom viewreset resize', () => refreshBlurMask(feature));
-
-    // when the map's size changes (e.g., fullscreen), refresh a bit later
-    map.on('resize', () => setTimeout(() => refreshBlurMask(feature), 120));
+    // if you expect edits to the boundary, call addOrUpdateDimmer(updatedFeature) after edits
   })
   .catch(err => console.error('Failed to load boundary geojson for blur overlay', err));
+
+/* ------------------------------------------------------------------------------------------------------------ */
+
 // -------------------------------------------------------------------------------
   const filterBtn = document.getElementById("filter-btn");
   const filterPanel = document.getElementById("filter-panel");
