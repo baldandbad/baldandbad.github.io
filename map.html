@@ -723,7 +723,7 @@ function setActiveMarker(m) {
 
   const map = L.map('map', {
     minZoom: 10,
-    maxZoom: 15,
+    maxZoom: 16,
     zoomControl: false
   }).setView([10.7769, 106.7009], 10);
   L.control.zoom({ position: 'bottomleft'
@@ -776,64 +776,76 @@ function gotoMarker(m) {
   setActiveMarker(m);
 }
 
-/* ---------------- Robust dimmer (paste right after L.tileLayer(...).addTo(map); ) ---------------- */
+/* ---------------- Inverted dimmer (mask outside polygon) ---------------- */
+/* Paste/replace previous dimmer code with this block.
+   IMPORTANT: call addOrUpdateDimmerFromLayer(boundaryLayer) after you add boundaryLayer to the map. */
 
-// create a dedicated pane so ordering is explicit (below markers, above tiles)
 if (!map.getPane('dimmerPane')) {
   map.createPane('dimmerPane');
-  // choose zIndex between overlayPane (400) and markerPane (600)
-  map.getPane('dimmerPane').style.zIndex = 450;
-  // make sure it doesn't block pointer events (markers above will still be clickable)
-  map.getPane('dimmerPane').style.pointerEvents = 'auto';
+  const pane = map.getPane('dimmerPane');
+  // z-index chosen so dimmer sits above tiles but below markers/popups
+  pane.style.zIndex = 450;
+  // Make the pane non-interactive so clicks go to markers above/below
+  pane.style.pointerEvents = 'none';
 }
 
 let dimLayer = null;
-let boundaryLayer = null;
 
-/** Convert a GeoJSON feature (Polygon / MultiPolygon) to an array of rings.
- *  Returns an array: [ ring1, ring2, ... ] where each ring = [[lat,lng],...]
- *  Works across FeatureCollection (we gather all polygons).
+/** Utility: wrap longitude into [-180,180] */
+function wrapLng(lng) {
+  return ((lng + 180) % 360 + 360) % 360 - 180;
+}
+
+/** Convert a Leaflet latlngs structure (possibly nested for MultiPolygon) into rings
+ *  returns array of rings where each ring = [[lat, lng], ...]
  */
-function geoJsonToRings(geojson) {
-  const features = (geojson.type === 'FeatureCollection') ? geojson.features
-                   : (geojson.type === 'Feature') ? [geojson]
-                   : (Array.isArray(geojson)) ? geojson
-                   : null;
-  if (!features || !features.length) return [];
-
+function extractRingsFromLatLngs(latlngs) {
   const rings = [];
-  features.forEach(f => {
-    if (!f || !f.geometry) return;
-    const g = f.geometry;
-    if (g.type === 'Polygon') {
-      // g.coordinates is [ [ [lng,lat], ... ], [hole...], ... ]
-      g.coordinates.forEach(r => {
-        rings.push(r.map(pt => [pt[1], pt[0]])); // to [lat,lng]
-      });
-    } else if (g.type === 'MultiPolygon') {
-      // g.coordinates is [ polygon1, polygon2, ... ]
-      g.coordinates.forEach(polygon => {
-        polygon.forEach(r => rings.push(r.map(pt => [pt[1], pt[0]])));
-      });
+  function walk(arr) {
+    if (!arr || !arr.length) return;
+    // detect array of LatLng points
+    if (arr[0] && typeof arr[0].lat === 'number') {
+      rings.push(arr.map(ll => [ll.lat, wrapLng(ll.lng)]));
+    } else {
+      // nested arrays (MultiPolygon or polygon with holes)
+      arr.forEach(walk);
     }
+  }
+  walk(latlngs);
+  return rings;
+}
+
+/** Convert GeoJSON Feature to rings (supports Polygon & MultiPolygon) */
+function geoJsonFeatureToRings(feature) {
+  if (!feature || !feature.geometry) return [];
+  const geom = feature.geometry;
+  const coords = (geom.type === 'Polygon') ? [geom.coordinates]
+               : (geom.type === 'MultiPolygon') ? geom.coordinates
+               : null;
+  if (!coords) return [];
+  const rings = [];
+  coords.forEach(polygon => {
+    polygon.forEach(ring => {
+      // GeoJSON coords are [lng,lat] -> convert to [lat,lng] and wrap lon
+      rings.push(ring.map(pt => [pt[1], wrapLng(pt[0])]));
+    });
   });
   return rings;
 }
 
-/** Add/update dimmer polygon: draws a giant outer rect and uses geo rings as holes.
- *  Uses the dedicated 'dimmerPane' so ordering is consistent.
+/** Create the inverted dimmer polygon from an array of rings (holes).
+ *  rings: [ [lat,lng,...], [lat,lng,...], ... ] (holes)
  */
-function addOrUpdateDimmerFromRings(rings) {
-  if (!map) return;
-  if (dimLayer) {
-    try { map.removeLayer(dimLayer); } catch (e) {}
-    dimLayer = null;
-  }
+function createDimmerFromRings(rings, options = {}) {
+  // remove existing dimLayer
+  if (dimLayer) { try { map.removeLayer(dimLayer); } catch (e) {} dimLayer = null; }
+
   if (!rings || !rings.length) {
-    console.warn('No rings available to create dimmer.');
+    console.warn('createDimmerFromRings: no rings supplied.');
     return;
   }
 
+  // big outer rectangle that covers world (lat, lng)
   const outer = [
     [  90, -180 ],
     [  90,  180 ],
@@ -841,25 +853,89 @@ function addOrUpdateDimmerFromRings(rings) {
     [ -90, -180 ]
   ];
 
-  // Leaflet accepts array: [ outerRing, hole1, hole2, ... ]
-  const polygonWithHoles = [ outer, ...rings ];
+  // Leaflet accepts an array where first element is outer ring, subsequent are holes
+  const polygonWithHoles = [ outer ].concat(rings);
 
   dimLayer = L.polygon(polygonWithHoles, {
-    pane: 'dimmerPane',      // explicit pane
-    color: '#000',
+    pane: 'dimmerPane',
+    color: options.color || '#000',
     weight: 0,
     opacity: 0,
-    fillColor: '#000',
-    fillOpacity: 0.45,
+    fillColor: options.fillColor || 'rgba(0,0,0,0.65)',
+    fillOpacity: typeof options.fillOpacity === 'number' ? options.fillOpacity : 0.45,
     interactive: false
   }).addTo(map);
 
-  // Ensure other important layers show above the mask
-  if (boundaryLayer && boundaryLayer.bringToFront) boundaryLayer.bringToFront();
-  // marker cluster and markers live in markerPane (zIndex ~600) so they stay above the dimmer
+  // make sure marker cluster and boundary (if present) are above the dimmer
+  // marker cluster typically lives in markerPane (~600 z-index)
+  if (window.markerCluster && typeof window.markerCluster.bringToFront === 'function') {
+    try { window.markerCluster.bringToFront(); } catch(e) {}
+  }
 }
 
+/** High-level helper: accept a Leaflet layer (GeoJSON group, FeatureGroup, or Polygon)
+ *  and create the inverted dimmer based on its geometry.
+ */
+function addOrUpdateDimmerFromLayer(layer) {
+  if (!layer) { console.warn('addOrUpdateDimmerFromLayer: layer missing'); return; }
+
+  // collect rings from layer(s)
+  const rings = [];
+
+  // if layer is a featureGroup or geojson group, iterate children
+  if (layer instanceof L.FeatureGroup || layer instanceof L.LayerGroup) {
+    layer.eachLayer(function(child) {
+      if (typeof child.getLatLngs === 'function') {
+        const r = extractRingsFromLatLngs(child.getLatLngs());
+        r.forEach(rr => rings.push(rr));
+      } else if (child.feature) {
+        const r = geoJsonFeatureToRings(child.feature);
+        r.forEach(rr => rings.push(rr));
+      }
+    });
+  } else {
+    // single layer or L.GeoJSON returned layer
+    if (typeof layer.getLatLngs === 'function') {
+      extractRingsFromLatLngs(layer.getLatLngs()).forEach(rr => rings.push(rr));
+    } else if (layer.feature) {
+      geoJsonFeatureToRings(layer.feature).forEach(rr => rings.push(rr));
+    } else if (layer.options && layer.options.geometry) {
+      // defensive: sometimes geojson style
+      geoJsonFeatureToRings(layer.options.geometry).forEach(rr => rings.push(rr));
+    }
+  }
+
+  if (!rings.length) {
+    console.warn('addOrUpdateDimmerFromLayer: found no rings on the provided layer.');
+    return;
+  }
+
+  createDimmerFromRings(rings);
+
+  // expose convenient function to update later if needed
+  window.updateMapDimmer = () => addOrUpdateDimmerFromLayer(layer);
+}
+
+/* Export small API for debugging */
+window.__dimmer = {
+  addOrUpdateDimmerFromLayer,
+  createDimmerFromRings,
+  removeDimmer: () => { if (dimLayer) { try { map.removeLayer(dimLayer); } catch(e){} dimLayer = null; } }
+};
+
+/* Example usage:
+   After you add the boundary layer (boundaryLayer = L.geoJSON(...).addTo(map);)
+   call:
+     addOrUpdateDimmerFromLayer(boundaryLayer);
+   If you update the geometry later, call:
+     window.updateMapDimmer();
+*/
+
+/* ---------------- End Dimmer block ---------------- */
+
+
 /** Fetch geojson and wire up map layers robustly */
+/* --- Fetch boundary and wire dimmer (REPLACE your current fetch block with this) --- */
 fetch('js/hcmc-boundary.geojson')
   .then(r => {
     if (!r.ok) throw new Error('Network response was not ok');
@@ -875,23 +951,18 @@ fetch('js/hcmc-boundary.geojson')
       console.warn('Failed to add boundaryLayer for visibility', e);
     }
 
-    const rings = geoJsonToRings(geojson);
-    console.log('Dimmer rings count:', rings.length);
-
-    if (!rings.length) {
-      console.warn('GeoJSON contained no polygon rings — check coordinate order or feature types.');
-      return;
+    // Use the layer to create inverted dimmer (this helper extracts rings for you)
+    try {
+      addOrUpdateDimmerFromLayer(boundaryLayer);
+      console.log('Dimmer created from boundaryLayer.');
+    } catch (err) {
+      console.warn('Failed to create dimmer from boundaryLayer', err);
     }
 
-    addOrUpdateDimmerFromRings(rings);
-
-    // Optional: if you want the dimmer to fade in
-    if (dimLayer) {
-      dimLayer.setStyle({ fillOpacity: 0 }); // start transparent
-      // small fade in
-      let step = 0;
-      const steps = 10;
-      const target = 0.45;
+    // Optional: fade-in the dimmer
+    if (typeof dimLayer !== 'undefined' && dimLayer) {
+      dimLayer.setStyle({ fillOpacity: 0 });
+      let step = 0, steps = 10, target = 0.45;
       const tick = () => {
         step++;
         dimLayer.setStyle({ fillOpacity: +(target * (step / steps)).toFixed(3) });
@@ -903,6 +974,7 @@ fetch('js/hcmc-boundary.geojson')
   .catch(err => {
     console.error('Failed to load/parse boundary geojson for dimmer:', err);
   });
+
 
 /* ------------------------------------------------------------------------------------- */
 
