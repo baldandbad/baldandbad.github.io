@@ -722,10 +722,10 @@ function setActiveMarker(m) {
   });
 
   const map = L.map('map', {
-    minZoom: 10,
-    maxZoom: 16,
+    minZoom: 9,
+    maxZoom: 15,
     zoomControl: false
-  }).setView([10.7769, 106.7009], 10);
+  }).setView([10.7769, 106.7009], 9);
   L.control.zoom({ position: 'bottomleft'
   }).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -974,37 +974,39 @@ fetch('js/hcmc-boundary.geojson')
   .catch(err => {
     console.error('Failed to load/parse boundary geojson for dimmer:', err);
   });
-
+  
 
 /* ------------------------------------------------------------------------------------- */
 
+
+
   // Example data
 const data = [
-  { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html", vr: "https://www.360view.vn/gallery/data/projects/vietnam/tp_hcm/baotangtp__05022011/" },
-  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html", vr: "non" },
-  { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_btctct_view_3&startactions=lookat(1.89,0.29,120,0,0);" },
-  { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_13-chua-giac-lam&startactions=lookat(104.09,-1.68,100.93,0,0);" },
-  { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_4_6_2_cho-binh-tay_(1)&startactions=lookat(-98.2,4.81,134.39,0,0);" },
-  { name: "Chợ Bến Thành", coords: [10.772562285042808,106.69800620687107], category: "thanhpho", page: "chobenthanh.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/chobenthanh__022011/index.html?" },
-  { name: "Căn Cứ Rừng Sác", coords: [10.407547,106.888519], category: "quocgia", page: "cancurungsac.html", vr: "non" },
-  { name: "Hầm giấu vũ khí biệt động", coords: [10.77215547871409,106.68593350431848], category: "quocgia", page: "cosogiauvukhi.html", vr: "non" },
-  { name: "Khu trại giam Bệnh Viện Chợ Quán", coords: [10.75329276787438,106.67915915593466], category: "quocgia", page: "khugiamtraibenhvientroquan.html", vr: "non" },
-  { name: "Lăng Lê Văn Duyệt", coords: [10.802218698128923,106.69712355857787], category: "quocgia", page: "langlevanduyet.html", vr: "non" },
-  { name: "Lăng mộ Phan Châu Trinh", coords: [10.804371552261498,106.661775396652], category: "quocgia", page: "mophanchautrinh.html", vr: "non" },
-  { name: "Nhà Thờ Đức Bà", coords: [10.779792558304973,106.69901819638865], category: "thanhpho", page: "nhathoducba.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/nhathoducba__022011/?" },
-  { name: "Tịnh xá Ngọc Phương", coords: [10.81534827804912,106.68978491518055], category: "quocgia", page: "tinhxangocphuong.html", vr: "non" },
-  { name: "Đình Phong Phú", coords: [10.832183577842558,106.78359777687334], category: "cachmang", page: "dinhphongphu.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_37-dinh-tho-dinh-phong-phu-(2)&startactions=lookat(-4.65,2.37,127.05,0,0);" },
-  { name: "Đình Thông Tây Hội", coords: [10.840034114033681,106.66492442289332], category: "kientruc", page: "dingthongtayhoi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_16-dinh-thong-tay-hoi-(2)&startactions=lookat(-99.4,-0.87,127.9,0,0);" },
-  { name: "Địa đạo Củ Chi", coords: [11.141789146277686,106.46135436902648], category: "dacbiet", page: "diadaocuchi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_1_1_2_dia-dao-cu-chi_(1)&startactions=lookat(125.09,-1.77,119.92,0,0);" },
-  { name: "Địa đạo Phú Thọ Hòa", coords: [10.783885492854845,106.63090098482986], category: "quocgia", page: "diadaophuthohoa.html", vr: "non" },
-  { name: "Nhà hát TPHCM", coords: [10.776713503847871,106.7031885226206], category: "kientruc", page: "nhahattphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_nhahattp_view4&startactions=lookat(85.37,-13.8,119.23,0,0);" },
-  { name: "Dinh Độc Lập", coords: [10.777067977226276,106.69528064173029], category: "dacbiet", page: "dinhdoclap.html", vr: "https://vr360.com.vn/projects/dinhdoclap/" },
-  { name: "Đình Chí Hòa", coords: [10.78144580194108,106.67316163457637], category: "kientruc", page: "dinhchihoa.html", vr: "non" },
-  { name: "Chùa Giác Viên", coords: [10.76318460966222,106.6398107945002], category: "kientruc", page: "chuagiacvien.html", vr: "non" },
-  { name: "Lò Gốm Cổ Hưng Lợi", coords: [10.725087405329568,106.62630157120653], category: "khaoco", page: "logom.html", vr: "non" },
-  { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_20-di-tich-lich-su-nga-ba-giong-(1)&startactions=lookat(103.33,-7.81,91.29,0,0);" },
-  { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_ubnd_view1&startactions=lookat(0.9,-20.39,119.83,0,0);" },
-  { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html", vr: "non" },
+  { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html", vr: "https://www.360view.vn/gallery/data/projects/vietnam/tp_hcm/baotangtp__05022011/", image: "images/bttphcm1.jpg" },
+  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html", vr: "non", image: "images/bthcm1.jpg"},
+  { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_btctct_view_3&startactions=lookat(1.89,0.29,120,0,0);", image: "images/btctcc2.jpg" },
+  { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_13-chua-giac-lam&startactions=lookat(104.09,-1.68,100.93,0,0);", image: "images/cgl1.jpg"},
+  { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_4_6_2_cho-binh-tay_(1)&startactions=lookat(-98.2,4.81,134.39,0,0);", image: "images/cbtt1.jpg" },
+  { name: "Chợ Bến Thành", coords: [10.772562285042808,106.69800620687107], category: "thanhpho", page: "chobenthanh.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/chobenthanh__022011/index.html?", image: "images/cbt2.jpg" },
+  { name: "Căn Cứ Rừng Sác", coords: [10.407547,106.888519], category: "quocgia", page: "cancurungsac.html", vr: "non", image: "images/ccrs1.jpg" },
+  { name: "Hầm giấu vũ khí biệt động", coords: [10.77215547871409,106.68593350431848], category: "quocgia", page: "cosogiauvukhi.html", vr: "non", image: "images/csgv3.webp"},
+  { name: "Khu trại giam Bệnh Viện Chợ Quán", coords: [10.75329276787438,106.67915915593466], category: "quocgia", page: "khugiamtraibenhvientroquan.html", vr: "non", image : "images/ktg5.jpg" },
+  { name: "Lăng Lê Văn Duyệt", coords: [10.802218698128923,106.69712355857787], category: "quocgia", page: "langlevanduyet.html", vr: "non", image: "images/llvd.png" },
+  { name: "Lăng mộ Phan Châu Trinh", coords: [10.804371552261498,106.661775396652], category: "quocgia", page: "mophanchautrinh.html", vr: "non", image: "images/mpc1.jpg" },
+  { name: "Nhà Thờ Đức Bà", coords: [10.779792558304973,106.69901819638865], category: "thanhpho", page: "nhathoducba.html", vr: "https://360view.vn/gallery/data/projects/vietnam/tp_hcm/nhathoducba__022011/?", image: "images/ntdb1.jpg" },
+  { name: "Tịnh xá Ngọc Phương", coords: [10.81534827804912,106.68978491518055], category: "quocgia", page: "tinhxangocphuong.html", vr: "non", image : "images/txn1.jpg" },
+  { name: "Đình Phong Phú", coords: [10.832183577842558,106.78359777687334], category: "cachmang", page: "dinhphongphu.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_37-dinh-tho-dinh-phong-phu-(2)&startactions=lookat(-4.65,2.37,127.05,0,0);", image: "images/dpp1.jpg" },
+  { name: "Đình Thông Tây Hội", coords: [10.840034114033681,106.66492442289332], category: "kientruc", page: "dingthongtayhoi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_16-dinh-thong-tay-hoi-(2)&startactions=lookat(-99.4,-0.87,127.9,0,0);", image: "images/dtth1.jpg" },
+  { name: "Địa đạo Củ Chi", coords: [11.141789146277686,106.46135436902648], category: "dacbiet", page: "diadaocuchi.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_1_1_2_dia-dao-cu-chi_(1)&startactions=lookat(125.09,-1.77,119.92,0,0);", image: "images/ddcc1.jpg"},
+  { name: "Địa đạo Phú Thọ Hòa", coords: [10.783885492854845,106.63090098482986], category: "quocgia", page: "diadaophuthohoa.html", vr: "non", image: "images/ddpth1.jpg"},
+  { name: "Nhà hát TPHCM", coords: [10.776713503847871,106.7031885226206], category: "kientruc", page: "nhahattphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_nhahattp_view4&startactions=lookat(85.37,-13.8,119.23,0,0);", image: "images/nht1.jpg" },
+  { name: "Dinh Độc Lập", coords: [10.777067977226276,106.69528064173029], category: "dacbiet", page: "dinhdoclap.html", vr: "https://vr360.com.vn/projects/dinhdoclap/", image: "images/ddl1.jpg" },
+  { name: "Đình Chí Hòa", coords: [10.78144580194108,106.67316163457637], category: "kientruc", page: "dinhchihoa.html", vr: "non", image: "images/dch2.jpg" },
+  { name: "Chùa Giác Viên", coords: [10.76318460966222,106.6398107945002], category: "kientruc", page: "chuagiacvien.html", vr: "non", image: "images/cgv1.jpg" },
+  { name: "Lò Gốm Cổ Hưng Lợi", coords: [10.725087405329568,106.62630157120653], category: "khaoco", page: "logom.html", vr: "non", image: "images/lg3.jpg" },
+  { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_20-di-tich-lich-su-nga-ba-giong-(1)&startactions=lookat(103.33,-7.81,91.29,0,0);", image: "images/nbg1.jpg" },
+  { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_ubnd_view1&startactions=lookat(0.9,-20.39,119.83,0,0);", image: "images/ubnd1.jpg" },
+  { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html", vr: "non", image: "images/dbd1.jpg" },
 ];
 
 
@@ -1043,37 +1045,126 @@ function setActiveMarker(m) {
 }
 
 
-const markerObjects = data.map(item => {
-  // sizes must match CSS .my-div-icon
-  const ICON_SIZE = 18;
-  const innerClass = categoryClass(item.category);
+/* ---------- Enhanced markers + rich popup + legend ---------- */
 
-  const html = `<div class="marker-inner ${innerClass}" aria-hidden="true"></div>`;
-  const icon = L.divIcon({
-    className: 'my-div-icon',   // container that we sized in CSS
-    html: html,
-    iconSize: [ICON_SIZE, ICON_SIZE],
-    iconAnchor: [ICON_SIZE/2, ICON_SIZE/2]  // center the icon on the coordinate
+// Category -> CSS color mapping (matches your existing CSS)
+const CATEGORY_COLORS = {
+  thanhpho: '#ff7043',
+  quocgia:  '#d32f2f',
+  kientruc: '#2196f3',
+  baotang:  '#f59e0b',
+  khaoco:   '#10b981',
+  dacbiet:  '#8b5cf6',
+  default:  '#6b7280'
+};
+
+// optional glyphs (single-letter or small text) — you can swap for SVG path glyphs
+const CATEGORY_LABEL = {
+  thanhpho: 'T',
+  quocgia:  'Q',
+  kientruc: 'K',
+  baotang:  'B',
+  khaoco:   'C',
+  dacbiet:  'D',
+  default:  '?'
+};
+
+const LEGEND_LABELS = {
+  thanhpho: 'Di tích cấp thành phố',
+  quocgia:  'Di tích cấp quốc gia',
+  kientruc: 'Kiến trúc - Nghệ thuật',
+  baotang:  'Bảo tàng / Chuyên đề',
+  khaoco:   'Di tích khảo cổ',
+  dacbiet:  'Di tích quốc gia đặc biệt',
+  khu:      'Khu dự trữ sinh quyển',
+  default:  'Khác'
+};
+
+// helper: build popup HTML for a marker item
+function buildPopupHtml(item) {
+  // prefer explicit image field, otherwise try thumb by slug
+  const thumbUrl = item.image 
+    ? item.image 
+    : `images/thumbs/${slugify(item.name)}.jpg`;
+
+  // snippet short description (optional)
+  const snippet = item.snippet ? escapeHtml(item.snippet) : '';
+
+  // accessible alt text
+  const alt = escapeHtml(item.name) + ' thumbnail';
+
+  // add small metadata row and action buttons
+  const actions = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px">
+      <a class="popup-btn" href="${escapeHtml(item.page)}" target="_blank" rel="noopener">Xem thêm</a>
+      <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank" rel="noopener">Chỉ đường</a>
+      ${item.vr && item.vr !== 'non' ? `<a class="popup-btn" href="${escapeHtml(item.vr)}" target="_blank" rel="noopener">VR360</a>` : ''}
+    </div>
+  `;
+
+  // final popup markup
+  const humanCategory = LEGEND_LABELS[item.category] || LEGEND_LABELS.default || (item.category || 'Khác');
+
+return `
+  <div style="min-width:260px;max-width:360px">
+    <img class="popup-thumb" src="${thumbUrl}" alt="${alt}" onerror="this.style.display='none'"/>
+    <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
+    ${ snippet ? `<p style="margin:0 0 8px;font-size:13px;color:#374151">${snippet}</p>` : '' }
+    <p style="margin:0;font-size:12px;color:#6b7280">Loại: ${escapeHtml(humanCategory)}</p>
+    ${actions}
+  </div>
+`;
+}
+
+// Build the divIcon HTML (keeps your styles)
+function createDivIconHtml(item) {
+  const cls = categoryClass(item.category);
+  return `<div class="marker-inner ${cls}" aria-hidden="true"></div>`;
+}
+
+function svgDataIcon(category, opts = {}) {
+  const size = opts.size || 26; // px
+  const color = CATEGORY_COLORS[category] || CATEGORY_COLORS.default;
+  const label = opts.label != null ? opts.label : (CATEGORY_LABEL[category] || '');
+  // SVG markup: circle + text centered
+  const svg = `
+    <svg xmlns='http://www.w3.org/2000/svg' width='${size}' height='${size}' viewBox='0 0 ${size} ${size}'>
+      <defs>
+        <filter id="s" x="-50%" y="-50%" width="200%" height="200%">
+          <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#000" flood-opacity="0.18"/>
+        </filter>
+      </defs>
+      <circle cx="${size/2}" cy="${size/2}" r="${(size/2)-1}" fill="${color}" stroke="#fff" stroke-width="2" filter="url(#s)"/>
+      <text x="50%" y="53%" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="${Math.round(size/2.6)}" fill="#fff" font-weight="700">${label}</text>
+    </svg>
+  `.trim();
+
+  // create data URI: encodeURIComponent is safer than base64 for SVG
+  const url = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  const svgPath = `images/map-pin.svg`;
+
+  return L.icon({
+    iconUrl: url,
+    iconSize: [size, size],
+    iconAnchor: [size/2, size/2],      // center the icon
+    popupAnchor: [0, -size/2 - 6],
+    className: '' // keep default classes so marker-anchor works
   });
+}
+
+// Create markers array (replaces your previous markerObjects block)
+const markerObjects = data.map(item => {
+  const ICON_SIZE = 18;
+  const html = createDivIconHtml(item);
+  const icon = svgDataIcon(item.category, { size: 22, label: null }); // label null => uses CATEGORY_LABEL
 
   const marker = L.marker(item.coords, { icon });
 
-  const thumbUrl = `images/thumbs/${slugify(item.name)}.jpg`;
-  const popupHtml = `
-  <div style="min-width:220px">
-    <img src="${thumbUrl}" style="width:100%;height:110px;object-fit:cover;border-radius:6px" onerror="this.style.display='none'"/>
-    <h3 style="margin:8px 0 6px">${escapeHtml(item.name)}</h3>
-    <div style="margin-top:8px;display:flex;gap:8px;flex-wrap:wrap">
-      <a class="popup-btn" href="${item.page}" target="_blank">Xem thêm</a>
-      <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank">Chỉ đường</a>
-      ${item.vr !== "non" ? `<a class="popup-btn" href="${item.vr}" target="_blank">VR360</a>` : ""}
-    </div>
-  </div>
-`;
-  // offset slightly so popup appears above the dot (negative Y)
-  marker.bindPopup(popupHtml, { minWidth: 220, offset: L.point(0, -ICON_SIZE/2 - 6), autoPan: true, keepInView: true });
+  // new rich popup
+  const popupHtml = buildPopupHtml(item);
+  marker.bindPopup(popupHtml, { minWidth: 260, maxWidth: 380, offset: L.point(0, -ICON_SIZE/2 - 6), autoPan: true, keepInView: true });
 
-  // lightweight tooltip (desktop only)
+  // tooltip (small)
   marker.bindTooltip(item.name, { permanent: false, direction: 'top', className: 'my-tooltip', offset: [0, -ICON_SIZE/2 - 8] });
 
   // metadata for filters/search
@@ -1083,17 +1174,18 @@ const markerObjects = data.map(item => {
 
   // highlight + open popup on click
   marker.on('click', () => {
-    setActiveMarker(marker);
+    // use your existing setActiveMarker if present
+    if (typeof setActiveMarker === 'function') setActiveMarker(marker);
     marker.openPopup();
   });
 
-  // show tooltip only on pointer: fine (desktop). avoids popups on touch devices
+  // tooltip behavior for pointer devices
   if (window.matchMedia && window.matchMedia('(pointer: fine)').matches) {
     marker.on('mouseover', () => marker.openTooltip());
     marker.on('mouseout',  () => marker.closeTooltip());
   }
 
-  // accessibility: make container focusable after it's added to the DOM
+  // accessibility: focusable
   marker.on('add', () => {
     const el = marker.getElement();
     if (!el) return;
@@ -1105,9 +1197,91 @@ const markerObjects = data.map(item => {
     });
   });
 
+  // add to cluster
   markerCluster.addLayer(marker);
   return marker;
 });
+
+// OPTIONAL: if you were doing a batched fade-in, you can replace the immediate adds with addMarkersWithFade(markerObjects, markerCluster);
+
+// ---------- Build a legend and add to map (simple DOM inside map container) ----------
+// Put this near your CATEGORY_COLORS definition
+
+// Optional: specify exact order you want the legend items shown in.
+// If you don't need a special order, set this to null or omit it.
+const LEGEND_ORDER = [
+  'dacbiet',
+  'quocgia',
+  'thanhpho',
+  'kientruc',
+  'baotang',
+  'khaoco',
+  'khu',
+  'default'
+];
+
+// Build legend using the custom labels and order
+(function buildLegend(){
+  const existing = document.getElementById('map-legend');
+  if (existing) existing.remove();
+
+  const legend = document.createElement('div');
+  legend.id = 'map-legend';
+  legend.setAttribute('aria-hidden','false');
+  legend.style.position = 'absolute';
+  legend.style.left = '12px';
+  legend.style.bottom = '12px';
+  legend.style.zIndex = 14000;
+  legend.style.background = '#fff';
+  legend.style.padding = '8px 10px';
+  legend.style.borderRadius = '8px';
+  legend.style.boxShadow = '0 18px 50px rgba(0,0,0,0.12)';
+  legend.style.fontSize = '13px';
+
+  const title = document.createElement('div');
+  title.style.fontWeight = '700';
+  title.style.marginBottom = '6px';
+  title.innerText = 'Chú giải';
+  legend.appendChild(title);
+
+  // decide which categories to iterate (either custom order or keys from CATEGORY_COLORS)
+  const keys = Array.isArray(LEGEND_ORDER) && LEGEND_ORDER.length
+    ? LEGEND_ORDER.filter(k => CATEGORY_COLORS[k] !== undefined) // keep only known keys
+    : Object.keys(CATEGORY_COLORS);
+
+  keys.forEach(k => {
+    const color = CATEGORY_COLORS[k] || CATEGORY_COLORS.default;
+    const label = LEGEND_LABELS[k] || (k === 'default' ? 'Khác' : k);
+
+    const item = document.createElement('div');
+    item.className = 'legend-item';
+    item.style.display = 'flex';
+    item.style.alignItems = 'center';
+    item.style.gap = '8px';
+    item.style.margin = '6px 0';
+    item.style.cursor = 'default';
+
+    const dot = document.createElement('div');
+    dot.className = 'legend-dot';
+    dot.style.width = '12px';
+    dot.style.height = '12px';
+    dot.style.borderRadius = '50%';
+    dot.style.background = color;
+    dot.style.border = '2px solid #fff';
+    dot.style.boxShadow = '0 2px 6px rgba(0,0,0,0.12)';
+
+    const txt = document.createElement('div');
+    txt.textContent = label;
+
+    item.appendChild(dot);
+    item.appendChild(txt);
+    legend.appendChild(item);
+  });
+
+  document.getElementById('map').appendChild(legend);
+})();
+
+
 
 /* ----------------- Street View (no API key) — embed with fallback ----------------- */
 /* This code uses public Google Maps URLs (no API key). It will try to embed in a modal iframe.
