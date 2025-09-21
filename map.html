@@ -1094,39 +1094,36 @@ function svgToDataUrl(svgText) {
 }
 
 // Main helper: return an L.icon tinted to `color` and sized to `size`
-async function getTintedIcon(svgUrl, color, size = 40, fallbackSvg = null) {
-  const key = `${svgUrl}|${color}|${size}`;
-  if (_tintedIconCache[key]) return _tintedIconCache[key];
+function getTintedIcon(color = '#ef4444', size = 38) {
+  const svg = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}">
+      <!-- Outer pin: gets tinted -->
+      <path 
+        d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"
+        fill="${color}" 
+        stroke="white" 
+        stroke-width="1"
+      />
+      
+      <!-- Inner circle: always fixed white -->
+      <circle 
+        cx="12" cy="9" r="3" 
+        fill="white" 
+        stroke="none" 
+        opacity="0.8"
+      />
+    </svg>`;
 
-  try {
-    const svgText = await fetchSvgText(svgUrl, fallbackSvg);
-    const tinted = tintSvgString(svgText, color);
-    const dataUrl = svgToDataUrl(tinted);
+  const url = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 
-    // tweak iconSize / anchor if your SVG has different aspect ratio
-    const icon = L.icon({
-      iconUrl: dataUrl,
-      iconSize: [Math.round(size * 0.8), size], // width,height (adjust if needed)
-      iconAnchor: [Math.round(size * 0.4), size], // tip anchor
-      popupAnchor: [0, -Math.round(size * 0.9)],
-      className: 'custom-svg-marker'
-    });
-
-    _tintedIconCache[key] = icon;
-    return icon;
-  } catch (err) {
-    console.warn('getTintedIcon fallback to raw file url', err);
-    // fallback: return L.icon using original svg file (may not be tinted)
-    const icon = L.icon({
-      iconUrl: svgUrl,
-      iconSize: [size,size],
-      iconAnchor: [size/2,size],
-      popupAnchor: [0,-size]
-    });
-    _tintedIconCache[key] = icon;
-    return icon;
-  }
+  return L.icon({
+    iconUrl: url,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],   // bottom point of the pin
+    popupAnchor: [0, -size * 0.9]   // popup above pin
+  });
 }
+
 
 const LEGEND_LABELS = {
   thanhpho: 'Di tích cấp thành phố',
