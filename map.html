@@ -1035,7 +1035,7 @@ const CATEGORY_COLORS = {
   khaoco:   '#10b981',
   dacbiet:  '#8b5cf6',
   cachmang: '#ef4444',
-  khu:      '#7c3aed',
+  khu:      '#FFFF00',
   default:  '#6b7280'
 };
 /* ---------- Automatic SVG tinting (no SVG edits required) ---------- */
@@ -1094,36 +1094,26 @@ function svgToDataUrl(svgText) {
 }
 
 // Main helper: return an L.icon tinted to `color` and sized to `size`
-function getTintedIcon(color = '#ef4444', size = 38) {
+function getTintedIcon(color = '#ff0000', size = 38) {
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="${size}" height="${size}">
-      <!-- Outer pin: gets tinted -->
-      <path 
-        d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"
-        fill="${color}" 
-        stroke="white" 
-        stroke-width="1"
-      />
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="${size}" height="${size}">
+    <!-- Outer pin path (tinted dynamically) -->
+    <path d="M16 0C10.48 0 6 4.48 6 10c0 7.5 10 22 10 22s10-14.5 10-22c0-5.52-4.48-10-10-10z"
+      fill="${color}" stroke="white" stroke-width="0.6"/>
       
-      <!-- Inner circle: always fixed white -->
-      <circle 
-        cx="12" cy="9" r="3" 
-        fill="white" 
-        stroke="none" 
-        opacity="0.8"
-      />
-    </svg>`;
+    <!-- Inner circle (always white) -->
+    <circle cx="16" cy="10" r="3.5" fill="white" opacity="0.9"/>
+  </svg>`;
 
   const url = `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 
   return L.icon({
     iconUrl: url,
     iconSize: [size, size],
-    iconAnchor: [size / 2, size],   // bottom point of the pin
-    popupAnchor: [0, -size * 0.9]   // popup above pin
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size * 0.9]
   });
 }
-
 
 const LEGEND_LABELS = {
   thanhpho: 'Di tích cấp thành phố',
@@ -1623,7 +1613,7 @@ fetch('js/hcmc-boundary.geojson')
   // Example data
 const data = [
   { name: "Bảo Tàng TPHCM", coords: [10.776069676733153, 106.6995407994018], category: "thanhpho", page: "baotangtphcm.html", vr: "https://www.360view.vn/gallery/data/projects/vietnam/tp_hcm/baotangtp__05022011/", image: "images/bttpchm1.jpg" },
-  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html", vr: "non", image: "images/bthcm1.jpeg"},
+  { name: "Bảo Tàng Hồ Chí Minh", coords: [10.768159642716595,106.70684673309313], category: "kientruc", page: "baotanghcm.html", vr: "non", image: "images/bthcm.png" },
   { name: "Bảo tàng Chứng tích Chiến tranh", coords: [10.779508902885842, 106.69208968489555], category: "baotang", page: "baotangchungtichchientranh.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_btctct_view_3&startactions=lookat(1.89,0.29,120,0,0);", image: "images/btctcc2.jpg" },
   { name: "Chùa Giác Lâm", coords: [10.778770,106.649202], category: "khu", page: "chuagiaclam.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_13-chua-giac-lam&startactions=lookat(104.09,-1.68,100.93,0,0);", image: "images/cgl1.jpg"},
   { name: "Chợ Bình Tây", coords: [10.749373657444895,106.65105450437837], category: "thanhpho", page: "chobinhtay.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_4_6_2_cho-binh-tay_(1)&startactions=lookat(-98.2,4.81,134.39,0,0);", image: "images/cbtt1.jpg" },
