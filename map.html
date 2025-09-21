@@ -241,7 +241,7 @@
     display: inline-block;
     padding: 8px 18px;
     background: linear-gradient(90deg, #ff7043 0%, #ffab91 100%);
-    color: #fff;
+    color: #ffffff;
     border-radius: 22px;
     font-size: 14px;
     font-weight: 600;
@@ -667,36 +667,6 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-/* === Hover scale for pointer devices === */
-.my-div-icon .marker-inner {
-  transition: transform 180ms ease, box-shadow 180ms ease;
-}
-.popup-thumb-wrap { position: relative; display:block; }
-.popup-thumb { width:100%; height:160px; object-fit:cover; border-radius:8px; display:block; }
-.popup-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  width: 40px;           /* tweak size */
-  height: 40px;
-  border-radius: 8px;
-  background: white;     /* if your badge is transparent, white card helps */
-  padding: 4px;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.16);
-  object-fit:contain;
-  z-index: 40;
-}
-/* smaller badge on mobile */
-@media (max-width:480px) {
-  .popup-badge { width: 32px; height: 32px; top:6px; left:6px; }
-  .popup-thumb { height:120px; }
-}
-
-.my-div-icon:hover .marker-inner,
-.my-div-icon:focus .marker-inner {
-  transform: scale(1.18);
-  box-shadow: 0 8px 28px rgba(0,0,0,0.28);
-}
 
 /* === Popup animation === */
 .leaflet-popup-content-wrapper {
@@ -841,6 +811,157 @@
 
 /* If you want the filter button to never invert text color on hover/focus (you had that bug earlier) */
 #filter-btn:hover, #filter-btn:focus { color: #0b66c2; background: #f0f8ff; box-shadow: 0 6px 18px rgba(11,102,194,0.08); }
+/* === Force popup button text to white (applies to anchors & buttons inside popups) === */
+.leaflet-popup-content-wrapper
+  a.popup-btn,
+.leaflet-popup-content-wrapper
+  button.popup-btn,
+.leaflet-popup-content-wrapper
+  .popup-actions a,
+.leaflet-popup-content-wrapper
+  .popup-actions button,
+.leaflet-popup-content-wrapper
+  .popup-actions-inline a,
+.leaflet-popup-content-wrapper
+  .popup-actions-inline button,
+.leaflet-popup-content-wrapper
+  a:not(.popup-btn)[role="button"],
+.leaflet-popup-content-wrapper
+  button {
+  color: #ffffff !important;
+  fill: #ffffff !important;            /* for SVG/icon fills inside buttons */
+  -webkit-text-fill-color: #ffffff !important; /* extra safeguard for some browsers */
+  text-shadow: 0 1px 0 rgba(0,0,0,0.18); /* improves contrast on light gradients */
+}
+
+/* ensure child icons inherit the color */
+.leaflet-popup-content-wrapper
+  a.popup-btn *,
+.leaflet-popup-content-wrapper
+  button.popup-btn *,
+.leaflet-popup-content-wrapper
+  .popup-actions * {
+  color: inherit !important;
+  fill: inherit !important;
+}
+
+/* keep hover/active states white as well */
+.leaflet-popup-content-wrapper
+  a.popup-btn:hover,
+.leaflet-popup-content-wrapper
+  a.popup-btn:focus,
+.leaflet-popup-content-wrapper
+  button.popup-btn:hover,
+.leaflet-popup-content-wrapper
+  button.popup-btn:focus {
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+/* ----- Allow deco to overflow popup wrapper ----- */
+.leaflet-popup-content-wrapper {
+  overflow: visible !important; /* allow pseudo-element outside the rounded border */
+}
+
+/* Ensure custom-popup is a positioned container */
+.custom-popup {
+  position: relative;
+  overflow: visible;
+}
+
+/* The pseudo-element uses CSS variable --deco (must be like: url('path/to.png')) */
+.leaflet-popup-content-wrapper .custom-popup::before {
+  content: "";
+  position: absolute;
+  top: -14px;
+  left: -14px;
+  width: 56px;
+  height: 56px;
+  background-image: var(--deco, none);
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: 20;
+  transform: rotate(-6deg);
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+}
+
+/* If we need to move deco to top-right (added by JS) */
+.leaflet-popup-content-wrapper .custom-popup.deco-top-right::before {
+  left: auto;
+  right: -14px;
+  transform: rotate(6deg) scaleX(-1); /* mirror for a natural look */
+}
+
+/* scale down on small screens to avoid blocking content */
+@media (max-width: 520px) {
+  .leaflet-popup-content-wrapper .custom-popup::before { width: 40px; height: 40px; top: -10px; left: -10px; transform: rotate(-4deg); }
+  .leaflet-popup-content-wrapper .custom-popup.deco-top-right::before { right: -10px; transform: rotate(4deg) scaleX(-1); }
+}
+
+/* ----- Force popup buttons/links text to white ----- */
+.leaflet-popup-content-wrapper a.popup-btn,
+.leaflet-popup-content-wrapper button.popup-btn,
+.leaflet-popup-content-wrapper .popup-actions a,
+.leaflet-popup-content-wrapper .popup-actions button,
+.leaflet-popup-content-wrapper .popup-actions-inline a,
+.leaflet-popup-content-wrapper .popup-actions-inline button {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  text-shadow: 0 1px 0 rgba(0,0,0,0.18);
+}
+.leaflet-popup-content-wrapper a.popup-btn * ,
+.leaflet-popup-content-wrapper button.popup-btn * ,
+.leaflet-popup-content-wrapper .popup-actions * { color: inherit !important; fill: inherit !important; }
+/* Allow pseudo-element to overflow the popup container */
+.leaflet-popup { overflow: visible !important; }
+
+/* Decoration applied to the outer popup-content-wrapper (so it sits on the border) */
+.leaflet-popup-content-wrapper {
+  position: relative;         /* needed for ::before positioning */
+  overflow: visible !important;
+}
+
+/* Pseudo-element on the outer wrapper (this is the element that draws the rounded border) */
+.leaflet-popup-content-wrapper::before {
+  content: "";
+  position: absolute;
+  top: -10px;                 /* pull slightly above the border */
+  left: -10px;                /* pull slightly to the left of the border */
+  width: var(--popup-deco-w, 56px);
+  height: var(--popup-deco-h, 56px);
+  background-image: var(--popup-deco, none); /* set via JS on popupopen: url('...') */
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;       /* don't block clicks */
+  z-index: 9999;              /* above border but below popup content if needed */
+  transform: rotate(var(--popup-deco-rotate, -6deg));
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,0.12));
+  transition: transform 140ms ease, left 140ms ease, right 140ms ease;
+}
+
+/* flip to top-right when class applied (mirrors the image) */
+.leaflet-popup-content-wrapper.deco-top-right::before {
+  left: auto;
+  right: -10px;
+  transform: rotate(calc(var(--popup-deco-rotate, -6deg) * -1)) scaleX(-1);
+}
+
+/* smaller on small screens */
+@media (max-width:520px) {
+  .leaflet-popup-content-wrapper::before {
+    width: var(--popup-deco-w-mobile, 40px);
+    height: var(--popup-deco-h-mobile, 40px);
+    top: -8px;
+    left: -8px;
+    transform: rotate(var(--popup-deco-rotate-mobile, -4deg));
+  }
+  .leaflet-popup-content-wrapper.deco-top-right::before {
+    right: -8px;
+    transform: rotate(calc(var(--popup-deco-rotate-mobile, -4deg) * -1)) scaleX(-1);
+  }
+}
 
 </style>
 <nav class="custom-navbar">
@@ -907,18 +1028,108 @@ const CATEGORY_COLORS = {
   baotang:  '#f59e0b',
   khaoco:   '#10b981',
   dacbiet:  '#8b5cf6',
+  cachmang: '#ef4444',
   khu:      '#7c3aed',
   default:  '#6b7280'
 };
+/* ---------- Automatic SVG tinting (no SVG edits required) ---------- */
 
+const _svgTemplateCache = {};
+const _tintedIconCache = {};
+
+// fetch SVG text (with optional fallbackText if fetch fails e.g. file://)
+async function fetchSvgText(url, fallbackText = null) {
+  if (_svgTemplateCache[url]) return _svgTemplateCache[url];
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('fetch failed: ' + res.status);
+    const txt = await res.text();
+    _svgTemplateCache[url] = txt;
+    return txt;
+  } catch (err) {
+    if (fallbackText) {
+      console.warn('Using fallback SVG text for', url, err);
+      _svgTemplateCache[url] = fallbackText;
+      return fallbackText;
+    }
+    console.error('Failed to fetch SVG:', err);
+    throw err;
+  }
+}
+
+// Replace fills/strokes/styles with color. Conservative: skip fill="none" and stroke="none"
+function tintSvgString(svgText, color) {
+  if (!svgText) return svgText;
+  let s = svgText;
+  // remove <style> blocks (they may override inline attributes)
+  s = s.replace(/<style[\s\S]*?<\/style>/gi, '');
+  // If the SVG contains a placeholder token CURRENT_COLOR, replace that first
+  if (s.indexOf('CURRENT_COLOR') !== -1) {
+    s = s.replace(/CURRENT_COLOR/g, color);
+  }
+  // Replace fill="..." except fill="none"
+  s = s.replace(/fill="(?!none)([^"]*)"/gi, `fill="${color}"`);
+  // Replace stroke="..." except stroke="none"
+  s = s.replace(/stroke="(?!none)([^"]*)"/gi, `stroke="${color}"`);
+  // Replace style="...fill:...;..." and style stroke occurrences
+  s = s.replace(/style="([^"]*)"/gi, (m, styleContent) => {
+    let ns = styleContent;
+    if (/fill\s*:\s*[^;]+/i.test(ns)) ns = ns.replace(/fill\s*:\s*[^;]+/gi, `fill:${color}`);
+    if (/stroke\s*:\s*[^;]+/i.test(ns)) ns = ns.replace(/stroke\s*:\s*[^;]+/gi, `stroke:${color}`);
+    return `style="${ns}"`;
+  });
+  return s;
+}
+
+// Produce a compact data: URL
+function svgToDataUrl(svgText) {
+  const cleaned = svgText.replace(/\r?\n|\s{2,}/g, ' ').trim();
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(cleaned);
+}
+
+// Main helper: return an L.icon tinted to `color` and sized to `size`
+async function getTintedIcon(svgUrl, color, size = 40, fallbackSvg = null) {
+  const key = `${svgUrl}|${color}|${size}`;
+  if (_tintedIconCache[key]) return _tintedIconCache[key];
+
+  try {
+    const svgText = await fetchSvgText(svgUrl, fallbackSvg);
+    const tinted = tintSvgString(svgText, color);
+    const dataUrl = svgToDataUrl(tinted);
+
+    // tweak iconSize / anchor if your SVG has different aspect ratio
+    const icon = L.icon({
+      iconUrl: dataUrl,
+      iconSize: [Math.round(size * 0.8), size], // width,height (adjust if needed)
+      iconAnchor: [Math.round(size * 0.4), size], // tip anchor
+      popupAnchor: [0, -Math.round(size * 0.9)],
+      className: 'custom-svg-marker'
+    });
+
+    _tintedIconCache[key] = icon;
+    return icon;
+  } catch (err) {
+    console.warn('getTintedIcon fallback to raw file url', err);
+    // fallback: return L.icon using original svg file (may not be tinted)
+    const icon = L.icon({
+      iconUrl: svgUrl,
+      iconSize: [size,size],
+      iconAnchor: [size/2,size],
+      popupAnchor: [0,-size]
+    });
+    _tintedIconCache[key] = icon;
+    return icon;
+  }
+}
 
 const LEGEND_LABELS = {
   thanhpho: 'Di tích cấp thành phố',
   quocgia:  'Di tích cấp quốc gia',
   kientruc: 'Kiến trúc - Nghệ thuật',
-  baotang:  'Bảo tàng / Chuyên đề',
+  baotang:  'Bảo tàng',
   khaoco:   'Di tích khảo cổ',
   dacbiet:  'Di tích quốc gia đặc biệt',
+  cachmang: 'Di tích lịch sử – văn hóa cách mạng',
   khu:      'Khu dự trữ sinh quyển',
   default:  'Khác'
 };
@@ -1118,7 +1329,7 @@ function setActiveMarker(m) {
     minZoom: 9,
     maxZoom: 15,
     zoomControl: false
-  }).setView([10.7769, 106.7009], 9);
+  }).setView([10.7769, 106.7009], 10);
   L.control.zoom({ position: 'bottomleft'
   }).addTo(map);
   L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
@@ -1479,27 +1690,35 @@ function setActiveMarker(m) {
 function buildPopupHtml(item) {
   const thumbUrl = item.image ? item.image : `images/thumbs/${slugify(item.name)}.jpg`;
   const snippet = item.snippet ? escapeHtml(item.snippet) : '';
+  const alt = escapeHtml(item.name) + ' thumbnail';
+  const cat = item.category || 'default';
+  const borderColor = CATEGORY_COLORS[cat] || CATEGORY_COLORS.default || '#9ca3af';
+
+  const decoPath = 'images/badges/kientruc.png'; // change path if needed
+
+  const actions = `
+    <div class="popup-actions-inline">
+      <a class="popup-btn primary" href="${escapeHtml(item.page)}" target="_blank" rel="noopener noreferrer">Xem thêm</a>
+      <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank" rel="noopener noreferrer">Chỉ đường</a>
+      ${item.vr && item.vr !== 'non' ? `<a class="popup-btn" href="${escapeHtml(item.vr)}" target="_blank" rel="noopener noreferrer">VR360</a>` : ''}
+    </div>`;
+
   const humanCategory = LEGEND_LABELS[item.category] || LEGEND_LABELS.default || (item.category || 'Khác');
 
-  // badgeUrl can be a small PNG/SVG per category, or same badge for all
-  const badgeUrl = item.badge || (`images/badges/${item.category || 'default'}.png`);
-
+  // include --deco inline so the pseudo-element can pick it up
   return `
-    <div class="popup-content">
-      <div class="popup-thumb-wrap">
-        <img class="popup-thumb" src="${thumbUrl}" alt="${escapeHtml(item.name)}" onerror="this.style.display='none'"/>
-        <img class="popup-badge" src="${badgeUrl}" alt="" onerror="this.style.display='none'"/>
+    <div class="custom-popup" style="--cat: ${borderColor}; --deco: url('${decoPath}')">
+      <div class="popup-thumb-outer" aria-hidden="true">
+        <div class="popup-thumb-inner">
+          <img class="popup-thumb" src="${thumbUrl}" alt="${alt}" onerror="this.style.display='none'" />
+        </div>
       </div>
+
       <h3>${escapeHtml(item.name)}</h3>
-      ${ snippet ? `<p style="margin:0 0 8px;font-size:13px;color:#374151">${snippet}</p>` : '' }
+      ${ snippet ? `<p class="snippet">${snippet}</p>` : '' }
       <p class="meta">Loại: ${escapeHtml(humanCategory)}</p>
-      <div class="popup-actions-inline">
-        <a class="popup-btn" href="${escapeHtml(item.page)}" target="_blank" rel="noopener">Xem thêm</a>
-        <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank" rel="noopener">Chỉ đường</a>
-        ${item.vr && item.vr !== 'non' ? `<a class="popup-btn" href="${escapeHtml(item.vr)}" target="_blank" rel="noopener">VR360</a>` : ''}
-      </div>
-    </div>
-  `;
+      ${actions}
+    </div>`;
 }
 
 
@@ -1785,46 +2004,94 @@ const LEGEND_ORDER = [
   };
 })();
 
-/* Insert Xem 360 button into popups when popup opens (uses the placeholder span in your popupHtml) */
-map.on('popupopen', (ev) => {
+// map category -> 
+// decoration image (PNG or SVG). Put files in images/deco/
+const CATEGORY_DECOS = {
+  thanhpho:  'images/deco/thanhpho.png',
+  quocgia:   'images/deco/quocgia.png',
+  kientruc:  'images/deco/kientruc.png',
+  baotang:   'images/deco/baotang.png',
+  khaoco:    'images/deco/khaoco.png',
+  dacbiet:   'images/deco/dacbiet.png',
+  khu:       'images/deco/khu.png',
+  default:   'images/deco/default.png'
+};
+
+
+map.on('popupopen', function(ev) {
+  try {
+    const popup = ev.popup;
+    const popupEl = popup.getElement(); // outer .leaflet-popup
+    if (!popupEl) return;
+    const wrapper = popupEl.querySelector('.leaflet-popup-content-wrapper');
+    if (!wrapper) return;
+
+    // try to identify category from marker (your markers store category)
+    // prefer metadata on popup source
+    let cat = null;
+    if (popup._source && (popup._source.category || popup._source._meta && popup._source._meta.category)) {
+      cat = popup._source.category || (popup._source._meta && popup._source._meta.category);
+    }
+    // fallback: if you included className 'popup-<cat>' when binding, parse it:
+    if (!cat && popup.options && popup.options.className) {
+      const m = popup.options.className.match(/popup-([^\s]+)/);
+      if (m) cat = m[1];
+    }
+    cat = cat || 'default';
+
+    // choose deco image and sizing (override per category if needed)
+    const deco = (window.CATEGORY_DECOS && window.CATEGORY_DECOS[cat]) ? window.CATEGORY_DECOS[cat] : (window.CATEGORY_DECOS && window.CATEGORY_DECOS.default) || 'images/deco/kientruc.png';
+    // optional per-category dimension customizations:
+    let decoW = '56px', decoH = '56px', decoR = '-6deg';
+    if (cat === 'dacbiet') { decoW = '72px'; decoH = '72px'; decoR = '-8deg'; }
+    if (cat === 'kientruc') { decoW = '64px'; decoH = '64px'; decoR = '-10deg'; }
+    // mobile values (fallback)
+    let decoWMobile = '40px', decoHMobile = '40px', decoRMobile = '-4deg';
+
+    // set CSS vars on the wrapper (these are read by CSS ::before)
+    wrapper.style.setProperty('--popup-deco', `url('${deco}')`);
+    wrapper.style.setProperty('--popup-deco-w', decoW);
+    wrapper.style.setProperty('--popup-deco-h', decoH);
+    wrapper.style.setProperty('--popup-deco-rotate', decoR);
+    wrapper.style.setProperty('--popup-deco-w-mobile', decoWMobile);
+    wrapper.style.setProperty('--popup-deco-h-mobile', decoHMobile);
+    wrapper.style.setProperty('--popup-deco-rotate-mobile', decoRMobile);
+
+    // Decide if the deco would be off-screen at the left edge -> flip to right
+    const mapRect = document.getElementById('map').getBoundingClientRect();
+    const popupRect = popupEl.getBoundingClientRect();
+    const decoPx = parseInt(decoW.replace('px','')) || 56;
+    // threshold: if popup's left edge is closer to map left than the deco width + margin -> flip
+    const LEFT_THRESHOLD = decoPx + 8;
+    if ((popupRect.left - mapRect.left) < LEFT_THRESHOLD) {
+      wrapper.classList.add('deco-top-right');
+    } else {
+      wrapper.classList.remove('deco-top-right');
+    }
+  } catch (err) {
+    console.warn('popup deco handler error', err);
+  }
+});
+
+// cleanup on close to avoid leftover classes/styles
+map.on('popupclose', function(ev) {
   try {
     const popupEl = ev.popup.getElement();
     if (!popupEl) return;
-    const placeholder = popupEl.querySelector('.sv-placeholder');
-    if (!placeholder) return;
-
-    // Coordinates stored by your popup placeholder attributes
-    const lat = parseFloat(placeholder.dataset.lat);
-    const lng = parseFloat(placeholder.dataset.lng);
-    if (Number.isNaN(lat) || Number.isNaN(lng)) { placeholder.remove(); return; }
-
-    // create button
-    const btn = document.createElement('button');
-    btn.className = 'popup-btn sv';
-    btn.type = 'button';
-    btn.textContent = 'Xem 360';
-    btn.title = 'Mở Street View (không cần API key)';
-
-    btn.addEventListener('click', () => {
-      // Try to embed in modal; if blocked by X-Frame-Options, user can click "Mở ở tab mới"
-      // If modal embedding fails visually, fallback code inside modal will provide open-in-new link.
-      if (window._openStreetViewModal) {
-        window._openStreetViewModal(lat, lng);
-      } else {
-        // final fallback: open new tab directly
-        const url = `https://www.google.com/maps?q=&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=11,0,0,0,0`;
-        window.open(url, '_blank', 'noopener');
-      }
-    });
-
-    // replace placeholder span with the button
-    placeholder.replaceWith(btn);
-
-  } catch (e) {
-    // don't break popup if something goes wrong
-    console.warn('Failed to attach Xem 360 button', e);
-  }
+    const wrapper = popupEl.querySelector('.leaflet-popup-content-wrapper');
+    if (!wrapper) return;
+    wrapper.classList.remove('deco-top-right');
+    // remove inline vars (optional)
+    wrapper.style.removeProperty('--popup-deco');
+    wrapper.style.removeProperty('--popup-deco-w');
+    wrapper.style.removeProperty('--popup-deco-h');
+    wrapper.style.removeProperty('--popup-deco-rotate');
+    wrapper.style.removeProperty('--popup-deco-w-mobile');
+    wrapper.style.removeProperty('--popup-deco-h-mobile');
+    wrapper.style.removeProperty('--popup-deco-rotate-mobile');
+  } catch(e) {}
 });
+
 
 
   // --- Filter ---
