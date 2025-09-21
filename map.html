@@ -999,20 +999,26 @@
 
     <!-- Slide-in filter panel -->
     <div id="filter-panel">
-  <h3>Bộ lọc</h3>
-  <button onclick="applyFilter('all')">Tất cả</button>
-  <button onclick="applyFilter('thanhpho')">Di tích cấp thành phố</button>
-  <button onclick="applyFilter('quocgia')">Di tích cấp quốc gia</button>
-  <button onclick="applyFilter('dacbiet')">Di tích quốc gia đặc biệt</button>
-  <button onclick="applyFilter('kientruc')">Di tích kiến trúc – nghệ thuật</button>
-  <button onclick="applyFilter('cachmang')">Di tích lịch sử – văn hóa cách mạng</button>
-  <button onclick="applyFilter('baotang')">Bảo tàng / chuyên đề</button>
-  <button onclick="applyFilter('khaoco')">Di tích khảo cổ</button>
-  <button onclick="applyFilter('khu')">Khu dự trữ sinh quyển</button>
-  <button onclick="applyFilter('khac')">Khác</button>
-</div>
-
+      <h3>Bộ lọc</h3>
+      <button onclick="applyFilter('all')">Tất cả</button>
+      <button onclick="applyFilter('thanhpho')">Di tích cấp thành phố</button>
+      <button onclick="applyFilter('quocgia')">Di tích cấp quốc gia</button>
+      <button onclick="applyFilter('dacbiet')">Di tích quốc gia đặc biệt</button>
+      <button onclick="applyFilter('kientruc')">Di tích kiến trúc – nghệ thuật</button>
+      <button onclick="applyFilter('cachmang')">Di tích lịch sử – văn hóa cách mạng</button>
+      <button onclick="applyFilter('baotang')">Bảo tàng / chuyên đề</button>
+      <button onclick="applyFilter('khaoco')">Di tích khảo cổ</button>
+      <button onclick="applyFilter('khu')">Khu dự trữ sinh quyển</button>
+      <button onclick="applyFilter('khac')">Khác</button>
+    </div>
   </div>
+  <!-- Add Hướng dẫn dùng section below the map -->
+  <section id="map-guide" style="margin: 24px 0 0 0; padding: 18px 20px; background: #f8fafc; border-radius: 10px; box-shadow: 0 2px 12px rgba(0,0,0,0.04);">
+    <h2 style="font-size: 1.18em; font-weight: 700; margin-top: 0; color: #2563eb;">Hướng dẫn dùng:</h2>
+    <div>
+      <p style="margin-bottom:0; color:#333;">- Các di tích gần vị trí nhau sẽ được gộp thành một nút, nhấn vào nút đó để xem các di tích trong khu vực đó.<br>- Nút bên góc phải trên sẽ bật chế độ toàn màn hình.<br>- Nút bộ lọc có chức nằng dùng để lọc ra các di tích theo loại.<br>- Mỗi địa điểm sẽ có một bài viết và hướng dẫn chỉ đường gắn vào. <br>- Một số địa điểm có chức năng VR360.</p>
+    </div>
+  </section>
 </main>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -1646,7 +1652,6 @@ const data = [
   { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html", vr: "non", image: "images/dbd1.jpg" },
 ];
 
-
 // helper: map category -> CSS class
 function categoryClass(cat){
   return {
@@ -1913,96 +1918,96 @@ const LEGEND_ORDER = [
 
 
 
-/* ----------------- Street View (no API key) — embed with fallback ----------------- */
-/* This code uses public Google Maps URLs (no API key). It will try to embed in a modal iframe.
-   If Google blocks embedding, we fall back to opening the URL in a new tab. */
+  /* ----------------- Street View (no API key) — embed with fallback ----------------- */
+  /* This code uses public Google Maps URLs (no API key). It will try to embed in a modal iframe.
+     If Google blocks embedding, we fall back to opening the URL in a new tab. */
 
-/* create modal once */
-(function(){
-  if (document.getElementById('sv-modal')) return;
-  const style = document.createElement('style');
-  style.textContent = `
-    #sv-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:14000; }
-    #sv-modal .sv-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.6); }
-    #sv-modal .sv-panel { position:relative; width:min(1100px,94vw); height:min(720px,86vh); background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.5); display:flex; flex-direction:column; }
-    #sv-modal .sv-header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#0b1220; color:#fff; font-weight:700; }
-    #sv-modal .sv-body { flex:1; background:#000; display:flex; }
-    #sv-modal iframe { width:100%; height:100%; border:0; display:block; }
-    #sv-modal .sv-close { background:transparent; color:#fff; border:0; font-size:20px; cursor:pointer; padding:6px 10px; }
-    #sv-modal .sv-fallback { padding:10px; text-align:center; font-size:13px; }
-    .popup-btn.sv { background: #2563eb; } /* small visual tweak for the sv button */
-  `;
-  document.head.appendChild(style);
+  /* create modal once */
+  (function(){
+    if (document.getElementById('sv-modal')) return;
+    const style = document.createElement('style');
+    style.textContent = `
+      #sv-modal { position:fixed; inset:0; display:none; align-items:center; justify-content:center; z-index:14000; }
+      #sv-modal .sv-backdrop { position:absolute; inset:0; background:rgba(0,0,0,0.6); }
+      #sv-modal .sv-panel { position:relative; width:min(1100px,94vw); height:min(720px,86vh); background:#fff; border-radius:10px; overflow:hidden; box-shadow:0 30px 80px rgba(0,0,0,.5); display:flex; flex-direction:column; }
+      #sv-modal .sv-header { display:flex; justify-content:space-between; align-items:center; padding:8px 12px; background:#0b1220; color:#fff; font-weight:700; }
+      #sv-modal .sv-body { flex:1; background:#000; display:flex; }
+      #sv-modal iframe { width:100%; height:100%; border:0; display:block; }
+      #sv-modal .sv-close { background:transparent; color:#fff; border:0; font-size:20px; cursor:pointer; padding:6px 10px; }
+      #sv-modal .sv-fallback { padding:10px; text-align:center; font-size:13px; }
+      .popup-btn.sv { background: #2563eb; } /* small visual tweak for the sv button */
+    `;
+    document.head.appendChild(style);
 
-  const modal = document.createElement('div');
-  modal.id = 'sv-modal';
-  modal.innerHTML = `
-    <div class="sv-backdrop" tabindex="-1"></div>
-    <div class="sv-panel" role="dialog" aria-modal="true" aria-label="Street View">
-      <div class="sv-header">
-        <div class="sv-title">Xem 360</div>
-        <div>
-          <button class="sv-close" title="Đóng">✕</button>
+    const modal = document.createElement('div');
+    modal.id = 'sv-modal';
+    modal.innerHTML = `
+      <div class="sv-backdrop" tabindex="-1"></div>
+      <div class="sv-panel" role="dialog" aria-modal="true" aria-label="Street View">
+        <div class="sv-header">
+          <div class="sv-title">Xem 360</div>
+          <div>
+            <button class="sv-close" title="Đóng">✕</button>
+          </div>
+        </div>
+        <div class="sv-body">
+          <iframe sandbox="allow-scripts allow-same-origin allow-popups" src="about:blank" referrerpolicy="no-referrer"></iframe>
+        </div>
+        <div class="sv-fallback" style="display:none">
+          Xem 360 không thể nhúng ở đây — <a class="sv-open-new" target="_blank" rel="noopener">Mở ở tab mới</a>
         </div>
       </div>
-      <div class="sv-body">
-        <iframe sandbox="allow-scripts allow-same-origin allow-popups" src="about:blank" referrerpolicy="no-referrer"></iframe>
-      </div>
-      <div class="sv-fallback" style="display:none">
-        Xem 360 không thể nhúng ở đây — <a class="sv-open-new" target="_blank" rel="noopener">Mở ở tab mới</a>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  const backdrop = modal.querySelector('.sv-backdrop');
-  const closeBtn = modal.querySelector('.sv-close');
-  const iframe = modal.querySelector('iframe');
-  const fallback = modal.querySelector('.sv-fallback');
-  const openNewLink = modal.querySelector('.sv-open-new');
+    `;
+    document.body.appendChild(modal);
+    const backdrop = modal.querySelector('.sv-backdrop');
+    const closeBtn = modal.querySelector('.sv-close');
+    const iframe = modal.querySelector('iframe');
+    const fallback = modal.querySelector('.sv-fallback');
+    const openNewLink = modal.querySelector('.sv-open-new');
 
-  function closeModal(){
-    iframe.src = 'about:blank';
-    fallback.style.display = 'none';
-    modal.style.display = 'none';
-  }
-  function openModalWithUrl(url){
-    // try to embed
-    modal.style.display = 'flex';
-    iframe.src = url + '&output=embed';
-    // set fallback link
-    openNewLink.href = url;
-    // after a short delay check if the iframe rendered a Google page or got blocked.
-    // There is no reliable cross-origin check; do a pragmatic fallback: after 900ms if iframe
-    // still has about:blank (rare) or user agent prevents rendering, show fallback.
-    setTimeout(() => {
-      // if iframe still 'about:blank' or has obvious block, show fallback — user can open new tab
-      if (!iframe.src || iframe.src.indexOf('about:blank') !== -1) {
-        fallback.style.display = 'block';
-      } else {
-        // sometimes Google will display a page that visually says "Sorry — we can't show" — user can close and open new tab
-        fallback.style.display = 'none';
-      }
-    }, 900);
-  }
-
-  backdrop.addEventListener('click', closeModal);
-  closeBtn.addEventListener('click', closeModal);
-  // escape key
-  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
-  // expose helper
-  window._openStreetViewModal = (lat, lng) => {
-    // build a friendly Google Maps URL that opens at the nearest Street View pano:
-    // use `layer=c&cbll=lat,lng&cbp=11,0,0,0,0`
-    // also provide non-embed variant (without &output=embed) as fallback open-in-new
-    const base = `https://www.google.com/maps?q=&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=11,0,0,0,0`;
-    try {
-      openModalWithUrl(base);
-    } catch (err) {
-      // fallback: just open new tab
-      window.open(base, '_blank', 'noopener');
+    function closeModal(){
+      iframe.src = 'about:blank';
+      fallback.style.display = 'none';
+      modal.style.display = 'none';
     }
-  };
-})();
+    function openModalWithUrl(url){
+      // try to embed
+      modal.style.display = 'flex';
+      iframe.src = url + '&output=embed';
+      // set fallback link
+      openNewLink.href = url;
+      // after a short delay check if the iframe rendered a Google page or got blocked.
+      // There is no reliable cross-origin check; do a pragmatic fallback: after 900ms if iframe
+      // still has about:blank (rare) or user agent prevents rendering, show fallback.
+      setTimeout(() => {
+        // if iframe still 'about:blank' or has obvious block, show fallback — user can open new tab
+        if (!iframe.src || iframe.src.indexOf('about:blank') !== -1) {
+          fallback.style.display = 'block';
+        } else {
+          // sometimes Google will display a page that visually says "Sorry — we can't show" — user can close and open new tab
+          fallback.style.display = 'none';
+        }
+      }, 900);
+    }
+
+    backdrop.addEventListener('click', closeModal);
+    closeBtn.addEventListener('click', closeModal);
+    // escape key
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && modal.style.display === 'flex') closeModal(); });
+    // expose helper
+    window._openStreetViewModal = (lat, lng) => {
+      // build a friendly Google Maps URL that opens at the nearest Street View pano:
+      // use `layer=c&cbll=lat,lng&cbp=11,0,0,0,0`
+      // also provide non-embed variant (without &output=embed) as fallback open-in-new
+      const base = `https://www.google.com/maps?q=&layer=c&cbll=${encodeURIComponent(lat + ',' + lng)}&cbp=11,0,0,0,0`;
+      try {
+        openModalWithUrl(base);
+      } catch (err) {
+        // fallback: just open new tab
+        window.open(base, '_blank', 'noopener');
+      }
+    };
+  })();
 
 // map category -> 
 // decoration image (PNG or SVG). Put files in images/deco/
@@ -2091,7 +2096,6 @@ map.on('popupclose', function(ev) {
     wrapper.style.removeProperty('--popup-deco-rotate-mobile');
   } catch(e) {}
 });
-
 
 
   // --- Filter ---
