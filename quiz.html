@@ -5,6 +5,17 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Bản đồ Di tích lịch sử TPHCM</title>
 <link rel="icon" href="images/favicon.png" />
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  /* add this with your other styles (or append) */
+  /* ensure the Home button uses a font with Vietnamese glyphs */
+  #homeBtn {
+    font-family: "Noto Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;         /* adjust weight as you like */
+    letter-spacing: 0.2px;    /* optional - nicer appearance for Vietnamese */
+    text-transform: none;     /* keep original casing */
+  }
+</style>
 <style>
   :root{
     --bg1:#0b1220; --bg2:#08132b;
@@ -99,9 +110,13 @@
   .end-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
   .btn.end-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:inherit;padding:8px 12px;border-radius:10px}
   .btn.end-primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;padding:8px 12px;border-radius:10px;font-weight:900}
+
+  /* hide the server/backend display so your API_URL is not visible */
+  #serverName { display: none !important; }
 </style>
 </head>
 <body>
+
 
 <div class="wrap">
   <!-- LEFT -->
@@ -116,6 +131,9 @@
       </div>
 
       <div style="display:flex;gap:12px;align-items:center">
+        <!-- Return to Home button added (same .btn styling) -->
+        <button class="btn ghost" id="homeBtn" onclick="returnHome()" aria-label="Return to home">Quay trở về Trang Chủ</button>
+
         <div class="scoreboard card">
           <div class="small">Score</div>
           <div class="score-number" id="scoreDisplay">0</div>
@@ -272,9 +290,6 @@ const joinModal = document.getElementById('joinModal');
 const endScreen = document.getElementById('endScreen');
 const endList = document.getElementById('endList');
 const endScoreSummary = document.getElementById('endScoreSummary');
-
-/* show server text */
-serverName.textContent = API_URL.replace(/^https?:\/\//,'');
 
 /* ====== helper: show message ====== */
 function showMsg(t, timeout=2500){
@@ -794,6 +809,21 @@ function playAgain(){
 /* ====== small helpers ====== */
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+/* ====== Return home helper ====== */
+/* 2) Add this near the top of your script (after API_URL and state defs) */
+/* Set HOME_PATH to whichever path your homepage actually lives at.
+   Use '/home1-html' if your server routes that way, or '/home1-html.html'
+   if it is a static file. Change as needed. */
+const HOME_PATH = '/home-1.html'; // <- change to '/home1-html.html' if needed
+
+/* 3) Replace the returnHome() implementation with this: */
+function returnHome(){
+  // Navigate to the site home page
+  // If you prefer a client-side reset instead of a navigation, replace with UI reset logic.
+  window.location.href = HOME_PATH;
+}
+
 
 /* ====== bootstrap ====== */
 refreshQuizzes();

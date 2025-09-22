@@ -667,7 +667,6 @@
   transform: translate(-50%, -50%) scale(1);
 }
 
-
 /* === Popup animation === */
 .leaflet-popup-content-wrapper {
   transform-origin: center bottom;
@@ -677,7 +676,68 @@
   from { transform: translateY(6px) scale(.98); opacity: 0; }
   to   { transform: translateY(0) scale(1); opacity: 1; }
 }
+/* ---------------- Mobile-friendly legend (override inline styles) ---------------- */
+@media (max-width: 900px) {
+  /* overall legend container */
+  #map-legend {
+    right: 10px !important;         /* move to bottom-right on mobile */
+    left: auto !important;
+    bottom: 10px !important;
+    width: 150px !important;        /* smaller than desktop */
+    padding: 6px 8px !important;
+    font-size: 12px !important;
+    border-radius: 10px !important;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.10) !important;
+    z-index: 16000 !important;
+  }
 
+  /* legend title */
+  #map-legend > div:first-child {
+    font-size: 13px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* each legend row */
+  #map-legend .legend-item {
+    gap: 8px !important;
+    margin: 4px 0 !important;
+    align-items: center !important;
+  }
+
+  /* dot size */
+  #map-legend .legend-dot {
+    width: 10px !important;
+    height: 10px !important;
+    border-width: 2px !important;
+  }
+
+  /* text truncation so the legend stays compact */
+  #map-legend .legend-item > div:last-child {
+    max-width: 96px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* even tighter on very small phones */
+@media (max-width: 420px) {
+  #map-legend {
+    width: 120px !important;
+    padding: 6px 6px !important;
+    font-size: 11px !important;
+    bottom: 8px !important;
+    right: 8px !important;
+  }
+  #map-legend .legend-dot { width: 9px !important; height: 9px !important; }
+}
+
+/* optional: show dots-only compact mode (uncomment if you want it)
+@media (max-width: 360px) {
+  #map-legend .legend-item > div:last-child { display: none !important; }
+  #map-legend { width: 56px !important; padding: 8px 6px !important; }
+}
+*/
 /* === Dimmer fade (for mask layer) - we'll toggle 'dim-visible' class on map container === */
 .map-dimmer-fade {
   transition: opacity 400ms ease;

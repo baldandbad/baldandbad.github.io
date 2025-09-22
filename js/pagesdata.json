@@ -14,6 +14,13 @@
     "categories": ["none"]
   },
   {
+    "title": "Bến nhà Rồng",
+    "url": "baotanghcm.html",
+    "image": "images/bthcm.png",
+    "description": "Bến Nhà Rồng được du khách và người dân địa phương thường xuyên đến tham quan. Nơi đây lưu giữ lại nhiều di tích lịch sử, trưng bày hình ảnh về cuộc sống và hoạt động của Chủ tịch Hồ Chí Minh.",
+    "categories": ["none"]
+  },
+  {
     "title": "Căn cứ Rừng Sác",
     "url": "cancurungsac.html",
     "image": "images/use_img/blog_img3.jpg",

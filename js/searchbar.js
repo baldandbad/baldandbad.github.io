@@ -34,7 +34,7 @@ function displayResults(results) {
         <h2 class="entry-title"><a href="${item.url}">${item.title}</a></h2>
       </header>
       <div class="entry-content"><p>${item.description}</p></div>
-      <a class="btn btn-medium read-more" href="${item.url}">Read More <i class="lnr lnr-arrow-right"></i></a>
+      <a class="btn btn-medium read-more" href="${item.url}">Tìm hiểu thêm <i class="lnr lnr-arrow-right"></i></a>
     </article>
   `).join('');
 
