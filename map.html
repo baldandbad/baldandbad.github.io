@@ -1391,34 +1391,23 @@ function setActiveMarker(m) {
 
   const markerCluster = L.markerClusterGroup({
   showCoverageOnHover: false,
-  spiderfyOnEveryZoom: false,    // we'll control spiderfy manually
+  spiderfyOnEveryZoom: false,
+  spiderfyOnMaxZoom: true,    // spiderfy automatically if you click at max zoom
+  zoomToBoundsOnClick: false, // we'll handle zoom+spiderfy logic manually
   animate: true,
-  // when cluster clicked default behavior is to zoom to bounds; we'll override
+  // keep your iconCreateFunction here (unchanged)
   iconCreateFunction: function(cluster) {
     const childCount = cluster.getChildCount();
-    // pick style based on count
     let sizeClass = 'large';
     if (childCount < 10) sizeClass = 'small';
     else if (childCount < 40) sizeClass = 'medium';
-
-    // optional: color by density (change thresholds to taste)
     const color = childCount < 10 ? '#47c0a6' : childCount < 40 ? '#f59e0b' : '#ef4444';
-
-    const html = `
-      <div class="marker-cluster-custom ${sizeClass}" style="background:${color}">
-        <span>${childCount}</span>
-      </div>`;
-
-    // size of cluster icon (adjust per sizeClass if you like)
+    const html = `<div class="marker-cluster-custom ${sizeClass}" style="background:${color}"><span>${childCount}</span></div>`;
     const size = sizeClass === 'small' ? 20 : sizeClass === 'medium' ? 24 : 28;
-    return L.divIcon({
-      html,
-      className: 'marker-cluster-wrapper', // base class for CSS
-      iconSize: L.point(size, size)
-    });
+    return L.divIcon({ html, className: 'marker-cluster-wrapper', iconSize: L.point(size, size) });
   }
 });
-  map.addLayer(markerCluster);
+map.addLayer(markerCluster);
   // Fetch boundary geojson, add to map, and create blur overlay
 /* ----------------- Dim outside boundary (paste this AFTER your L.tileLayer(...).addTo(map); ) ----------------- */
   /* --- Add polished animations & interactions --- */
@@ -1446,16 +1435,55 @@ function setActiveMarker(m) {
 markerCluster.on('clusterclick', function (e) {
   const cluster = e.layer;
   const childCount = cluster.getChildCount();
+  const SPIDERFY_THRESHOLD = 12; // your existing threshold
 
-  // threshold for spiderfy vs zoom
-  const SPIDERFY_THRESHOLD = 12;
+  // cluster bounds and the highest zoom that'll show them separated
+  const bounds = cluster.getBounds();
+  // map.getBoundsZoom(bounds, paddingFalse) computes the zoom to show bounds exactly
+  const bestZoom = Math.min(map.getMaxZoom(), map.getBoundsZoom(bounds, false));
 
+  // If cluster is small, spiderfy in place
   if (childCount <= SPIDERFY_THRESHOLD) {
-    // spiderfy in place (show individual markers around the cluster)
-    try { cluster.spiderfy(); } catch (err) { console.warn('spiderfy failed', err); }
+    try {
+      // cluster.spiderfy() works in most plugin versions; fallback included
+      if (typeof cluster.spiderfy === 'function') cluster.spiderfy();
+      else if (typeof markerCluster.spiderfy === 'function') markerCluster.spiderfy(cluster);
+      else console.warn('No spiderfy method found');
+    } catch (err) {
+      console.warn('spiderfy failed', err);
+    }
+    return;
+  }
+
+  // For larger clusters, attempt to zoom to a level that will break the cluster.
+  // If already at or above bestZoom, spiderfy as a fallback.
+  if (map.getZoom() >= bestZoom) {
+    try {
+      if (typeof cluster.spiderfy === 'function') cluster.spiderfy();
+      else if (typeof markerCluster.spiderfy === 'function') markerCluster.spiderfy(cluster);
+    } catch (err) {
+      console.warn('spiderfy fallback failed', err);
+    }
   } else {
-    // zoom to bounds to expand cluster
-    try { map.fitBounds(cluster.getBounds(), { padding: [40, 40] }); } catch (err) { console.warn(err); }
+    // Fit bounds but force the map to not exceed bestZoom.
+    // We use moveend once to attempt spiderfy if still clustered after zoom.
+    map.once('moveend', () => {
+      // small timeout lets MarkerCluster recalc after zoom animation
+      setTimeout(() => {
+        // if cluster still exists at same position, spiderfy it
+        try {
+          if (typeof cluster.spiderfy === 'function') cluster.spiderfy();
+        } catch (err) { /* ignore */ }
+      }, 80);
+    });
+
+    // use fitBounds with maxZoom so we don't overshoot if map max zoom smaller
+    try {
+      map.fitBounds(bounds, { padding: [40, 40], maxZoom: bestZoom });
+    } catch (err) {
+      // fallback
+      map.fitBounds(bounds, { padding: [40, 40] });
+    }
   }
 });
 

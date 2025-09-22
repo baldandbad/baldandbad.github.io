@@ -7,13 +7,12 @@
 <link rel="icon" href="images/favicon.png" />
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&display=swap" rel="stylesheet">
 <style>
-  /* add this with your other styles (or append) */
-  /* ensure the Home button uses a font with Vietnamese glyphs */
+
   #homeBtn {
     font-family: "Noto Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-    font-weight: 700;         /* adjust weight as you like */
-    letter-spacing: 0.2px;    /* optional - nicer appearance for Vietnamese */
-    text-transform: none;     /* keep original casing */
+    font-weight: 700;         
+    letter-spacing: 0.2px;    
+    text-transform: none;     
   }
 </style>
 <style>
@@ -38,11 +37,9 @@
     padding:12px;
   }
 
-  /* container */
   .wrap{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:12px;display:grid;grid-template-columns:1fr 360px;gap:12px}
   @media(max-width:920px){ .wrap{grid-template-columns:1fr} }
 
-  /* left-stage */
   .stage{background:var(--card);border-radius:12px;padding:14px;min-height:560px;display:flex;flex-direction:column;gap:12px;position:relative}
   .topbar{display:flex;justify-content:space-between;align-items:center}
   .logo{display:flex;gap:10px;align-items:center}
@@ -60,11 +57,9 @@
   .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12);background:rgba(251,113,133,0.04)}
   .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
 
-  /* time bar */
   .time-wrap{height:10px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:12px}
   .time-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--accentB),var(--accentA));transform-origin:left;transition:width 0.12s linear}
 
-  /* right sidebar */
   .sidebar{display:flex;flex-direction:column;gap:12px}
   .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
   .list{max-height:44vh;overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:8px}
@@ -88,7 +83,7 @@
 
   .modal {
     position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;
-    background: rgba(20,24,40,0.98); /* more solid background for readability */
+    background: rgba(20,24,40,0.98); 
     padding:16px;border-radius:12px;
     box-shadow:0 18px 40px rgba(0,0,0,0.6);
     min-width:260px;
@@ -99,8 +94,7 @@
   @media(max-width:720px){ .wrap{padding:8px} .stage{min-height:520px} }
 
   #message {position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;font-size:13px}
-  
-  /* endscreen overlay */
+
   .end-overlay{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(8,19,43,0.6), rgba(4,8,20,0.75));z-index:120;backdrop-filter: blur(6px);padding:16px}
   .end-card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:18px;border-radius:14px;width:100%;max-width:520px;color:#051226}
   .end-header{display:flex;justify-content:space-between;align-items:center}
@@ -111,15 +105,224 @@
   .btn.end-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:inherit;padding:8px 12px;border-radius:10px}
   .btn.end-primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;padding:8px 12px;border-radius:10px;font-weight:900}
 
-  /* hide the server/backend display so your API_URL is not visible */
   #serverName { display: none !important; }
+
+  /* ===== MOBILE UI FOR QUIZ PAGE ===== */
+  @media (max-width: 900px) {
+    body {
+      /* Prevents the fixed .wrap from being cut off at the top */
+      padding-top: 0 !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      min-height: 100vh !important;
+    }
+    .wrap {
+      grid-template-columns: 1fr !important;
+      padding: 6px !important;
+      max-width: 100vw !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .stage, .sidebar, .card, .question-card {
+      min-height: unset !important;
+      border-radius: 10px !important;
+      padding: 8px !important;
+    }
+    .topbar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+    }
+    .logo {
+      flex-direction: row !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    .sidebar {
+      gap: 8px !important;
+    }
+    .scoreboard.card {
+      min-width: 90px !important;
+      padding: 6px !important;
+    }
+    .question-card {
+      padding: 10px !important;
+    }
+    .qtext {
+      font-size: 16px !important;
+      min-height: 36px !important;
+    }
+    .options {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+    .opt {
+      padding: 10px !important;
+      font-size: 15px !important;
+    }
+    .meta-row {
+      flex-direction: column !important;
+      gap: 4px !important;
+      align-items: flex-start !important;
+    }
+    .time-wrap {
+      margin-top: 8px !important;
+      height: 8px !important;
+    }
+    .time-bar {
+      height: 8px !important;
+    }
+    .end-card {
+      padding: 10px !important;
+      border-radius: 10px !important;
+      max-width: 98vw !important;
+    }
+    .end-header {
+      flex-direction: column !important;
+      gap: 6px !important;
+      align-items: flex-start !important;
+    }
+    .end-list {
+      padding-right: 0 !important;
+      max-height: 40vh !important;
+    }
+    .end-row {
+      padding: 7px !important;
+      font-size: 15px !important;
+    }
+    .btn, .btn.primary, .btn.ghost, .btn.end-primary, .btn.end-ghost {
+      padding: 8px 10px !important;
+      font-size: 15px !important;
+      border-radius: 8px !important;
+    }
+    #homeBtn {
+      font-size: 15px !important;
+      padding: 8px 10px !important;
+      border-radius: 8px !important;
+    }
+    .badge {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 17px !important;
+      border-radius: 8px !important;
+    }
+    .logo img {
+      height: 60px !important;
+    }
+    .sidebar .card {
+      padding: 8px !important;
+    }
+    .quiz-item {
+      padding: 7px !important;
+      font-size: 15px !important;
+    }
+    .list {
+      gap: 5px !important;
+    }
+    #quizList {
+      max-height: 30vh !important;
+      padding-right: 2px !important;
+    }
+    .modal {
+      min-width: 90vw !important;
+      padding: 10px !important;
+      border-radius: 8px !important;
+    }
+    #message {
+      left: 4px !important;
+      bottom: 4px !important;
+      padding: 6px 8px !important;
+      font-size: 13px !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  @media (max-width: 520px) {
+    body {
+      padding-top: 0 !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      min-height: 100vh !important;
+    }
+    .wrap {
+      padding: 2px !important;
+      border-radius: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .stage, .sidebar, .card, .question-card, .end-card {
+      border-radius: 0 !important;
+      padding-left: 2px !important;
+      padding-right: 2px !important;
+    }
+    .topbar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+    }
+    .logo {
+      flex-direction: row !important;
+      gap: 6px !important;
+      align-items: center !important;
+    }
+    .qtext {
+      font-size: 14px !important;
+      min-height: 24px !important;
+    }
+    .opt {
+      font-size: 13px !important;
+      padding: 8px !important;
+    }
+    .btn, .btn.primary, .btn.ghost, .btn.end-primary, .btn.end-ghost, #homeBtn {
+      font-size: 13px !important;
+      padding: 7px 8px !important;
+      border-radius: 6px !important;
+    }
+    .badge {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 13px !important;
+      border-radius: 6px !important;
+    }
+    .logo img {
+      height: 38px !important;
+    }
+    .sidebar .card {
+      padding: 4px !important;
+    }
+    .quiz-item {
+      padding: 4px !important;
+      font-size: 13px !important;
+    }
+    .end-row {
+      font-size: 13px !important;
+      padding: 4px !important;
+    }
+    .end-header {
+      font-size: 14px !important;
+    }
+    .end-list {
+      max-height: 30vh !important;
+    }
+    .modal {
+      min-width: 98vw !important;
+      padding: 4px !important;
+      border-radius: 4px !important;
+    }
+    #message {
+      font-size: 12px !important;
+      padding: 4px 6px !important;
+      border-radius: 6px !important;
+    }
+  }
+  /* ...existing code... */
 </style>
 </head>
 <body>
 
-
 <div class="wrap">
-  <!-- LEFT -->
+  
   <div class="stage" id="stage">
     <div class="topbar">
       <div class="logo">
@@ -131,7 +334,7 @@
       </div>
 
       <div style="display:flex;gap:12px;align-items:center">
-        <!-- Return to Home button added (same .btn styling) -->
+        
         <button class="btn ghost" id="homeBtn" onclick="returnHome()" aria-label="Return to home">Quay trở về Trang Chủ</button>
 
         <div class="scoreboard card">
@@ -167,7 +370,7 @@
     </div>
   </div>
 
-  <!-- RIGHT -->
+  
   <div class="sidebar">
     <div class="card">
       <div style="display:flex;justify-content:space-between;align-items:center">
@@ -210,7 +413,6 @@
 
 <div id="message" class="small hidden"></div>
 
-<!-- Join modal -->
 <div id="joinModal" class="modal hidden">
   <div style="font-weight:900">Join Room</div>
   <input id="joinCode" placeholder="Số phòng (VD: AB12)" />
@@ -221,7 +423,6 @@
   </div>
 </div>
 
-<!-- Endscreen overlay -->
 <div id="endScreen" class="end-overlay" style="display:none">
   <div class="end-card" role="dialog" aria-modal="true" aria-labelledby="endTitle">
     <div class="end-header">
@@ -243,10 +444,9 @@
 
 <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
 <script>
-/* ====== CONFIG - set your backend (no trailing slash) ====== */
+
 const API_URL = "https://baldandbadgithubio-production-030a.up.railway.app";
 
-/* ====== state & DOM refs ====== */
 let _handlersAttached = false;
 let socket = null;
 let quizzes = [];
@@ -260,13 +460,12 @@ let timerRemaining = 0;
 let roomCode = null;
 let amHost = false;
 
-let mode = 'idle'; // 'solo' or 'multi'
+let mode = 'idle'; 
 let currentMultiQuestion = null;
 let multiplayerIndex = null;
 let multiplayerTotal = null;
 let currentRoomCode = null;
 
-// Submission guard
 const submittedRef = { current: {} };
 
 const serverName = document.getElementById('serverName');
@@ -291,13 +490,11 @@ const endScreen = document.getElementById('endScreen');
 const endList = document.getElementById('endList');
 const endScoreSummary = document.getElementById('endScoreSummary');
 
-/* ====== helper: show message ====== */
 function showMsg(t, timeout=2500){
   messageEl.textContent = t; messageEl.classList.remove('hidden');
   setTimeout(()=>{ messageEl.classList.add('hidden'); }, timeout);
 }
 
-/* ====== Audio helpers ====== */
 const AudioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
 function playTone(f, t = 0.12, type='sine', gain=0.12){
   if(!AudioCtx) return;
@@ -317,7 +514,6 @@ function wrongSound(){ playTone(220,0.12,'sawtooth',0.12); }
 function startSound(){ playTone(440,0.12,'sine',0.12); setTimeout(()=>playTone(660,0.08,'sine',0.08),130); }
 function finishSound(){ playTone(520,0.12,'triangle',0.12); setTimeout(()=>playTone(780,0.08,'triangle',0.08),150); }
 
-/* ===== confetti (small canvas particle burst) ===== */
 function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count = 40) {
   const colors = ["#ffd86b","#ff7ab6","#34d399","#60a5fa","#f97316","#a78bfa"];
   const canvas = document.createElement('canvas');
@@ -361,7 +557,6 @@ function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count 
   draw();
 }
 
-/* ====== Consolidated socket handlers ====== */
 function attachSocketHandlers() {
   if (!socket || _handlersAttached) return;
   _handlersAttached = true;
@@ -399,7 +594,7 @@ function attachSocketHandlers() {
       timeLimit: q.timeLimit ?? 12
     };
     currentMultiQuestion = normal; multiplayerIndex = normal.index; multiplayerTotal = normal.total;
-    // reset submitted guard for this question
+
     submittedRef.current = submittedRef.current || {};
     submittedRef.current[normal.id] = false;
     mode = 'multi';
@@ -451,14 +646,13 @@ function attachSocketHandlers() {
     burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
     showMsg('Game over! Check final scores', 3000);
     updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
-    // show end screen with scores
+
     showEndScreen(scores.map(s => ({ id: s.id, name: s.name, total: s.total || s.score || 0 })));
   });
 
   socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
 }
 
-/* ====== fetch quizzes (REST) ====== */
 async function refreshQuizzes(){
   try{
     const r = await fetch(API_URL + '/api/quizzes');
@@ -489,10 +683,9 @@ function renderQuizList(){
   });
 }
 
-/* ====== SOLO flow ====== */
 async function openSolo(qid){
   mode = 'solo';
-  await connectSocket(); // optional keep socket for leaderboard later
+  await connectSocket(); 
   try{
     const r = await fetch(`${API_URL}/api/quizzes/${qid}`);
     if(!r.ok) throw new Error(await r.text());
@@ -534,7 +727,6 @@ function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
   });
 }
 
-/* ====== render question & handle picks ====== */
 function showQuestion(){
   clearInterval(timer);
   updateTimeBar(1);
@@ -584,7 +776,6 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
     return;
   }
 
-  // MULTIPLAYER
   const q = currentMultiQuestion;
   if(!q) { showMsg('No active question', 1500); return; }
   submittedRef.current = submittedRef.current || {};
@@ -609,10 +800,10 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
 
 function finishRun(){
   clearInterval(timer);
-  // prepare final score list for solo
+
   const scores = [{ id: 'you', name: 'Bạn', total: score }];
   showMsg(`Run finished! Score ${score}`, 3000);
-  // show the endscreen using same UI
+
   showEndScreen(scores);
   questions = []; currentIndex=0; score=0; combo=0;
   qtext.textContent = 'Hit Solo or Host to play again';
@@ -621,7 +812,6 @@ function finishRun(){
   comboDisplay.textContent = 'combo ×0';
 }
 
-/* ====== timer & time bar ====== */
 function startTimer(seconds){
   clearInterval(timer);
   timerDuration = seconds;
@@ -640,10 +830,10 @@ function startTimer(seconds){
   }, tick*1000);
 }
 function updateTimeBar(fraction){
-  // fraction between 0..1
+
   const pct = Math.max(0, Math.min(1, fraction)) * 100;
   timeBar.style.width = pct + '%';
-  // color shift for urgency
+
   if (fraction < 0.25) {
     timeBar.style.background = 'linear-gradient(90deg,#fb7185,#ff7ab6)';
   } else if (fraction < 0.6) {
@@ -665,11 +855,10 @@ function onTimeUp(){
     setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) finishRun(); else showQuestion(); }, 900);
     return;
   }
-  // multiplayer: wait for server to end the question (server auto-ends on timeout)
+
   showMsg('Time up — waiting for host', 1800);
 }
 
-/* ====== socket connection & utils ====== */
 function connectSocket() {
   if (socket && socket.connected) return Promise.resolve(socket);
   if (socket && socket.connecting) {
@@ -687,7 +876,6 @@ function connectSocket() {
     reconnectionAttempts: 6
   });
 
-  // attach handlers immediately
   attachSocketHandlers();
 
   return new Promise((resolve) => {
@@ -702,7 +890,6 @@ function connectSocket() {
   });
 }
 
-/* ====== multiplayer helpers ====== */
 function openHostList(){
   connectSocket();
   showMsg('Hit "Host" next to a quiz to create a room (in this UI).', 2500);
@@ -764,9 +951,8 @@ function updatePlayers(list){
   });
 }
 
-/* ===== End screen UI ===== */
 function showEndScreen(scores){
-  // scores: [{ id, name, total }] or [{ id, name, score }] or single-player
+
   endList.innerHTML = '';
   if(!Array.isArray(scores)) scores = [scores];
   const normalized = scores.map(s => ({ id: s.id || s.name, name: s.name || s.id || 'Player', total: (s.total ?? s.score ?? 0) }));
@@ -789,7 +975,7 @@ function showEndScreen(scores){
 
 function closeEndScreen(){
   endScreen.style.display = 'none';
-  // reset to home/menu view
+
   mode = 'idle';
   currentMultiQuestion = null;
   multiplayerIndex = null;
@@ -801,31 +987,21 @@ function closeEndScreen(){
 }
 
 function playAgain(){
-  // simple behavior: go home (user can click Play/Host again)
+
   closeEndScreen();
   showMsg('Ready — start another game', 1400);
 }
 
-/* ====== small helpers ====== */
 function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
 function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
 
-/* ====== Return home helper ====== */
-/* 2) Add this near the top of your script (after API_URL and state defs) */
-/* Set HOME_PATH to whichever path your homepage actually lives at.
-   Use '/home1-html' if your server routes that way, or '/home1-html.html'
-   if it is a static file. Change as needed. */
-const HOME_PATH = '/home-1.html'; // <- change to '/home1-html.html' if needed
+const HOME_PATH = '/home-1.html'; 
 
-/* 3) Replace the returnHome() implementation with this: */
 function returnHome(){
-  // Navigate to the site home page
-  // If you prefer a client-side reset instead of a navigation, replace with UI reset logic.
+
   window.location.href = HOME_PATH;
 }
 
-
-/* ====== bootstrap ====== */
 refreshQuizzes();
 connectSocket();
 
