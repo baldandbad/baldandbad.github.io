@@ -154,6 +154,7 @@
 .marker-cat-khaoco     { background: #10b981; }
 .marker-cat-dacbiet    { background: #8b5cf6; }
 .marker-cat-default    { background: #6b7280; }
+.market-cat-phivat     { background: #9c27b0; }
 
 /* active marker: larger ring */
 .marker-active {
@@ -555,6 +556,7 @@
 .marker-cat-khaoco   { background:#10b981; }
 .marker-cat-dacbiet  { background:#8b5cf6; }
 .marker-cat-default  { background:#6b7280; }
+.market-cat-phivat   { background: #9c27b0; }
 
 .marker-active { transform: translate(-50%, -50%) scale(1.6); box-shadow: 0 6px 18px rgba(0,0,0,0.45); z-index:9999; }
 
@@ -613,6 +615,7 @@
 .marker-cat-khaoco   { background:#10b981 !important; }
 .marker-cat-dacbiet  { background:#8b5cf6 !important; }
 .marker-cat-default  { background:#6b7280 !important; }
+.marker-cat-phivat   { background:#9c27b0 !important; }
 
 .marker-active .marker-inner {
   transform: scale(1.45);
@@ -1070,6 +1073,7 @@
       <button onclick="applyFilter('baotang')">Bảo tàng / chuyên đề</button>
       <button onclick="applyFilter('khaoco')">Di tích khảo cổ</button>
       <button onclick="applyFilter('khu')">Khu dự trữ sinh quyển</button>
+      <button onclick="applyFilter('phivat')">Di sản văn hóa Phi vật thể</button>
       <button onclick="applyFilter('khac')">Khác</button>
     </div>
   </div>
@@ -1097,6 +1101,7 @@ const CATEGORY_COLORS = {
   dacbiet:  '#8b5cf6',
   cachmang: '#ef4444',
   khu:      '#FFFF00',
+  phivat:  '#9c27b0',
   default:  '#6b7280'
 };
 /* ---------- Automatic SVG tinting (no SVG edits required) ---------- */
@@ -1185,6 +1190,7 @@ const LEGEND_LABELS = {
   dacbiet:  'Di tích quốc gia đặc biệt',
   cachmang: 'Di tích lịch sử – văn hóa cách mạng',
   khu:      'Khu dự trữ sinh quyển',
+  phivat: 'Di sản văn hóa Phi vật thể',
   default:  'Khác'
 };
 
@@ -1380,8 +1386,8 @@ function setActiveMarker(m) {
   });
 
   const map = L.map('map', {
-    minZoom: 9,
-    maxZoom: 15,
+    minZoom: 7,
+    maxZoom: 16,
     zoomControl: false
   }).setView([10.7769, 106.7009], 10);
   L.control.zoom({ position: 'bottomleft'
@@ -1726,6 +1732,11 @@ const data = [
   { name: "Ngã Ba Giồng", coords: [10.868358706057167,106.56114532344505], category: "quocgia", page: "ngabagiong.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_20-di-tich-lich-su-nga-ba-giong-(1)&startactions=lookat(103.33,-7.81,91.29,0,0);", image: "images/nbg1.jpg" },
   { name: "Trụ sở UBND", coords: [10.776564644610339,106.70090517485895], category: "kientruc", page: "trusoubndtphcm.html", vr: "https://map3d.visithcmc.vn/?startscene=scene_ubnd_view1&startactions=lookat(0.9,-20.39,119.83,0,0);", image: "images/ubnd1.jpg" },
   { name: "Đình Bình Đông", coords: [10.727827252842598,106.64129241658803], category: "quocgia", page: "dinhbinhdong.html", vr: "non", image: "images/dbd1.jpg" },
+  { name: "Lễ hội khai Hạ cầu An", coords:[10.801923121412305, 106.6973082610739], category:"phivat", page:"lehoik.html", vr:"non", image:"images/lhkh1.jpg"},
+  { name: "Lễ hội Nghinh Ông", coords:[10.417327494477863, 106.97143908049047], category:"phivat", page:"lehoinghinhong.html", vr:"non", image:"images/lhno.jpg"},
+  { name: "Lân, sư, rồng", coords:[10.750761668714038, 106.65748097186062], category:"phivat", page:"lansurong.html", vr:"non", image:"images/lsr3.jpg"},
+  { name: "Tết Nguyên tiêu", coords:[10.754221271423617, 106.66855561662278], category:"phivat", page:"lehoinguyentieu.html", vr:"non", image:"images/lhnt1.jpg"},
+  { name: "Vovinam", coords:[10.776409653730894, 106.66354428342531], category:"phivat", page:"vovinam.html", vr:"non", image:"images/vvn1.jpg"}
 ];
 
 // helper: map category -> CSS class
@@ -1737,7 +1748,8 @@ function categoryClass(cat){
     baotang:  'marker-cat-baotang',
     khaoco:   'marker-cat-khaoco',
     dacbiet:  'marker-cat-dacbiet',
-    khu:      'marker-cat-kientruc'
+    khu:      'marker-cat-kientruc',
+    phivat:  'marker-cat-phivat'
   }[cat] || 'marker-cat-default';
 }
 
@@ -1777,12 +1789,32 @@ function buildPopupHtml(item) {
 
   const decoPath = 'images/badges/kientruc.png'; // change path if needed
 
-  const actions = `
-    <div class="popup-actions-inline">
-      <a class="popup-btn primary" href="${escapeHtml(item.page)}" target="_blank" rel="noopener noreferrer">Xem thêm</a>
-      <a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${item.coords[0]},${item.coords[1]}" target="_blank" rel="noopener noreferrer">Chỉ đường</a>
-      ${item.vr && item.vr !== 'non' ? `<a class="popup-btn" href="${escapeHtml(item.vr)}" target="_blank" rel="noopener noreferrer">VR360</a>` : ''}
-    </div>`;
+  // Build actions dynamically so we can conditionally omit the "Chỉ đường" button
+  const buttons = [];
+
+  // "Xem thêm" always shown (escape URL)
+  buttons.push(
+    `<a class="popup-btn primary" href="${escapeHtml(item.page)}" target="_blank" rel="noopener noreferrer">Xem thêm</a>`
+  );
+
+  // Only add "Chỉ đường" if category is NOT "phivat" (case-insensitive)
+  const isPhiVat = item.category && String(item.category).toLowerCase() === 'phivat';
+  if (!isPhiVat && item.coords && item.coords.length >= 2) {
+    const lat = encodeURIComponent(item.coords[0]);
+    const lng = encodeURIComponent(item.coords[1]);
+    buttons.push(
+      `<a class="popup-btn" href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}" target="_blank" rel="noopener noreferrer">Chỉ đường</a>`
+    );
+  }
+
+  // VR button if present
+  if (item.vr && item.vr !== 'non') {
+    buttons.push(
+      `<a class="popup-btn" href="${escapeHtml(item.vr)}" target="_blank" rel="noopener noreferrer">VR360</a>`
+    );
+  }
+
+  const actions = `<div class="popup-actions-inline">${buttons.join('')}</div>`;
 
   const humanCategory = LEGEND_LABELS[item.category] || LEGEND_LABELS.default || (item.category || 'Khác');
 
@@ -1801,8 +1833,6 @@ function buildPopupHtml(item) {
       ${actions}
     </div>`;
 }
-
-
 
 // Build the divIcon HTML (keeps your styles)
 function createDivIconHtml(item) {
@@ -1928,6 +1958,7 @@ const LEGEND_ORDER = [
   'baotang',
   'khaoco',
   'khu',
+  'phivat',
   'default'
 ];
 
@@ -2095,6 +2126,7 @@ const CATEGORY_DECOS = {
   khaoco:    'images/deco/khaoco.png',
   dacbiet:   'images/deco/dacbiet.png',
   khu:       'images/deco/khu.png',
+  phivat:   'images/deco/phivat.png',
   default:   'images/deco/default.png'
 };
 
