@@ -773,8 +773,26 @@ function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
     const q = questions[currentIndex];
     const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
     const isCorrect = String(answerId) === String(correct);
-    if(isCorrect){ correctSound(); const bonus = Math.round(timerRemaining); const gained = 10 + clamp(bonus, 0, timerDuration); score += gained; combo++; el.classList.add('correct'); showMsg('Correct! +' + gained, 1100); }
-    else { wrongSound(); combo = 0; el.classList.add('wrong'); Array.from(optionsEl.children).forEach(ch=>{ const meta = ch.querySelector('.small')?.textContent || ''; const m = meta.match(/Choice\s*(.+)$/i); if(m && String(m[1]) === String(correct)) ch.classList.add('correct'); }); }
+    if(isCorrect){
+      correctSound();
+      burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); // <--- Confetti on correct answer
+      const bonus = Math.round(timerRemaining);
+      const gained = 10 + clamp(bonus, 0, timerDuration);
+      score += gained;
+      combo++;
+      el.classList.add('correct');
+      showMsg('Correct! +' + gained, 1100);
+    }
+    else {
+      wrongSound();
+      combo = 0;
+      el.classList.add('wrong');
+      Array.from(optionsEl.children).forEach(ch=>{
+        const meta = ch.querySelector('.small')?.textContent || '';
+        const m = meta.match(/Choice\s*(.+)$/i);
+        if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
+      });
+    }
     scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
     setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
     return;
