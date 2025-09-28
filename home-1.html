@@ -11,6 +11,10 @@
 					<script src="js/html5shiv.min.js"></script>
 					<script src="js/respond.min.js"></script>
 					<![endif]-->
+          <link rel="preload" href="/assets/music.mp3" as="audio">
+<link rel="preload" href="/css/music-overlay.css" as="style">
+<link rel="stylesheet" href="/css/music-overlay.css">
+<script defer src="/js/music-overlay.js"></script>
     <link rel="shortcut icon" href="images/favicon.png" />
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/font-awesome.min.css">
@@ -1371,6 +1375,17 @@
     <script>
       new WOW().init();
     </script>
+    <!-- partial: auto-music-minimal-class.html -->
+<!-- single element with class (not a <button>) -->
+<div class="auto-music-toggle" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle music mute">
+  <!-- svg icon -->
+  <svg class="auto-music-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+  </svg>
+</div>
+
+<!-- (optional) <audio> element; script will create it if missing -->
+<!-- <audio id="auto-music-audio" src="/assets/music.mp3" preload="auto" loop></audio> -->
   </body>
   <!--home-123:18  -->
 </html>

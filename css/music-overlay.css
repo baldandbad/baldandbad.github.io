@@ -1,0 +1,44 @@
+/* css/auto-music-class.css */
+:root{
+  --accent: #e53935;
+  --accent-dark: #b71c1c;
+  --btn-size: 48px;
+  --shadow: 0 6px 18px rgba(2,6,23,0.6);
+}
+
+.auto-music-toggle{
+  position: fixed;
+  left: 14px;
+  bottom: 14px;
+  z-index: 130000;
+  width: var(--btn-size);
+  height: var(--btn-size);
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg, var(--accent), var(--accent-dark));
+  color: #fff;
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform .12s ease, opacity .12s ease;
+  user-select: none;
+}
+.auto-music-toggle:active { transform: translateY(1px); }
+
+/* muted state */
+.auto-music-toggle.muted{
+  background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(0,0,0,0.06));
+  color: #ccd7e6;
+}
+
+/* focus */
+.auto-music-toggle:focus { outline: 3px solid rgba(255,255,255,0.12); outline-offset: 3px; }
+
+/* icon tweaks */
+.auto-music-icon { display:block; width:22px; height:22px; }
+
+/* responsive */
+@media (max-width:420px){
+  :root{ --btn-size:56px; }
+  .auto-music-toggle{ left:12px; bottom:12px; }
+}
