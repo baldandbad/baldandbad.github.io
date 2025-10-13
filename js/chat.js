@@ -18,7 +18,7 @@ async function sendMessage() {
   chatInput.value = "";
 
   try {
-    const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+    const res = await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/ask", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: text })
