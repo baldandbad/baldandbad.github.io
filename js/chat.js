@@ -1,3 +1,14 @@
+const chatWidget = document.getElementById("chat-widget");
+const chatToggle = document.getElementById("chat-toggle");
+const chatBody = document.getElementById("chat-body");
+const chatInput = document.getElementById("chat-input");
+const chatSend = document.getElementById("chat-send");
+
+chatToggle.addEventListener("click", () => {
+  chatWidget.style.display =
+    chatWidget.style.display === "flex" ? "none" : "flex";
+});
+
 async function sendMessage() {
   const text = chatInput.value.trim();
   if (!text) return;
@@ -58,3 +69,15 @@ async function sendMessage() {
     chatSend.disabled = false;
   }
 }
+
+function appendMessage(sender, message) {
+  const msg = document.createElement("div");
+  msg.innerHTML = `<b>${sender}:</b> ${message}`;
+  chatBody.appendChild(msg);
+  chatBody.scrollTop = chatBody.scrollHeight;
+}
+
+chatSend.addEventListener("click", sendMessage);
+chatInput.addEventListener("keypress", e => {
+  if (e.key === "Enter") sendMessage();
+});
