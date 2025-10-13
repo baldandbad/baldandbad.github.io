@@ -1847,3 +1847,159 @@ input[type="checkbox"] .styled:checked + label::after,
 input[type="radio"] .styled:checked + label::after {
   color: #fff;
 }
+
+/* Redesigned button style */
+.btn,
+button,
+input[type="button"],
+input[type="submit"] {
+  font-family: 'Montserrat', 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  background: #2596be; /* solid blue */
+  color: #fff !important; /* always white text */
+  box-shadow: 0 2px 12px rgba(255, 122, 182, 0.08);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+}
+
+.btn:hover,
+button:hover,
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  background: #1976a5; /* darker blue on hover */
+  color: #fff !important;
+  box-shadow: 0 4px 18px rgba(255, 122, 182, 0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.btn:active,
+button:active,
+input[type="button"]:active,
+input[type="submit"]:active {
+  background: #15608a !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(37, 150, 190, 0.12);
+  transform: scale(0.98);
+}
+
+/* Only .btn class: solid #2596be, always white text, blue hover/active */
+.btn {
+  font-family: 'Montserrat', 'Open Sans', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: 0.03em;
+  padding: 12px 28px;
+  border-radius: 12px;
+  border: none;
+  background: #2596be !important;
+  color: #fff !important;
+  box-shadow: 0 2px 12px rgba(37, 150, 190, 0.08);
+  transition: background 0.18s, box-shadow 0.18s, transform 0.12s;
+  cursor: pointer;
+  outline: none;
+  position: relative;
+}
+
+.btn:hover,
+.btn:focus {
+  background: #1976a5 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 18px rgba(37, 150, 190, 0.18);
+  transform: translateY(-2px) scale(1.04);
+}
+
+.btn:active {
+  background: #15608a !important;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(37, 150, 190, 0.12);
+  transform: scale(0.98);
+}
+
+/* Redesigned blog listing cards */
+.blog-listing,
+.blog-card,
+#search-results .result-item {
+  background: linear-gradient(180deg, #fffbe8 0%, #fff3f8 100%);
+  border-radius: 18px;
+  box-shadow: 0 2px 18px rgba(255, 122, 182, 0.08);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+  transition: box-shadow 0.18s, transform 0.12s;
+  border: 1.5px solid #ffd86b;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.blog-listing:hover,
+.blog-card:hover,
+#search-results .result-item:hover {
+  box-shadow: 0 8px 32px rgba(255, 122, 182, 0.18);
+  transform: translateY(-2px) scale(1.02);
+  border-color: #ff7ab6;
+}
+
+.blog-listing-title,
+.blog-card-title,
+#search-results .result-item a {
+  font-family: 'Montserrat', 'Open Sans', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #e53935;
+  margin-bottom: 6px;
+  text-decoration: none;
+  transition: color 0.18s;
+}
+
+.blog-listing-title:hover,
+.blog-card-title:hover,
+#search-results .result-item a:hover {
+  color: #ff7ab6;
+}
+
+.blog-listing-meta,
+.blog-card-meta,
+#search-results .result-item em {
+  font-size: 0.98em;
+  color: #a8a8a8;
+  margin-bottom: 4px;
+  font-style: italic;
+}
+
+.blog-listing-desc,
+.blog-card-desc {
+  font-size: 1.08em;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.blog-listing-img,
+.blog-card-img {
+  width: 100%;
+  max-width: 340px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  box-shadow: 0 2px 8px rgba(255, 122, 182, 0.10);
+  object-fit: cover;
+}
+
+@media (max-width: 900px) {
+  .blog-listing,
+  .blog-card,
+  #search-results .result-item {
+    padding: 14px 10px;
+    border-radius: 12px;
+  }
+  .blog-listing-img,
+  .blog-card-img {
+    max-width: 100%;
+    border-radius: 8px;
+  }
+}

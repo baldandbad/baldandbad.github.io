@@ -82,16 +82,25 @@ function changePage(page) {
   displayResults(currentResults);
 }
 
+// Utility: Remove Vietnamese accents
+function removeAccents(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');
+}
+
 // Handle search
 const form = document.querySelector('.search-form');
 form.addEventListener('submit', function (e) {
   e.preventDefault();
-  const query = form.querySelector('.search-field').value.toLowerCase();
-  const filtered = data.filter(item =>
-    item.title.toLowerCase().includes(query) ||
-    item.description.toLowerCase().includes(query) ||
-    item.categories.join(', ').toLowerCase().includes(query)
-  );
+  const queryRaw = form.querySelector('.search-field').value.toLowerCase();
+  const query = removeAccents(queryRaw);
+
+  const filtered = data.filter(item => {
+    // Normalize all fields for accent-insensitive search
+    const title = removeAccents(item.title.toLowerCase());
+    const desc = removeAccents(item.description.toLowerCase());
+    const cats = removeAccents(item.categories.join(', ').toLowerCase());
+    return title.includes(query) || desc.includes(query) || cats.includes(query);
+  });
   currentPage = 1;
   displayResults(filtered);
 });

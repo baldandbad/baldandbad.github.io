@@ -262,16 +262,16 @@
        <div class="container">
           <div class="row">
             <main id="main" class="site-main col-xs-12 col-sm-8 left-block">
-              <div id ="search-results"></div>
-              <div class="pagination">
-                <span class="page-numbers current">1</span>
-                <a href="blog.html#" class="page-numbers">2</a>
-                <a href="blog.html#" class="page-numbers">3</a>
-                <a href="blog.html#" class="next page-numbers">
-                  <i class="fa fa-angle-right"></i>
-                </a>
-              </div>
-            </main>
+  <div id="search-results"></div>
+  <div class="pagination">
+    <span class="page-numbers current">1</span>
+    <a href="blog.html#" class="page-numbers">2</a>
+    <a href="blog.html#" class="page-numbers">3</a>
+    <a href="blog.html#" class="next page-numbers">
+      <i class="fa fa-angle-right"></i>
+    </a>
+  </div>
+</main>
             <div class="widget-area col-xs-12 col-sm-4 pull-right" id="secondary">
               <aside class="widget widget_search">
                 <h3>Tìm Kiếm</h3>
@@ -325,6 +325,20 @@
     <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
   </svg>
 </div>
+<script>
+  // Example: Render blog listings with new design
+  function renderBlogListings(items) {
+    const container = document.getElementById('search-results');
+    container.innerHTML = items.map(item => `
+      <div class="blog-listing">
+        ${item.img ? `<img src="${item.img}" alt="" class="blog-listing-img" />` : ''}
+        <a href="${item.url}" class="blog-listing-title">${item.title}</a>
+        <div class="blog-listing-meta">${item.categories ? item.categories.join(', ') : ''}</div>
+        <div class="blog-listing-desc">${item.desc || ''}</div>
+      </div>
+    `).join('');
+  }
+</script>
   </body>
   <!--blog23:55  -->
 </html>
