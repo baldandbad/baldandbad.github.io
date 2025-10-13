@@ -31,7 +31,16 @@ const API_URL = "https://openrouter.ai/api/v1/chat/completions";
 const API_KEY = process.env.OPENROUTER_API_KEY;
 
 app.post("/ask", async (req, res) => {
-  const userMsg = req.body.message;
+  console.log("----- /ask called -----");
+  console.log("Headers:", req.headers);
+  console.log("Body:", req.body);
+
+  const userMsg = req.body?.message;
+  if (!userMsg || typeof userMsg !== "string" || userMsg.trim() === "") {
+    console.warn("Empty or missing 'message' in request body");
+    return res.status(400).json({ reply: "", error: "Missing 'message' in request body" });
+  }
+
   const payload = {
     model: "deepseek/deepseek-r1-0528:free",
     messages: [
@@ -41,6 +50,8 @@ app.post("/ask", async (req, res) => {
   };
 
   try {
+    if (!API_KEY) console.warn("OPENROUTER_API_KEY is not set");
+
     const openRes = await fetch(API_URL, {
       method: "POST",
       headers: {
@@ -50,13 +61,63 @@ app.post("/ask", async (req, res) => {
       body: JSON.stringify(payload),
     });
 
-    const data = await openRes.json();
-    res.json({ reply: data.choices?.[0]?.message?.content || "No reply." });
+    const raw = await openRes.text(); // read raw text first (safe for debugging)
+    console.log("OpenRouter raw response (text):", raw);
+
+    let data;
+    try {
+      data = raw ? JSON.parse(raw) : null;
+    } catch (parseErr) {
+      console.error("Failed to parse OpenRouter response as JSON:", parseErr);
+      // Return the raw body for debugging
+      return res.status(502).json({ reply: "", error: "Invalid JSON from OpenRouter", raw });
+    }
+
+    // If HTTP status not ok, return error info
+    if (!openRes.ok) {
+      console.error("OpenRouter returned non-OK status:", openRes.status, data);
+      return res.status(openRes.status).json({ reply: "", error: data?.error || "OpenRouter error", raw: data });
+    }
+
+    console.log("OpenRouter parsed JSON:", JSON.stringify(data, null, 2));
+
+    // Robust extraction function - try several possible fields
+    function extractReply(d) {
+      // 1) Standard chat format (OpenAI-like / OpenRouter docs)
+      const c0 = d?.choices?.[0];
+      if (c0) {
+        if (typeof c0?.message?.content === "string" && c0.message.content.trim() !== "") return c0.message.content;
+        // some providers/models use 'text' or 'content' directly
+        if (typeof c0?.text === "string" && c0.text.trim() !== "") return c0.text;
+        // if streaming tokens were used, text may be under delta (not expected here)
+        if (typeof c0?.delta?.content === "string" && c0.delta.content.trim() !== "") return c0.delta.content;
+      }
+      // 2) Other shapes (some providers put content in output/result)
+      if (Array.isArray(d?.output) && d.output[0]?.content?.[0]?.text) return d.output[0].content[0].text;
+      if (typeof d?.result?.content === "string" && d.result.content.trim() !== "") return d.result.content;
+      // 3) fallback: if there's a top-level 'reply' (your current code assumed this), return that
+      if (typeof d?.reply === "string" && d.reply.trim() !== "") return d.reply;
+      return null;
+    }
+
+    const reply = extractReply(data);
+
+    if (!reply) {
+      console.warn("No usable text found in OpenRouter response. Returning debug info.");
+      // In development only: return the whole parsed response so you can inspect it client-side.
+      // IMPORTANT: remove or change this before production to avoid revealing secrets.
+      return res.json({ reply: "No reply.", debug: data });
+    }
+
+    // normal success case
+    return res.json({ reply });
+
   } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: "Error talking to OpenRouter" });
+    console.error("Error while calling OpenRouter:", err);
+    return res.status(500).json({ error: "Error talking to OpenRouter", details: err?.message });
   }
 });
+
 
 app.use("/comments", commentsRouter);
 
