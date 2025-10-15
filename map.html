@@ -1819,6 +1819,17 @@ function buildPopupHtml(item) {
   const humanCategory = LEGEND_LABELS[item.category] || LEGEND_LABELS.default || (item.category || 'Khác');
 
   // include --deco inline so the pseudo-element can pick it up
+  let vrSourceHtml = '';
+  if (item.vr && item.vr !== 'non') {
+    try {
+      const urlObj = new URL(item.vr, window.location.origin);
+      vrSourceHtml = `<div style="margin-top:8px;font-size:0.97em;color:#666;">Nguồn VR: ${urlObj.hostname.replace(/^www\./, '')}</div>`;
+    } catch (e) {
+      // fallback if URL parsing fails
+      vrSourceHtml = `<div style="margin-top:8px;font-size:0.97em;color:#666;">Nguồn VR: ${item.vr}</div>`;
+    }
+  }
+
   return `
     <div class="custom-popup" style="--cat: ${borderColor}; --deco: url('${decoPath}')">
       <div class="popup-thumb-outer" aria-hidden="true">
@@ -1831,6 +1842,7 @@ function buildPopupHtml(item) {
       ${ snippet ? `<p class="snippet">${snippet}</p>` : '' }
       <p class="meta">Loại: ${escapeHtml(humanCategory)}</p>
       ${actions}
+      ${vrSourceHtml}
     </div>`;
 }
 
