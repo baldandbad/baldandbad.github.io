@@ -1991,17 +1991,6 @@ input[type="submit"]:active {
 }
 
 @media (max-width: 900px) {
-  .blog-listing,
-  .blog-card,
-  #search-results .result-item {
-    padding: 14px 10px;
-    border-radius: 12px;
-  }
-  .blog-listing-img,
-  .blog-card-img {
-    max-width: 100%;
-    border-radius: 8px;
-  }
   .sidebar-toggle-btn {
     display: flex !important;
     position: fixed;
