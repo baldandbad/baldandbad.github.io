@@ -865,7 +865,7 @@
   });
 
   closeBtn.addEventListener('click',()=> lightbox.classList.remove('active'));
-  lightbox.addEventListener('click',e=>{
+  lightbox.addEventListener('click', e=>{
     if(e.target===lightbox){ lightbox.classList.remove('active'); }
   });
 })();
@@ -1311,26 +1311,46 @@
         }
         // sendMessage (keeps your fetch)
         async function sendMessage() {
-          const text = input.value.trim();
-          if (!text) return;
-          addMessage(text, "user");
-          input.value = "";
-          try {
-            const res = await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/ask", {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json"
-              },
-              body: JSON.stringify({
-                message: text
-              })
-            });
-            const data = await res.json();
-            addMessage(data.reply || "(No reply)", "ai");
-          } catch (err) {
-            addMessage("Error: " + err.message, "ai");
-          }
-        }
+  const text = input.value.trim();
+  if (!text) return;
+  addMessage(text, "user");
+  input.value = "";
+
+  console.log("Sending message:", text);
+  try {
+    const res = await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/ask", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    });
+    console.log("Fetch complete. status:", res.status, res.statusText);
+    console.log("Response headers:", Array.from(res.headers.entries()));
+
+    const raw = await res.text();                 // read raw text first
+    console.log("Raw response:", raw);
+
+    // try parse JSON if content-type suggests JSON
+    let data;
+    const ct = res.headers.get("content-type") || "";
+    if (ct.includes("application/json")) {
+      try { data = JSON.parse(raw); }
+      catch (err) {
+        console.error("JSON parse error:", err);
+        addMessage("Server returned invalid JSON. Check response in Network tab.", "ai");
+        return;
+      }
+    } else {
+      addMessage(`Non-JSON response (status ${res.status}). See Console/Network.`, "ai");
+      return;
+    }
+
+    console.log("Parsed JSON:", data);
+    addMessage(data.reply || "(No reply)", "ai");
+  } catch (err) {
+    console.error("Fetch error:", err);
+    addMessage("Error: " + err.message, "ai");
+  }
+}
       });
     </script>
     <script src="js/jquery.min.js"></script>
@@ -1362,6 +1382,25 @@
           pagination: true,
           autoPlay: true
         });
+
+        // initialize FlexSlider for the about-slide
+        if ($.fn && $.fn.flexslider) {
+          $('.about-slide').flexslider({
+            animation: 'slide',
+            controlNav: false,
+            directionNav: false,
+            slideshow: true,
+            slideshowSpeed: 4000,
+            animationSpeed: 600,
+            start: function(slider) {
+              // ensure the slider container is visible after init
+              slider.container.css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
+            }
+          });
+        } else {
+          // fallback: make sure the element is visible even if flexslider script failed to load
+          $('.about-slide').css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
+        }
       });
     </script>
     <script src="js/theme.js"></script>
