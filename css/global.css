@@ -2061,3 +2061,7 @@ input[type="submit"]:active {
     transition: none;
   }
 }
+.category-list { list-style: none; padding: 0; margin: 6px 0 12px 0; }
+.category-list li { cursor: pointer; padding: 6px 8px; border-radius: 6px; margin-bottom: 4px; user-select: none; }
+.category-list li:hover { background: rgba(0,0,0,0.03); }
+.category-list li.active { background: rgba(0,0,0,0.05); font-weight: 600; }
