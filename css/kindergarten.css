@@ -627,7 +627,7 @@ a:hover.read-more {
 .classes .classes-info .classes-time li {
   margin: 0;
   padding: 0 0 0 15px;
-  width: 33%;
+  width: 100%;
   float: left;
   border-right: 1px solid #eee;
   background: 0 0;
