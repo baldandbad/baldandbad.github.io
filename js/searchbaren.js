@@ -13,42 +13,54 @@ const paginationDiv = document.getElementById('pagination');
 
 async function loadData() {
   try {
-    // try different possible relative paths if needed (adjust to your setup)
+    // Try several likely locations so it works at "/", "/en/", or other subpaths
     const pathCandidates = [
-  '/js/pagesdataen.json',
-  './js/pagesdataen.json',
-  '../js/pagesdataen.json'
-];
-    let res = null;
+      '/js/pagesdataen.json',   // absolute root
+      './js/pagesdataen.json',  // relative to current page folder (e.g. /en/js/...)
+      '../js/pagesdataen.json'  // one level up (e.g. /js/ when page in /en/)
+    ];
+
     let lastErr = null;
+    let loaded = false;
 
     for (const p of pathCandidates) {
       try {
-        res = await fetch(p);
-        // break on 200-299
-        if (res.ok) {
-          // use this response
-          break;
-        } else {
+        console.debug('[loadData] trying', p);
+        const res = await fetch(p, { cache: 'no-store' });
+        const ct = res.headers.get('content-type') || '';
+        const text = await res.text();
+        console.debug('[loadData] response', p, 'status', res.status, 'content-type', ct, 'preview:', text.slice(0,200));
+
+        if (!res.ok) {
           lastErr = new Error(`HTTP ${res.status} ${res.statusText} for ${p}`);
-          res = null;
+          continue;
+        }
+
+        // If response looks like HTML (starts with '<' or '<!DOCTYPE'), skip it
+        if (text.trim().startsWith('<')) {
+          lastErr = new Error(`Server returned HTML for ${p} (starts with "<"). Often this is index.html or an error page.`);
+          continue;
+        }
+
+        // Try parse JSON
+        try {
+          data = JSON.parse(text);
+          loaded = true;
+          console.info('[loadData] loaded JSON from', p);
+          break;
+        } catch (parseErr) {
+          lastErr = new Error(`pagesdata.json contains invalid JSON for ${p}: ${parseErr.message}`);
+          continue;
         }
       } catch (err) {
         lastErr = err;
+        console.warn('[loadData] fetch error for candidate', p, err);
       }
-    }
+    } // end loop
 
-    if (!res) throw lastErr || new Error('Could not fetch pagesdata.json');
+    if (!loaded) throw lastErr || new Error('Could not fetch pagesdataen.json from any candidate path');
 
-    // try to parse JSON and surface parse errors
-    const txt = await res.text();
-    try {
-      data = JSON.parse(txt);
-    } catch (err) {
-      throw new Error('pagesdata.json contains invalid JSON: ' + err.message);
-    }
-
-    // get categories (try categories.json or extract from pagesdata)
+    // categories: try external categories file, else extract
     try {
       const catRes = await fetch('/js/categoriesen.json');
       if (catRes.ok) {
@@ -68,13 +80,14 @@ async function loadData() {
     console.error('Failed to load data:', err);
     if (container) container.innerHTML = `<p>Error loading data: ${err.message}</p>`;
 
-    // fallback to sample data so UI remains functional while you fix file/path
-    data = SAMPLE_DATA;
+    // fallback to SAMPLE_DATA (ensure SAMPLE_DATA is declared near the top of the file)
+    data = typeof SAMPLE_DATA !== 'undefined' ? SAMPLE_DATA : [];
     populateCategories(extractCategoriesFromData(data));
     currentResults = data;
     displayResults(currentResults);
   }
 }
+
 
 function populateCategories(categories) {
   if (!categoryListEl) return;
