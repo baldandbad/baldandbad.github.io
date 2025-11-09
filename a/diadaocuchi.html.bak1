@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--blog-details23:55  -->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>EducationPress - The Most Complete Education Solution</title>
+<!--[if lt IE 9]>
+					<script src="js/html5shiv.min.js"></script>
+					<script src="js/respond.min.js"></script>
+					<![endif]-->
+<link href="/a/images/favicon.png" rel="shortcut icon"/>
+<link href="/a/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="/a/css/font-awesome.min.css" rel="stylesheet"/>
+<link href="/a/css/linearicons-free.css" rel="stylesheet"/>
+<link href="/a/css/simple-line-icons.css" rel="stylesheet"/>
+<link href="/a/vendor/fancybox/css/fancybox.css" rel="stylesheet"/>
+<link href="/a/css/global.css" rel="stylesheet"/>
+<link href="/a/css/style.css" rel="stylesheet"/>
+<link href="/a/css/kindergarten.css" rel="stylesheet"/>
+</head>
+<body><style> .custom-navbar { width: 100%; background: #fff; box-shadow: 0 2px 16px rgba(44,62,80,0.07), 0 1.5px 0 #f3f3f3; border-bottom: 1.5px solid #f3f3f3; position: sticky; top: 0; z-index: 1000; font-family: 'Montserrat', 'Open Sans', sans-serif; transition: box-shadow .18s; } .custom-navbar-inner { justify-content: space-between; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; padding: 0 40px; height: 120px; } .custom-navbar-logo { display: flex; align-items: center; gap: 0; text-decoration: none; background: #fff; border-radius: 12px; padding: 0; transition: box-shadow .18s, border .18s; } .custom-navbar-logo img { height: 96px; width: auto; border-radius: 8px; background: #fff; } .custom-navbar-nav { display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; } .custom-navbar-nav > li { position: relative; } .custom-navbar-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px 8px 18px; color: #2f2f2f; font-weight: 600; border-radius: 8px 8px 0 0; background: none; border: none; font-size: 1rem; position: relative; transition: color .18s, background .18s; } .custom-navbar-link::after { content: ''; display: block; position: absolute; left: 18px; right: 18px; bottom: 2px; height: 2.5px; background: linear-gradient(90deg, #e53935 0%, #ff7043 100%); border-radius: 2px; transform: scaleX(0); transition: transform .22s; } .custom-navbar-link:hover, .custom-navbar-link:focus { color: #e53935; background: #f9f9f9; } .custom-navbar-link:hover::after, .custom-navbar-link:focus::after { transform: scaleX(1); } .custom-navbar-dropdown { display: none; position: absolute; left: 0; top: 110%; min-width: 200px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); padding: 8px 0; z-index: 1001; border: 1.5px solid #f3f3f3; animation: fadeIn .18s; } .custom-navbar-nav > li:hover > .custom-navbar-dropdown, .custom-navbar-nav > li:focus-within > .custom-navbar-dropdown { display: block; } .custom-navbar-dropdown a { display: flex; align-items: center; gap: 8px; padding: 11px 28px 11px 22px; color: #e53935; font-weight: 500; text-decoration: none; border-radius: 8px; transition: background .16s, color .16s; font-size: 0.98rem; position: relative; } .custom-navbar-dropdown a:hover { background: #fff3f1; color: transparent; } .custom-navbar-dropdown a::before { content: '2'; color: #ff7043; font-size: 1.2em; margin-right: 8px; opacity: 0.7; } .custom-navbar-toggle { display: none; background: none; border: none; color: #e53935; font-size: 2rem; cursor: pointer; margin-left: 12px; border-radius: 8px; padding: 4px 10px; transition: background .18s; } .custom-navbar-toggle:hover { background: #ffe3de; } /* new: menu toggle specific styles to avoid global button overrides */ .menu-icon-btn { /* reset heavy button rules from global styles */ background: transparent !important; border: none !important; box-shadow: none !important; color: #ff5722 !important; /* site orange */ font-size: 1.9rem; line-height: 1; padding: 6px 10px; display: none; /* hide by default (desktop) */ align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: background .18s, transform .12s; -webkit-appearance: none; } .menu-icon-btn:hover, .menu-icon-btn:focus { background: #fff3f1; color: #d32f2f !important; outline: none; } .menu-icon-btn:active { transform: translateY(1px) scale(.995); } /* keep the old custom-navbar-toggle selector for any other behavior but avoid generic button styling */ .custom-navbar-toggle { /* minimal shim so scripts querying this class still work */ background: none; border: none; padding: 0; } @media (max-width: 900px) { .custom-navbar-inner { flex-wrap: wrap; height: auto; padding: 0 10px; } /* show the menu button on mobile */ .menu-icon-btn { display: inline-flex; } .custom-navbar-nav { flex-direction: column; align-items: flex-start; width: 100%; background: #fff; border-radius: 0 0 16px 16px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); margin-top: 8px; display: none; position: absolute; left: 0; top: 72px; z-index: 1002; border-top: 1.5px solid #f3f3f3; } .custom-navbar-nav.show { display: flex; } .custom-navbar-nav > li { width: 100%; } .custom-navbar-link { color: #e53935; background: none; width: 100%; text-align: left; border-radius: 0; padding: 16px 22px 14px 22px; } .custom-navbar-link::after { left: 22px; right: 22px; bottom: 4px; } .custom-navbar-link:hover { background: #fff3f1; color: #d32f2f; } .custom-navbar-dropdown { position: static; box-shadow: none; background: #fff; border-radius: 0; min-width: 100%; padding: 0; border: none; } .custom-navbar-dropdown a { padding: 13px 32px; } .custom-navbar-toggle { display: block; } } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } </style>
+<nav class="custom-navbar">
+<div class="custom-navbar-inner">
+<a class="custom-navbar-logo" href="/a/home-1.html">
+<img alt="Logo" src="/a/images/logo5.png"/>
+</a>
+<button aria-label="Mở menu" class="custom-navbar-toggle" onclick="document.querySelector('.custom-navbar-nav').classList.toggle('show')">
+<i class="fa fa-bars"></i>
+</button>
+<ul class="custom-navbar-nav">
+<li><a class="custom-navbar-link" href="/a/home-1.html">Trang Chủ</a></li>
+<li><a class="custom-navbar-link" href="/a/map.html">Bản Đồ</a></li>
+<li><a class="custom-navbar-link" href="/a/blog.html">Kho Thông Tin</a></li>
+</ul>
+</div>
+</nav>
+<div class="breadcrumb-section">
+<div class="container">
+<div class="row">
+<header class="entry-header">
+<h1 class="entry-title">Địa đạo Củ Chi</h1>
+</header>
+</div>
+</div>
+</div>
+<div class="page-spacer clearfix">
+<div class="content-area" id="primary">
+<div class="container">
+<div class="row">
+<main class="site-main col-xs-12 col-sm-8 left-block" id="main">
+<article class="post hentry">
+<a href="/a/blog-details.html">
+</a>
+<header class="entry-header">
+</header>
+<div class="entry-content">
+<div class="entry-content">
+<div class="post-frame">
+<img alt="Post image" src="/a/images/ddcc5.jpg"/>
+</div>
+<h3>Bài viết giới thiệu</h3>
+<h4>• Sự nổi tiếng</h4>
+<p>
+    Được mệnh danh là “làng chiến đấu trong lòng đất”, Địa đạo Củ Chi là hệ thống phòng thủ kiên cố, thông minh trong lòng đất, của quân và dân Củ Chi trong kháng chiến chống Pháp và chống Mĩ. Hệ thống địa đạo không chỉ là nơi trú ẩn, sinh hoạt, hội họp quân sự, cứu thương, chế tạo và tàng trữ vũ khí mà còn tấn công bất ngờ khiến quân giặc không hề hay biết. Ngày nay, Địa đạo Củ Chi trở thành Di tích Quốc gia đặc biệt, là một trong sáu công trình nhân tạo đặc biệt nhất thế giới, một trong những biểu tượng thể hiện ý chí kiên cường, bất khuất của quân dân Củ Chi, thu hút hàng triệu lượt khách du lịch trong và ngoài nước khi đến du lịch ở Thành phố Hồ Chí Minh.
+  </p>
+<div class="post-frame">
+<img alt="Post image" src="/a/images/ddcc2.jpg"/>
+</div>
+<h4>• Lịch sử hình thành</h4>
+<p>
+    Địa đạo Củ Chi bắt đầu được xây dựng trong thời kỳ kháng chiến chống thực dân Pháp. Khi mới được xây dựng, địa đạo chỉ là những hầm trú ngắn có cấu trúc đơn giản để bộ đội ẩn nập và cất giấu tài liệu. Nhưng hầm bí mật có nhược điểm là khi bị phát hiện, dễ bị địch khống chế vây bắt hoặc tiêu diệt. Từ đó người ta nghĩ rằng cần phải kéo dài căn hầm bí mật thành những đường hầm và trổ lên mặt đất bằng nhiều cửa bí mật để vừa trú ẩn vừa đánh lại quân địch, và khi cần, sẽ thoát khỏi chỗ nguy hiểm đến một nơi khác. 
+    Bước sang thời kì chống đế quốc Mỹ xâm lược Việt Nam, địa đạo Củ Chi phát triển mạnh, nhất là đầu năm 1966. Phong trào đào địa đạo ngày càng phát triển rầm rộ, mạnh mẽ khắp nơi, trẻ già, trai gái nô nức tham gia kiến tạo đường hầm đánh giặc. Sức mạnh ý chí của con người đã chiến thắng khó khăn. Chỉ bằng phương tiện dụng cụ hết sức thô sơ là lưỡi cuốc và chiếc ki xúc đất bằng tre, quân và dân Củ Chi đã tạo nên công trình đồ sộ với hàng trăm km đường ngầm dọc ngang trong lòng đất, nối liền các xã ấp với nhau như một “làng ngầm” kỳ diệu. Hệ thống địa đạo dài 250 km, với 3 tầng sâu khác nhau, tầng trên cách mặt đất khoảng 3 m, tầng giữa cách mặt đất khoảng 5-8 m, tầng dưới cùng sâu hơn 12 m. 
+    Trong suốt những năm kháng chiến, quân Mỹ liên tục tấn công nhằm đánh phá vùng căn cứ và hệ thống địa đạo. Chúng sử dụng những thủ đoạn như: Bơm nước vào lòng địa đạo, dùng đội quân “chuột cống” đánh phá, dùng chó bẹc-giê săn lùng phát hiện và triệt phá, dùng xe cơ giới ủi bằng,… Nhưng cán bộ và nhân dân huyện Củ Chi vẫn kiên cường chống trả khiến những kế hoạch này chưa bao giờ thành công.
+  </p>
+<div class="post-frame">
+<img alt="Post image" src="/a/images/ddcc3.jpg"/>
+</div>
+<h4>• Kết cấu</h4>
+<p>
+    Kiến trúc địa đạo mang tính kế thừa và có giá trị về nhiều mặt, đặc biệt là về mặt nghệ thuật quân sự, chiến tranh nhân dân, với những sáng tạo kiệt xuất, đã phát triển đến đỉnh cao trong giai đoạn kháng chiến chống Mỹ, mà cả thế giới phải ghi nhận.
+    Địa đạo Củ Chi là một hệ thống địa đạo chạy ngoắt ngoéo trong lòng đất, từ đường “xương sống” (đường chính) tỏa ra vô số nhánh dài ngắn, ăn thông với nhau, hoặc độc lập chấm dút tùy theo địa hình. Có nhiều nhánh trổ ra sông Sài gòn để khi bị tình thế nguy kịch có thể vượt qua sông sang vùng căn cứ khác.
+    Địa đạo đào trên một khu vực đất sét pha đá ong nên có độ bền cao, ít bị sụt lở. Hệ thống đường hầm có khả năng chống được đạn pháo và sức nặng của xe tăng, xe bọc thép, những đoạn hầm sâu chống được bom cỡ nhỏ. Có những đoạn cấu trúc từ 2 đến 3 tầng (tầng trên gọi là “thượng,” tầng dưới gọi là “trầm”). Chỗ lên xuống giữa các tầng có nắp hầm bí mật.
+    Trong địa đạo có những nút chặn ở những điểm cần thiết để ngăn địch hoặc chất độc hóa học do địch phun vào. Có những đoạn hẹp (eo), phải lách người mới chui qua được. Dọc theo đường hầm có lỗ thông hơi bên trên, được ngụy trang kín đáo và trổ lên mặt đất bằng nhiều cửa bí mật. Nhiều cửa được cấu trúc thành ổ chiến đấu, ụ bắn tỉa rất linh hoạt. Dưới những khúc địa đạo ở khu hiểm yếu, có đặt hầm chông, hố đinh, cạm bẫy…
+    Xung quanh cửa lên xuống hầm được bố trí nhiều hầm chông, hố đinh, mìn trái (gọi là tử địa), có cả mìn lớn chống tăng và mâm phóng lựu đạn chống máy bay trực thăng, nhằm tiêu diệt, ngăn chặn quân địch tới gần.
+    Liên hoàn với địa đạo có các hầm rộng có thể mắc võng để nghỉ ngơi. Trong hầm có nơi dự trữ vũ khí, lương thực, thực phẩm, có giếng nước, bếp “Hoàng Cầm,” hầm làm việc của lãnh đạo, hầm giải phẫu, nuôi dưỡng thương binh, hầm chữ A vững chắc cho phụ nữ, người già, trẻ em trú ẩn. Có những hầm lớn, mái lợp thoáng mát, bên trên ngụy trang khéo léo để hội họp, biểu diễn văn nghệ…
+  </p>
+<div class="post-frame">
+<img alt="Post image" src="/a/images/ddcc4.jpg"/>
+</div>
+<h4>• Cuộc sống trong địa đạo</h4>
+<p>
+    Điều kiện sống và chiến đấu trong địa đạo vô cùng gian khổ. Do cần phải bảo tồn lực lượng để chiến đấu nên người quân dân Củ Chi phải chấp nhận mọi sự khắc nghiệt có thể nói là vượt quá sức chịu đựng của con người. Chỉ có thể bò hoặc cúi lom khom khi di chuyển, thiếu không khí để thở, ánh sáng, ẩm ướt và nóng bức, côn trùng, rắn rết… nên hầu như đa số những người sống ở địa đạo đều bị kí sinh trùng, bệnh da liễu và các bệnh về xương. Ngoài ra, việc thiếu thốn lương thực, thực phẩm và nhu yếu phẩm cũng là vấn đề lớn nhất của cư dân địa đạo. Có thể nói, cuộc sống trong địa đạo như vậy là đỉnh cao về lòng yêu nước, sức chịu đựng, sự kiên nhẫn và khát vọng hòa bình của người dân Củ Chi. Đúng như một chính khách nước ngoài đã phát biểu khi chui xuống thăm địa đạo: “Đã nhiều năm tôi nghi ngờ về cuộc chiến đấu của nhân dân Việt Nam. Làm sao một nước nhỏ và nghèo lại có thể đánh thắng một nước lớn và giàu có như nước Mỹ. Nhưng khi tới đây, chui qua 70m đường hầm, tôi đã tự trả lời được câu hỏi đó”.
+  </p>
+<h4>• Các hoạt động thăm quan, khám phá địa đạo Củ Chi</h4>
+<p>
+    Đến địa đạo Củ Chi không hề nhàm chán, bạn không chỉ được khám phá, trải nghiệm những giá trị lịch sử tại đây mà còn có nhiều hoạt động trải nghiệm thú vị khác.
+    1. Chui hầm địa đạo: bạn sẽ được tham quan, khám phá mọi ngóc ngách của hệ thống đường hầm dài 120m gồm 2 tầng; sau đó được thưởng thức món khoai, sắn, củ mài chấm muối vừng từ bếp Hoàng Cầm khi xưa và nghe kể chuyện về thứ đồ ăn đã nuôi sống quân dân Củ Chi trong kháng chiến
+    2. Khám phá khu tái hiện chiến tranh: bạn sẽ được xem những thước phim, mô hình, hoạt động thực tế tái hiện toàn bộ cảnh sinh hoạt, chiến đấu của quân và nhân dân ta dưới địa đạo.
+    3. Khu tắm và trò chơi trên nước: bạn có thể tắm hồ bơi, đạp xe quanh hồ, chèo thuyền kayak trong hồ tắm tại đây.
+    4. Thử sức với trải ngiệm bắn súng: một trong những hoạt động độc đáo và thu hút khách du lịch tại đây là tại bắn súng sơn và đạn thật
+    5. Thưởng thức trái cây tại vườn cây Trung An: tại đây, bạn có thể tận tay hái và thưởng thức nhiều loại trái cây thơm ngon đặc sản của địa phương như: Chôm chôm, mận, mít, sầu riêng, dâu,…
+    6. Thưởng thức nhiều món ăn đặc sản địa phương: bạn có thể thưởng thức nhiều món ăn ngon đặc sản tại khu di tích hoặc các quán gần đó như: bò tơ củ chi, cháo môn lươn, mít non trộn tôm thịt, nước mía sầu riêng…
+  </p>
+<h4>• Những lưu ý khi đến địa đạo</h4>
+<p>
+    - Thời gian mở cửa :7h00 – 17h00 
+    - Giá vé vào khu du lịch khoảng 20.000- 30.000VNĐ/người, vé chui hầm 20.000 VNĐ/người, vé các trò chơi 50.000 VNĐ/người.
+    - Mặc trang phục gọn gàng, thuận tiện cho hoạt động chui hầm, tối màu để tránh bám bẩn và chọn giày thể thao để thoải mái hơn khi di chuyển.
+    - Bạn nhớ chuẩn bị một số mỹ phẩm cần thiết để tránh nắng và đề phòng côn trùng.
+    - Tour du lịch : bạn có thể tới địa đạo bằng đường bộ hoặc hấp dẫn hơn là bằng đường thủy trên những chiếc ca nô xuất phát từ bến Bạch Đằng tại trung tâm thành phố Hồ Chí Minh rồi ngược dòng sông Sài Gòn, ngắm nhìn khung cảnh thơ mộng và lắng nghe nhiều câu chuyện lịch sử hấp dẫn để tới thăm quan.
+  </p>
+</div>
+</div>
+</article>
+<div class="comments-area" id="comments">
+<ul id="comment-list"></ul>
+<script>
+                  window.POST_ID = 10;
+                  const API_URL1 = "https://baldandbadgithubio-production.up.railway.app/comments";
+                  async function loadComments() {
+                    const res = await fetch(`${API_URL1}?post_id=${window.POST_ID}`); // API endpoint from your backend
+                    const comments = await res.json();
+                    const list = document.getElementById("comment-list");
+                    list.innerHTML = ""; // clear old comments
+                    comments.forEach(c => {
+                      const html = `
+      
+																				<li class="comment">
+																					<article class="comment-body">
+																						<div class="author-photo">
+																							<a href="blog-details.html" class="avatar">
+																								<img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+																							</a>
+																						</div>
+																						<div class="comment-wrapper">
+																							<div class="comment-meta">
+																								<div class="comment-author vcard">
+																									<h5 class="fn">${c.name}</h5>
+																								</div>
+																							</div>
+																							<div class="comment-content">
+																								<p>${c.message}</p>
+																							</div>
+																							<div class="comment-metadata">
+																								<span>${new Date(c.created_at).toLocaleDateString()}</span>
+																							</div>
+																							<div class="reply">
+																								<a href="#" class="comment-reply-link btn btn-default">Reply</a>
+																							</div>
+																						</div>
+																					</article>
+																				</li>
+    `;
+                      list.insertAdjacentHTML("beforeend", html);
+                    });
+                  }
+                  // Call on page load
+                  loadComments();
+                </script>
+<div class="comment-respond" id="respond">
+<h3 class="comment-reply-title" id="reply-title">Bình Luận</h3>
+<form action="#" class="comment-form" id="commentform" method="post">
+<p class="comment-form-author">
+<label>Tên <span class="required">*</span>
+</label>
+<input id="author" name="author" required="" type="text"/>
+</p>
+<p class="comment-form-comment">
+<label>Bình luận</label>
+<textarea cols="45" id="comment" name="comment" required="" rows="8"></textarea>
+</p>
+<p class="form-submit">
+<input class="submit btn btn-default" id="submit" type="submit" value="Submit"/>
+</p>
+</form>
+</div>
+<script>
+                  window.POST_ID = 10;
+                  const postID = window.POST_ID;
+                  const API_URL = "https://baldandbadgithubio-production.up.railway.app/comments";
+
+                  function buildCommentTree(comments) {
+                    const map = {};
+                    const roots = [];
+                    comments.forEach(c => {
+                      c.replies = [];
+                      map[c.id] = c;
+                    });
+                    comments.forEach(c => {
+                      if (c.parent_id) {
+                        map[c.parent_id]?.replies.push(c);
+                      } else {
+                        roots.push(c);
+                      }
+                    });
+                    return roots;
+                  }
+
+                  function createCommentHTML(c, depth = 0) {
+                    // Calculate indentation - limit to 5 levels max for sanity
+                    const indent = Math.min(depth, 5) * 30; // 30px per level
+                    return `
+    
+																						<li class="comment ${depth > 0 ? 'is-reply' : ''}" 
+        id="li-comment-${c.id}"
+        style="margin-left: ${indent}px">
+																							<article class="comment-body">
+																								<div class="author-photo">
+																									<a href="blog-details.html" class="avatar">
+																										<img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+																									</a>
+																								</div>
+																								<div class="comment-wrapper">
+																									<div class="comment-meta">
+																										<div class="comment-author vcard">
+																											<h5 class="fn">${c.name}</h5>
+              ${depth > 0 ? `
+																											<span class="reply-indicator">↳ replied </span>` : ''}
+            
+																										</div>
+																									</div>
+																									<div class="comment-content">
+																										<p>${c.message}</p>
+																									</div>
+																									<div class="comment-metadata">
+																										<span>${new Date(c.created_at).toLocaleDateString()}</span>
+																									</div>
+																									<div class="reply">
+																										<a href="#" class="comment-reply-link btn btn-default">Reply</a>
+																									</div>
+																								</div>
+																							</article>
+      ${c.replies?.length ? `
+        
+																							<ol class="comment-replies">
+          ${c.replies.map(reply => createCommentHTML(reply, depth + 1)).join('')}
+        </ol>
+      ` : ''}
+    
+																						</li>
+  `;
+                  }
+                  // Load comments from backend
+                  async function loadComments() {
+                    const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`);
+                    const comments = await res.json();
+                    const nestedComments = buildCommentTree(comments);
+                    const list = document.getElementById("comment-list");
+                    list.innerHTML = "";
+                    nestedComments.forEach(c => {
+                      list.insertAdjacentHTML("beforeend", createCommentHTML(c));
+                    });
+                  }
+                  document.addEventListener("click", function(e) {
+                    if (e.target.classList.contains("comment-reply-link")) {
+                      e.preventDefault();
+                      // Remove any existing inline reply forms
+                      document.querySelectorAll(".inline-reply-form").forEach(f => f.remove());
+                      const commentElement = e.target.closest(".comment");
+                      const parentId = commentElement.id.replace("li-comment-", "");
+                      // Create a small inline reply form
+                      const replyForm = document.createElement("form");
+                      replyForm.classList.add("inline-reply-form");
+                      replyForm.innerHTML = `
+      
+																						<input type="text" name="reply-name" placeholder="Your name" required />
+																						<textarea name="reply-message" placeholder="Write your reply..." required></textarea>
+																						<button type="submit">Post Reply</button>
+    `;
+                      // Append form to comment
+                      commentElement.appendChild(replyForm);
+                      // Handle reply form submission
+                      replyForm.addEventListener("submit", async function(e) {
+                        e.preventDefault();
+                        const name = this.querySelector("input[name='reply-name']").value;
+                        const message = this.querySelector("textarea[name='reply-message']").value;
+                        console.log(name);
+                        console.log(message);
+                        const created_at = new Date();
+                        await fetch("https://baldandbadgithubio-production.up.railway.app/comments", {
+                          method: "POST",
+                          headers: {
+                            "Content-Type": "application/json"
+                          },
+                          body: JSON.stringify({
+                            name,
+                            message,
+                            avatar: null,
+                            created_at: created_at,
+                            post_id: postID,
+                            parent_id: parentId
+                          })
+                        });
+                        // Reload comments
+                        loadComments();
+                      });
+                    }
+                  });
+                  // Handle form submit
+                  document.getElementById("commentform").addEventListener("submit", async function(e) {
+                    e.preventDefault();
+                    const name = document.getElementById("author").value;
+                    const message = document.getElementById("comment").value;
+                    const created_at = new Date();
+                    const post_id = postID;
+                    await fetch(API_URL, {
+                      method: "POST",
+                      headers: {
+                        "Content-Type": "application/json"
+                      },
+                      body: JSON.stringify({
+                        name,
+                        message,
+                        avatar: null,
+                        created_at,
+                        post_id,
+                        parent_id: null
+                      })
+                    });
+                    this.reset();
+                    loadComments();
+                  });
+                  // Load on page start
+                  loadComments();
+                </script>
+</div>
+</main>
+<div class="widget-area col-xs-12 col-sm-4 pull-right" id="secondary">
+<aside class="widget widget_search">
+<h3>Tìm Kiếm</h3>
+<div class="search-form">
+<form action="/a/blog.html" id="searchForm" method="GET">
+<input class="search-field" id="searchInput" name="s" placeholder="Search …" type="search"/>
+<input class="search-submit btn btn-default" type="submit" value="Search"/>
+</form>
+</div>
+<div id="results" style="margin-top: 15px;"></div>
+</aside>
+<aside class="custom-sidebar">
+<h3 style="font-weight:bold; color:#007bff;">LOẠI DI TÍCH</h3>
+<div style="margin-bottom:15px;">
+Di tích quốc gia đặc biệt
+ </div>
+<h3 style="font-weight:bold; color:#007bff;">TÓM TẮT DI TÍCH</h3>
+<div style="margin-bottom:15px;">
+      Địa đạo Củ Chi là di tích quốc gia đặc biệt, biểu tượng cho ý chí kiên cường, sáng tạo của quân dân Củ Chi, là công trình phòng thủ ngầm nổi tiếng thế giới, thu hút hàng triệu du khách mỗi năm.
+    </div>
+<h4 style="font-weight:bold; color:#007bff;">VIDEO VỀ DI TÍCH</h4>
+<div style="margin-bottom:15px;">
+<a href="https://youtu.be/_sbm0Dkq2n4?si=RCMN9o20iTZO30M_" target="_blank">Phim tài liệu “Du kích Củ Chi”</a><br/>
+<a href="https://youtu.be/VY4uOlGUF8E?si=fNZ-smx7aYKCUdnA" target="_blank">Tuấn tiền tỉ 1</a><br/>
+<a href="https://youtu.be/4dZ1DpBJO8c?si=LCaRAqSVFJqkOZhn" target="_blank">Tuấn tiền tỉ 2</a><br/>
+<a href="https://youtu.be/8osvCvNxvdg?si=_rvelSrp7X33EN8O" target="_blank">Tuấn tiền tỉ 3</a><br/>
+<a href="https://youtu.be/KVPTqZvKX48?si=f6IPDFZKyyo196Rj" target="_blank">CD Team</a><br/>
+<a href="https://youtu.be/bNJqul_V3DE?si=e2NXxFnu6QcQnklc" target="_blank">Việt sử giai thoại</a><br/>
+<a href="https://youtu.be/NH_hkopuW3k?si=fOezA5RbGvaGPgof" target="_blank">Biệt động Sài Gòn</a>
+</div>
+<h4 style="font-weight:bold; color:#007bff;">ĐƯỜNG LINK VỀ BÀI VIẾT</h4>
+<div style="margin-bottom:15px;">
+<a href="https://tuoitre.vn/doi-quan-xuat-quy-nhap-than-73114.htm" target="_blank">Báo Tuổi trẻ: Lối đánh du kích</a><br/>
+<a href="https://thanhnien.vn/ky-uc-cua-anh-hung-to-van-duc-ve-sang-che-min-gat-khac-tinh-cua-xe-tang-my-185250423124416461.htm" target="_blank">Anh hùng Tô Văn Đực</a><br/>
+<a href="https://www.vietnamplus.vn/huyen-thoai-doi-nu-du-kich-cu-chi-voi-nhung-chien-cong-hien-hach-post1003522.vnp" target="_blank">Đội nữ du kích Củ Chi</a><br/>
+<a href="http://diadaocuchi.com.vn" target="_blank">Trang web bảo tàng Địa đạo Củ Chi</a>
+</div>
+<h4 style="font-weight:bold; color:#007bff;">ĐỊA ĐIỂM</h4>
+<div>
+      đường tỉnh lộ 15, Ấp Phú Hiệp, xã Phú Mỹ Hưng, huyện Củ Chi, thành phố Hồ Chí Minh.
+    </div>
+</aside>
+<!-- ...existing code... -->
+</div>
+<script>
+                let pages = [];
+                async function loadData() {
+                  try {
+                    const res = await fetch('js/pagesdata.json');
+                    pages = await res.json();
+                  } catch (err) {
+                    document.getElementById('results').innerHTML = ' < p > Error loading search data. < /p>';
+                  }
+                }
+
+                function filterResults() {
+                  const query = document.getElementById('searchInput').value.toLowerCase();
+                  const selectedCategory = document.getElementById('categoryFilter').value;
+                  const filtered = pages.filter(page => {
+                    const matchesCategory = selectedCategory === 'all' || (page.categories && page.categories.includes(selectedCategory));
+                    const matchesQuery = page.title.toLowerCase().includes(query);
+                    return matchesCategory && matchesQuery;
+                  });
+                  displayResults(filtered);
+                }
+
+                function displayResults(items) {
+                  const resultsDiv = document.getElementById('results');
+                  resultsDiv.innerHTML = items.map(item => `
+																										
+																							<div class="result-item">
+																								<a href="${item.url}">${item.title}</a>
+																								<em style="display:block; font-size: 0.9em;">(${item.categories.join(', ')})</em>
+																							</div>`).join('') || " < p > No results found. < /p>";
+                }
+                // Load data when page loads
+                loadData();
+              </script>
+</div>
+</div>
+</div>
+</div>
+<footer class="site-footer" id="colophon">
+<div class="container">
+<div class="row">
+<div class="col-xs-12 col-sm-4">
+<img alt="" src="/a/images/logo5.png"/>
+</div>
+</div>
+<div class="row">
+<div class="col-xs-12 col-sm-4 footer-widget">
+<aside class="widget widget_text">
+<div class="textwidget"> The point of using Lorem Ipsum is that it has a more or less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. </div>
+</aside>
+<aside class="widget socialmedia-widget"></aside>
+</div>
+<div class="col-xs-12 col-sm-4 footer-widget">
+<aside class="widget widget_nav_menu">
+<ul class="menu">
+<li>
+<a href="/a/blog-details.html">Home</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Shortcodes</a>
+</li>
+<li>
+<a href="/a/blog-details.html">about US</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Blog</a>
+</li>
+<li>
+<a href="/a/blog-details.html">classes</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Contact US</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Teachers</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Privacy Policy</a>
+</li>
+<li>
+<a href="/a/blog-details.html">Events</a>
+</li>
+</ul>
+</aside>
+</div>
+</div>
+</div>
+</footer>
+<div id="login-form" style="display:none;">
+<div class="row">
+<h3>Login</h3>
+<p>Please Login to Create a New Course</p>
+<form action="/a/blog-details.html" id="login">
+<input name="email" placeholder="Email or Username" type="text"/>
+<input name="password" placeholder="Password" type="text"/>
+<div class="row remeber">
+<label>
+<input name="rember" type="checkbox" value=""/> Remember Me </label>
+<a href="/a/blog-details.html">Forgot Password?</a>
+</div>
+<div class="text-center button">
+<input name="Login" type="button" value="Login Now"/>
+</div>
+</form>
+</div>
+</div>
+<div id="register-form" style="display:none;">
+<div class="row">
+<h3>Register</h3>
+<p>Please Register to Create a New Account</p>
+<form action="/a/blog-details.html" id="register">
+<input name="name" placeholder="Name" type="text"/>
+<input name="username" placeholder="Username" type="text"/>
+<input name="email" placeholder="Email" type="text"/>
+<input name="password" placeholder="Password" type="text"/>
+<input name="confirmpassword" placeholder="Confirm Password" type="text"/>
+<div class="row new-login"> Already have an account? <a href="/a/blog-details.html">Login to your account! </a>
+</div>
+<div class="text-center button">
+<input name="create-account" type="button" value="Create an Account"/>
+</div>
+</form>
+</div>
+</div>
+<button id="chatbox-toggle">Open</button>
+<div aria-hidden="true" id="chatbox-container">
+<div id="chatbox-header"> AI Assistant <button id="chatbox-close">✖</button>
+</div>
+<div aria-live="polite" id="chatbox-messages">
+<!-- sample messages -->
+<div class="chat-message chat-ai">Hello — how can I help?</div>
+</div>
+<div id="chatbox-input-area">
+<input id="chatbox-input" placeholder="Type your message..." type="text"/>
+<button id="chatbox-send">Send</button>
+</div>
+</div>
+<style>
+      /* Use a very high z-index to ensure the chat sits above other UI.
+     If another element still covers it, make sure that element doesn't
+     create a new stacking context with transform/opacity/position and a higher z-index. */
+      #chatbox-container {
+        position: fixed;
+        bottom: 80px;
+        right: 20px;
+        width: 300px;
+        height: 400px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        /* z-index high so it sits above most site elements */
+        z-index: 2147483647;
+        /* Hidden (off-screen) state using transform for smooth GPU animation */
+        transform: translateX(380px);
+        opacity: 0;
+        pointer-events: none;
+        transition: transform .38s cubic-bezier(.2, .9, .2, 1), opacity .28s;
+        will-change: transform, opacity;
+      }
+
+      /* show state -> visible & interactive */
+      #chatbox-container.show {
+        transform: translateX(0);
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      #chatbox-header {
+        flex: 0 0 50px;
+        background: #0078ff;
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 10px;
+      }
+
+      /* Messages area fills the available middle space and is scrollable */
+      #chatbox-messages {
+        flex: 1;
+        height: 280px;
+        padding: 10px;
+        overflow-y: auto;
+        box-sizing: border-box;
+        gap: 8px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .message {
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 12px;
+      }
+
+      .message.sent {
+        align-self: flex-end;
+        /* moves your messages to the right */
+        background-color: #007bff;
+        color: white;
+      }
+
+      .message.received {
+        align-self: flex-start;
+        /* moves other messages to the left */
+        background-color: #e5e5ea;
+        color: black;
+      }
+
+      /* If you want the newest messages to appear at the bottom visually,
+     use JS to auto-scroll to bottom on open/new message. */
+      /* Chat bubbles must NOT flex-grow */
+      .chat-message {
+        flex: 0 0 auto;
+        max-width: 75%;
+        padding: 8px 12px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        animation: msgIn .18s ease;
+      }
+
+      .chat-user {
+        align-self: flex-end;
+        background: #0078ff;
+        color: white;
+        border-bottom-right-radius: 0;
+      }
+
+      .chat-ai {
+        align-self: flex-start;
+        background: #e5e5ea;
+        color: black;
+        border-bottom-left-radius: 0;
+      }
+
+      #chatbox-input-area {
+        flex: 0 0 56px;
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        padding: 8px;
+        border-top: 1px solid #eee;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 250, 250, 0.9));
+      }
+
+      #chatbox-input {
+        flex: 1;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        outline: none;
+      }
+
+      #chatbox-send {
+        background: #0078ff;
+        color: white;
+        border: none;
+        padding: 8px 12px;
+        border-radius: 8px;
+        cursor: pointer;
+      }
+
+      /* toggle button z-index should also be high so it's clickable */
+      #chatbox-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 2147483647;
+      }
+
+      @keyframes msgIn {
+        from {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+<script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const toggleBtn = document.getElementById("chatbox-toggle");
+        const chatbox = document.getElementById("chatbox-container");
+        const closeBtn = document.getElementById("chatbox-close");
+        const sendBtn = document.getElementById("chatbox-send");
+        const input = document.getElementById("chatbox-input");
+        const messages = document.getElementById("chatbox-messages");
+        // Ensure chatbox is direct child of body to avoid stacking context issues
+        if (chatbox && chatbox.parentElement !== document.body) {
+          document.body.appendChild(chatbox);
+        }
+        // open/close helpers
+        function openChat() {
+          chatbox.classList.add("show");
+          chatbox.setAttribute('aria-hidden', 'false');
+          input.focus();
+          // ensure latest messages visible
+          requestAnimationFrame(() => {
+            messages.scrollTop = messages.scrollHeight;
+          });
+        }
+
+        function closeChat() {
+          chatbox.classList.remove("show");
+          chatbox.setAttribute('aria-hidden', 'true');
+          toggleBtn.focus();
+        }
+        // Toggle button
+        toggleBtn.addEventListener('click', () => {
+          if (chatbox.classList.contains('show')) closeChat();
+          else openChat();
+        });
+        // Close button
+        closeBtn.addEventListener('click', closeChat);
+        // Close on Escape
+        document.addEventListener('keydown', (e) => {
+          if (e.key === "Escape" && chatbox.classList.contains("show")) closeChat();
+        });
+        // Send message handlers
+        sendBtn.addEventListener('click', sendMessage);
+        input.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            sendMessage();
+          }
+        });
+        // single addMessage function (no duplicates)
+        function addMessage(text, sender) {
+          const div = document.createElement("div");
+          div.classList.add("chat-message", sender === "user" ? "chat-user" : "chat-ai");
+          div.textContent = text;
+          messages.appendChild(div);
+          requestAnimationFrame(() => {
+            messages.scrollTop = messages.scrollHeight;
+          });
+        }
+        // sendMessage (keeps your fetch)
+        async function sendMessage() {
+          const text = input.value.trim();
+          if (!text) return;
+          addMessage(text, "user");
+          input.value = "";
+          try {
+            const res = await fetch("https://baldandbadgithubio-production.up.railway.app/ask", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json"
+              },
+              body: JSON.stringify({
+                message: text
+              })
+            });
+            const data = await res.json();
+            addMessage(data.reply || "(No reply)", "ai");
+          } catch (err) {
+            addMessage("Error: " + err.message, "ai");
+          }
+        }
+      });
+    </script>
+<script src="/a/js/jquery.min.js"></script>
+<script src="/a/js/bootstrap.min.js"></script>
+<script src="/a/js/theme.js"></script>
+<script src="/a/vendor/fancybox/js/jquery.fancybox.js" type="text/javascript"></script>
+<script src="/a/vendor/fancybox/js/custom.fancybox.js" type="text/javascript"></script>
+<script>
+      jQuery.noConflict();
+      jQuery('.fancybox').fancybox();
+    </script>
+</body>
+<!--blog-details23:55  -->
+</html>

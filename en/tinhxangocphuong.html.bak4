@@ -1,0 +1,1933 @@
+<!DOCTYPE html>
+
+
+
+
+
+<html lang="en">
+
+
+<!--blog-details23:55  -->
+
+
+<head>
+
+
+<meta charset="utf-8"/>
+
+
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+
+
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+
+<title>Bản đồ Di tích lịch sử TPHCM</title>
+
+
+<!--[if lt IE 9]>
+
+
+					<script src="js/html5shiv.min.js"></script>
+
+
+					<script src="js/respond.min.js"></script>
+
+
+					<![endif]-->
+
+
+<link as="audio" href="/assets/music.mp3" rel="preload"/>
+
+
+<link as="style" href="/css/music-overlay.css" rel="preload"/>
+
+
+<link href="/css/music-overlay.css" rel="stylesheet"/>
+
+
+<script defer="" src="/js/music-overlay.js"></script>
+
+
+<link href="/images/favicon.png" rel="shortcut icon"/>
+
+
+<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+
+
+<link href="/css/font-awesome.min.css" rel="stylesheet"/>
+
+
+<link href="/css/linearicons-free.css" rel="stylesheet"/>
+
+
+<link href="/css/simple-line-icons.css" rel="stylesheet"/>
+
+
+<link href="/vendor/fancybox/css/fancybox.css" rel="stylesheet"/>
+
+
+<link href="/css/global.css" rel="stylesheet"/>
+
+
+<link href="/css/style.css" rel="stylesheet"/>
+
+
+<link href="/css/kindergarten.css" rel="stylesheet"/>
+
+
+</head>
+
+
+<body><style> .custom-navbar { width: 100%; background: #fff; box-shadow: 0 2px 16px rgba(44,62,80,0.07), 0 1.5px 0 #f3f3f3; border-bottom: 1.5px solid #f3f3f3; position: sticky; top: 0; z-index: 1000; font-family: 'Montserrat', 'Open Sans', sans-serif; transition: box-shadow .18s; } .custom-navbar-inner { justify-content: space-between; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; padding: 0 40px; height: 120px; } .custom-navbar-logo { display: flex; align-items: center; gap: 0; text-decoration: none; background: #fff; border-radius: 12px; padding: 0; transition: box-shadow .18s, border .18s; } .custom-navbar-logo img { height: 96px; width: auto; border-radius: 8px; background: #fff; } .custom-navbar-nav { display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; } .custom-navbar-nav > li { position: relative; } .custom-navbar-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px 8px 18px; color: #2f2f2f; font-weight: 600; border-radius: 8px 8px 0 0; background: none; border: none; font-size: 1rem; position: relative; transition: color .18s, background .18s; } .custom-navbar-link::after { content: ''; display: block; position: absolute; left: 18px; right: 18px; bottom: 2px; height: 2.5px; background: linear-gradient(90deg, #e53935 0%, #ff7043 100%); border-radius: 2px; transform: scaleX(0); transition: transform .22s; } .custom-navbar-link:hover, .custom-navbar-link:focus { color: #e53935; background: #f9f9f9; } .custom-navbar-link:hover::after, .custom-navbar-link:focus::after { transform: scaleX(1); } .custom-navbar-dropdown { display: none; position: absolute; left: 0; top: 110%; min-width: 200px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); padding: 8px 0; z-index: 1001; border: 1.5px solid #f3f3f3; animation: fadeIn .18s; } .custom-navbar-nav > li:hover > .custom-navbar-dropdown, .custom-navbar-nav > li:focus-within > .custom-navbar-dropdown { display: block; } .custom-navbar-dropdown a { display: flex; align-items: center; gap: 8px; padding: 11px 28px 11px 22px; color: #e53935; font-weight: 500; text-decoration: none; border-radius: 8px; transition: background .16s, color .16s; font-size: 0.98rem; position: relative; } .custom-navbar-dropdown a:hover { background: #fff3f1; color: transparent; } .custom-navbar-dropdown a::before { content: '2'; color: #ff7043; font-size: 1.2em; margin-right: 8px; opacity: 0.7; } .custom-navbar-toggle { display: none; background: none; border: none; color: #e53935; font-size: 2rem; cursor: pointer; margin-left: 12px; border-radius: 8px; padding: 4px 10px; transition: background .18s; } .custom-navbar-toggle:hover { background: #ffe3de; } /* new: menu toggle specific styles to avoid global button overrides */ .menu-icon-btn { /* reset heavy button rules from global styles */ background: transparent !important; border: none !important; box-shadow: none !important; color: #ff5722 !important; /* site orange */ font-size: 1.9rem; line-height: 1; padding: 6px 10px; display: none; /* hide by default (desktop) */ align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: background .18s, transform .12s; -webkit-appearance: none; } .menu-icon-btn:hover, .menu-icon-btn:focus { background: #fff3f1; color: #d32f2f !important; outline: none; } .menu-icon-btn:active { transform: translateY(1px) scale(.995); } /* keep the old custom-navbar-toggle selector for any other behavior but avoid generic button styling */ .custom-navbar-toggle { /* minimal shim so scripts querying this class still work */ background: none; border: none; padding: 0; } @media (max-width: 900px) { .custom-navbar-inner { flex-wrap: wrap; height: auto; padding: 0 10px; } /* show the menu button on mobile */ .menu-icon-btn { display: inline-flex; } .custom-navbar-nav { flex-direction: column; align-items: flex-start; width: 100%; background: #fff; border-radius: 0 0 16px 16px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); margin-top: 8px; display: none; position: absolute; left: 0; top: 72px; z-index: 1002; border-top: 1.5px solid #f3f3f3; } .custom-navbar-nav.show { display: flex; } .custom-navbar-nav > li { width: 100%; } .custom-navbar-link { color: #e53935; background: none; width: 100%; text-align: left; border-radius: 0; padding: 16px 22px 14px 22px; } .custom-navbar-link::after { left: 22px; right: 22px; bottom: 4px; } .custom-navbar-link:hover { background: #fff3f1; color: #d32f2f; } .custom-navbar-dropdown { position: static; box-shadow: none; background: #fff; border-radius: 0; min-width: 100%; padding: 0; border: none; } .custom-navbar-dropdown a { padding: 13px 32px; } .custom-navbar-toggle { display: block; } } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } </style>
+
+
+<nav class="custom-navbar"><div class="custom-navbar-inner"><a href="/" class="custom-navbar-logo"><img src="/images/logo5.png" alt="Map" style="height: 96px;"></a><div class="navbar-right-content"><ul class="custom-navbar-nav"><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/en/home-1.html">Homepage</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/en/map.html">Map</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/en/blog.html"> Information Archive</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/en/quiz.html">Minigame</a></li></ul><div class="navbar-utility-controls"><div class="lang-switcher" style="position:relative; color: #2f2f2f;"><select id="lang-select" aria-label="Chọn ngôn ngữ" title="Chọn ngôn ngữ" hidden><option value="vi" aria-label="Tiếng Việt" title="Tiếng Việt">vi</option><option value="en" aria-label="English" title="English">en</option></select><div class="lang-control" role="group" aria-label="Language switcher"><button id="lang-btn" class="lang-btn" aria-haspopup="true" aria-expanded="false" title="Chọn ngôn ngữ" type="button"><img id="lang-btn-flag" class="flag-img" src="/images/flag-vi.svg" alt="Tiếng Việt" width="24" height="16" /><span class="visually-hidden">Chọn ngôn ngữ</span></button><ul class="lang-menu" role="menu" aria-labelledby="lang-btn"><li role="none"><button role="menuitem" class="lang-item" data-lang="vi" title="Tiếng Việt" type="button"><img class="flag-img" src="/images/flag-vi.svg" alt="Tiếng Việt" width="24" height="16" /><span class="lang-label">Tiếng Việt</span></button></li><li role="none"><button role="menuitem" class="lang-item" data-lang="en" title="English" type="button"><img class="flag-img" src="/images/flag-en.svg" alt="English" width="24" height="16" /><span class="lang-label">English</span></button></li></ul></div></div> <button aria-label="Mở menu" class="custom-navbar-toggle menu-icon-btn" onclick="document.querySelector('.custom-navbar-nav').classList.toggle('show')"><i class="fa fa-bars" aria-hidden="true"></i></button></div></div></div></nav>
+
+
+<div class="breadcrumb-section">
+
+
+<div class="container">
+
+
+<div class="row">
+
+
+<header class="entry-header">
+
+
+<h1 class="entry-title">Ngoc Phuong Nunnery</h1>
+
+
+</header>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<div class="page-spacer clearfix">
+
+
+<div class="content-area" id="primary">
+
+
+<div class="container">
+
+
+<div class="row">
+
+
+<main class="site-main col-xs-12 col-sm-8 left-block" id="main">
+
+
+<article class="post hentry">
+
+
+<a href="/en/blog-details.html">
+
+
+</a>
+
+
+<header class="entry-header">
+
+
+</header>
+
+
+<div class="entry-content">
+
+
+<h3>Introductory Article</h3>
+
+
+<div class="post-frame">
+
+
+<img alt="Post image" src="/images/txn1.jpg"/>
+
+
+</div>
+
+
+<h4>• Value</h4>
+
+
+<p>
+
+
+    Ngoc Phuong Monastery, founded by Venerable Nun Huynh Lien, is the ancestral temple (To Dinh) of the Bhikkhuni Mendicant Sect and serves as the Central Headquarters for more than 120 monasteries across Central and Southern Vietnam. Thanks to the great contributions of Venerable Nun Huynh Lien and the nuns of Ngoc Phuong Monastery to the national unification movement, the monastery was officially recognized by the Ministry of Culture and Information as a National Historical Site. <br/>
+
+
+Today, Ngoc Phuong Monastery is not only a major Buddhist training center for mendicant nuns in Ho Chi Minh City, but also an important educational institution for cultivating and developing Bhikkhuni talents throughout the country.
+
+
+  </p>
+
+
+<div class="post-frame">
+
+
+<img alt="Post image" src="/images/txn2.jpg"/>
+
+
+<div class="img-ref">Source: phatgiao.org.vn</div>
+
+
+</div>
+
+
+<h4>• History</h4>
+
+
+<p>
+
+
+The Ngoc Phuong Monastery was built in 1957 by the late Venerable Nun Huynh Lien, the Head of the Bhikkhuni Mendicant Sect, and has since undergone several restorations and renovations over the years
+
+
+  </p>
+
+
+<div class="post-frame">
+
+
+<img alt="Post image" src="/images/txn3.jpeg"/>
+
+
+<div class="img-ref">Source: phatsuonline.vn</div>
+
+
+</div>
+
+
+<h4>• Structure</h4>
+
+
+<p>
+
+
+    The Ngoc Phuong Monastery consists of three two-story buildings. In the center are the lecture hall (ground floor) and the main hall (upper floor), with two rows of nun quarters on either side. The lecture hall and the main hall measure 12 meters wide and 8.6 meters long. In front of the main hall stands a 2-meter-tall statue of Bodhisattva Avalokitesvara (Guanyin). The main hall’s roof is made of reinforced concrete with tiled covering. The interior is simple yet solemn, reflecting the monastery’s spiritual serenity. <br/>
+
+
+Immediately behind the lecture hall are the living quarters for the nuns, and behind the main hall is the abbess’s chamber (kept for visiting senior nuns since the resident abbess passed away in 2019), along with the ancestral hall honoring senior nuns and past abbesses. On the left wing are the nun quarters: the ground floor includes living rooms, a memorial room dedicated to the first abbess, the monastery’s office, and the kitchen. The upper floor includes living quarters, the ancestral worship room (Cửu Huyền), and a rooftop garden with light-structured rooms and ornamental plants. <br/>
+
+
+The right wing houses, on the ground floor, a bookstore for Buddhist scriptures and cultural items near the gate, followed by a guest room for monks, a room for lay Buddhists, storage and dining hall, and a parking area. The first floor contains nun quarters, while the second floor includes the office and classrooms for the Elementary Buddhist Studies program, a library, study rooms, and additional living quarters.
+
+
+  </p>
+
+
+<h4>• Activities</h4>
+
+
+<p>
+
+
+    The Ngoc Phuong Monastery has made significant contributions to the struggle for the liberation of the South and the reunification of the country.<br/>
+
+
+Venerable Nun Huynh Lien, the founder of the monastery, joined the revolution in 1960. From then on, she used the monastery as a revolutionary base throughout the resistance war against the U.S. (1960–1975), earning it the title “Headquarters of the Street Protests.”<br/>
+
+
+The monastery served as a secret base for supplying goods, medicine, and food, and for sheltering revolutionary cadres from various units such as the Financial Committee, the Southwestern Arts Committee, the Inter-District 4 Security Committee, Long An Secret Zone, and the D War Zone. It was also a meeting place for the Inter-District 4 Party Committee and Security Committee.<br/>
+
+
+In addition, the monastery was the headquarters for many social and political movements, including the Women’s Movement for the Right to Live, the People’s Front for Peace, the National Self-Determination Movement, the Committee for the Improvement of Prison Conditions, and the Student Movement.<br/>
+
+
+Some of its notable activities included Venerable Nun Huynh Lien collaborating with Catholic communities to denounce the U.S.’s malicious policies during an event attended by Senator McGovern at the Redemptorist Church on Ky Dong Street.<br/>
+
+
+Other impactful actions included a week-long hunger strike in front of the Independence Palace, a sit-in protest at Nga Bay lasting three days and two nights, and participation in the famous “Journalists Go Begging” movement.
+
+
+  </p>
+
+
+</div>
+
+
+</article>
+
+
+<div class="comments-area" id="comments">
+
+
+<ul id="comment-list"></ul>
+
+
+<script>
+
+
+                  window.POST_ID = 28;
+
+
+                  const API_URL1 = "https://baldandbadgithubio-production-4f3f.up.railway.app/comments";
+
+
+                  async function loadComments() {
+
+
+                    const res = await fetch(`${API_URL1}?post_id=${window.POST_ID}`); // API endpoint from your backend
+
+
+                    const comments = await res.json();
+
+
+                    const list = document.getElementById("comment-list");
+
+
+                    list.innerHTML = ""; // clear old comments
+
+
+                    comments.forEach(c => {
+
+
+                      const html = `
+
+
+      
+
+
+																				<li class="comment">
+
+
+																					<article class="comment-body">
+
+
+																						<div class="author-photo">
+
+
+																							<a href="blog-details.html" class="avatar">
+
+
+																								<img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+
+
+																							</a>
+
+
+																						</div>
+
+
+																						<div class="comment-wrapper">
+
+
+																							<div class="comment-meta">
+
+
+																								<div class="comment-author vcard">
+
+
+																									<h5 class="fn">${c.name}</h5>
+
+
+																								</div>
+
+
+																							</div>
+
+
+																							<div class="comment-content">
+
+
+																								<p>${c.message}</p>
+
+
+																							</div>
+
+
+																							<div class="comment-metadata">
+
+
+																								<span>${new Date(c.created_at).toLocaleDateString()}</span>
+
+
+																							</div>
+
+
+																							<div class="reply">
+
+
+																								<a href="#" class="comment-reply-link btn btn-default">Reply</a>
+
+
+																							</div>
+
+
+																						</div>
+
+
+																					</article>
+
+
+																				</li>
+
+
+    `;
+
+
+                      list.insertAdjacentHTML("beforeend", html);
+
+
+                    });
+
+
+                  }
+
+
+                  // Call on page load
+
+
+                  loadComments();
+
+
+                </script>
+
+
+<div class="comment-respond" id="respond">
+
+
+<h3 class="comment-reply-title" id="reply-title">Bình Luận</h3>
+
+
+<form action="#" class="comment-form" id="commentform" method="post">
+
+
+<p class="comment-form-author">
+
+
+<label>Name<span class="required">*</span>
+
+
+</label>
+
+
+<input id="author" name="author" required="" type="text"/>
+
+
+</p>
+
+
+<p class="comment-form-comment">
+
+
+<label>Comment</label>
+
+
+<textarea cols="45" id="comment" name="comment" required="" rows="8"></textarea>
+
+
+</p>
+
+
+<p class="form-submit">
+
+
+<input class="submit btn btn-default" id="submit" type="submit" value="Submit"/>
+
+
+</p>
+
+
+</form>
+
+
+</div>
+
+
+<script>
+
+
+                  window.POST_ID = 2;
+
+
+                  const postID = window.POST_ID;
+
+
+                  const API_URL = "https://baldandbadgithubio-production-4f3f.up.railway.app/comments";
+
+
+
+
+
+                  function buildCommentTree(comments) {
+
+
+                    const map = {};
+
+
+                    const roots = [];
+
+
+                    comments.forEach(c => {
+
+
+                      c.replies = [];
+
+
+                      map[c.id] = c;
+
+
+                    });
+
+
+                    comments.forEach(c => {
+
+
+                      if (c.parent_id) {
+
+
+                        map[c.parent_id]?.replies.push(c);
+
+
+                      } else {
+
+
+                        roots.push(c);
+
+
+                      }
+
+
+                    });
+
+
+                    return roots;
+
+
+                  }
+
+
+
+
+
+                  function createCommentHTML(c, depth = 0) {
+
+
+                    // Calculate indentation - limit to 5 levels max for sanity
+
+
+                    const indent = Math.min(depth, 5) * 30; // 30px per level
+
+
+                    return `
+
+
+    
+
+
+																						<li class="comment ${depth > 0 ? 'is-reply' : ''}" 
+
+
+        id="li-comment-${c.id}"
+
+
+        style="margin-left: ${indent}px">
+
+
+																							<article class="comment-body">
+
+
+																								<div class="author-photo">
+
+
+																									<a href="blog-details.html" class="avatar">
+
+
+																										<img class="avatar" src="${c.avatar || 'images/use_img/post_author.jpg'}" alt="" />
+
+
+																									</a>
+
+
+																								</div>
+
+
+																								<div class="comment-wrapper">
+
+
+																									<div class="comment-meta">
+
+
+																										<div class="comment-author vcard">
+
+
+																											<h5 class="fn">${c.name}</h5>
+
+
+              ${depth > 0 ? `
+
+
+																											<span class="reply-indicator">↳ replied </span>` : ''}
+
+
+            
+
+
+																										</div>
+
+
+																									</div>
+
+
+																									<div class="comment-content">
+
+
+																										<p>${c.message}</p>
+
+
+																									</div>
+
+
+																									<div class="comment-metadata">
+
+
+																										<span>${new Date(c.created_at).toLocaleDateString()}</span>
+
+
+																									</div>
+
+
+																									<div class="reply">
+
+
+																										<a href="#" class="comment-reply-link btn btn-default">Reply</a>
+
+
+																									</div>
+
+
+																								</div>
+
+
+																							</article>
+
+
+      ${c.replies?.length ? `
+
+
+        
+
+
+																							<ol class="comment-replies">
+
+
+          ${c.replies.map(reply => createCommentHTML(reply, depth + 1)).join('')}
+
+
+        </ol>
+
+
+      ` : ''}
+
+
+    
+
+
+																						</li>
+
+
+  `;
+
+
+                  }
+
+
+                  // Load comments from backend
+
+
+                  async function loadComments() {
+
+
+                    const res = await fetch(`${API_URL}?post_id=${window.POST_ID}`);
+
+
+                    const comments = await res.json();
+
+
+                    const nestedComments = buildCommentTree(comments);
+
+
+                    const list = document.getElementById("comment-list");
+
+
+                    list.innerHTML = "";
+
+
+                    nestedComments.forEach(c => {
+
+
+                      list.insertAdjacentHTML("beforeend", createCommentHTML(c));
+
+
+                    });
+
+
+                  }
+
+
+                  document.addEventListener("click", function(e) {
+
+
+                    if (e.target.classList.contains("comment-reply-link")) {
+
+
+                      e.preventDefault();
+
+
+                      // Remove any existing inline reply forms
+
+
+                      document.querySelectorAll(".inline-reply-form").forEach(f => f.remove());
+
+
+                      const commentElement = e.target.closest(".comment");
+
+
+                      const parentId = commentElement.id.replace("li-comment-", "");
+
+
+                      // Create a small inline reply form
+
+
+                      const replyForm = document.createElement("form");
+
+
+                      replyForm.classList.add("inline-reply-form");
+
+
+                      replyForm.innerHTML = `
+
+
+      
+
+
+																						<input type="text" name="reply-name" placeholder="Your name" required />
+
+
+																						<textarea name="reply-message" placeholder="Write your reply..." required></textarea>
+
+
+																						<button type="submit">Post Reply</button>
+
+
+    `;
+
+
+                      // Append form to comment
+
+
+                      commentElement.appendChild(replyForm);
+
+
+                      // Handle reply form submission
+
+
+                      replyForm.addEventListener("submit", async function(e) {
+
+
+                        e.preventDefault();
+
+
+                        const name = this.querySelector("input[name='reply-name']").value;
+
+
+                        const message = this.querySelector("textarea[name='reply-message']").value;
+
+
+                        console.log(name);
+
+
+                        console.log(message);
+
+
+                        const created_at = new Date();
+
+
+                        await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/comments", {
+
+
+                          method: "POST",
+
+
+                          headers: {
+
+
+                            "Content-Type": "application/json"
+
+
+                          },
+
+
+                          body: JSON.stringify({
+
+
+                            name,
+
+
+                            message,
+
+
+                            avatar: null,
+
+
+                            created_at: created_at,
+
+
+                            post_id: postID,
+
+
+                            parent_id: parentId
+
+
+                          })
+
+
+                        });
+
+
+                        // Reload comments
+
+
+                        loadComments();
+
+
+                      });
+
+
+                    }
+
+
+                  });
+
+
+                  // Handle form submit
+
+
+                  document.getElementById("commentform").addEventListener("submit", async function(e) {
+
+
+                    e.preventDefault();
+
+
+                    const name = document.getElementById("author").value;
+
+
+                    const message = document.getElementById("comment").value;
+
+
+                    const created_at = new Date();
+
+
+                    const post_id = postID;
+
+
+                    await fetch(API_URL, {
+
+
+                      method: "POST",
+
+
+                      headers: {
+
+
+                        "Content-Type": "application/json"
+
+
+                      },
+
+
+                      body: JSON.stringify({
+
+
+                        name,
+
+
+                        message,
+
+
+                        avatar: null,
+
+
+                        created_at,
+
+
+                        post_id,
+
+
+                        parent_id: null
+
+
+                      })
+
+
+                    });
+
+
+                    this.reset();
+
+
+                    loadComments();
+
+
+                  });
+
+
+                  // Load on page start
+
+
+                  loadComments();
+
+
+                </script>
+
+
+</div>
+
+
+</main>
+
+
+<div class="widget-area col-xs-12 col-sm-4 pull-right" id="secondary">
+
+
+<aside class="custom-sidebar">
+
+
+<h3 style="font-weight:bold; color:#007bff;">TYPE OF RELIC</h3>
+
+
+<div style="margin-bottom:15px;">
+
+
+National-level Historical Relic
+
+
+ </div>
+
+
+<h3 style="font-weight:bold; color:#007bff;">SUMMARY</h3>
+
+
+<div style="margin-bottom:15px;">
+
+
+      The Ngoc Phuong Nunnery (Tịnh Xá) is the ancestral pagoda of the mendicant Buddhist nuns' order, a center for study and training of talented nuns. It also served as a revolutionary base, marking many events in the struggle for the liberation of the South and the reunification of the country.
+
+
+    </div>
+
+
+<h4 style="font-weight:bold; color:#007bff;">VIDEOS</h4>
+
+
+<div style="margin-bottom:15px;">
+
+
+<a href="https://www.youtube.com/watch?v=-i7F8ljj9UM&amp;ab_channel=V%C6%B0%E1%BB%9DnNh%C3%A0%26Cu%E1%BB%99cS%E1%BB%91ng" target="_blank">[Video giới thiệu tịnh xá Ngọc Phương]</a><br>
+
+
+<a href="https://www.youtube.com/watch?v=wKCs8nUQ7FQ&amp;ab_channel=PHAPANMEDIA" target="_blank">[Vấn Đáp Phật Pháp Tại TỊNH XÁ NGỌC PHƯƠNG]</a>
+
+
+</br></div>
+
+
+<h4 style="font-weight:bold; color:#007bff;">ARTICLES</h4>
+
+
+<div style="margin-bottom:15px;">
+
+
+<a href="https://tapchinghiencuuphathoc.vn/dao-phat-khat-si-la-gi.html" target="_blank">Đạo Phật Khất sĩ là gì?</a><br>
+
+
+<a href="https://vanhoaphatgiaovietnam.net/thu-vien/sing/phan-biet-chua-tinh-xa-thien-vien-tu-vien-am-1118" target="_blank">Phân biệt chùa, tịnh xá, thiền viện, tu viện</a>
+
+
+</br></div>
+
+
+<h4 style="font-weight:bold; color:#007bff;">LOCATION</h4>
+
+
+<div>
+
+
+      498/1 Đường Lê Quang Định, Phường Hạnh Thông, Thành Phố Hồ Chí Minh
+
+
+    </div>
+
+
+</aside>
+
+
+<!-- ...existing code... -->
+
+
+</div>
+
+
+<script>
+
+
+                let pages = [];
+
+
+                async function loadData() {
+
+
+                  try {
+
+
+                    const res = await fetch('js/pagesdata.json');
+
+
+                    pages = await res.json();
+
+
+                  } catch (err) {
+
+
+                    document.getElementById('results').innerHTML = ' < p > Error loading search data. < /p>';
+
+
+                  }
+
+
+                }
+
+
+
+
+
+                function filterResults() {
+
+
+                  const query = document.getElementById('searchInput').value.toLowerCase();
+
+
+                  const selectedCategory = document.getElementById('categoryFilter').value;
+
+
+                  const filtered = pages.filter(page => {
+
+
+                    const matchesCategory = selectedCategory === 'all' || (page.categories && page.categories.includes(selectedCategory));
+
+
+                    const matchesQuery = page.title.toLowerCase().includes(query);
+
+
+                    return matchesCategory && matchesQuery;
+
+
+                  });
+
+
+                  displayResults(filtered);
+
+
+                }
+
+
+
+
+
+                function displayResults(items) {
+
+
+                  const resultsDiv = document.getElementById('results');
+
+
+                  resultsDiv.innerHTML = items.map(item => `
+
+
+																										
+
+
+																							<div class="result-item">
+
+
+																								<a href="${item.url}">${item.title}</a>
+
+
+																								<em style="display:block; font-size: 0.9em;">(${item.categories.join(', ')})</em>
+
+
+																							</div>`).join('') || " < p > No results found. < /p>";
+
+
+                }
+
+
+                // Load data when page loads
+
+
+                loadData();
+
+
+              </script>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<footer class="site-footer" id="colophon">
+
+
+<div class="container">
+
+
+<div class="row">
+
+
+<!-- Logo section -->
+
+
+<div class="col-xs-12 text-center">
+
+
+<img alt="Logo" class="logo-img" src="/images/logo5.png"/>
+
+
+</div>
+
+
+</div>
+
+
+<div class="row">
+
+
+<!-- Navigation menu below logo -->
+
+
+<div class="col-xs-12 text-center">
+
+
+<ul class="menu list-inline">
+
+
+<li class="list-inline-item"><a href="/en/home-1.html">HOMEPAGE</a></li>
+
+
+<li class="list-inline-item"><a href="/en/home-1.html">MAP</a></li>
+
+
+<li class="list-inline-item"><a href="/en/home-1.html"> INFORMATION ARCHIVE</a></li>
+
+
+<li class="list-inline-item"><a href="/en/quiz.html">QUIZ</a></li>
+
+
+</ul>
+
+
+</div>
+
+
+</div>
+
+
+</div>
+
+
+<button id="chatbox-toggle">TRỢ LÝ AI</button>
+
+
+<div aria-hidden="true" id="chatbox-container">
+
+
+<div id="chatbox-header"> Trợ lý AI <button id="chatbox-close">✖</button>
+
+
+</div>
+
+
+<div aria-live="polite" id="chatbox-messages">
+
+
+<!-- sample messages -->
+
+
+<div class="chat-message chat-ai">Xin chào!</div>
+
+
+</div>
+
+
+<div id="chatbox-input-area">
+
+
+<input id="chatbox-input" placeholder="Type your message..." type="text"/>
+
+
+<button id="chatbox-send">Send</button>
+
+
+</div>
+
+
+</div>
+
+
+<style>
+
+
+      /* Use a very high z-index to ensure the chat sits above other UI.
+
+
+     If another element still covers it, make sure that element doesn't
+
+
+     create a new stacking context with transform/opacity/position and a higher z-index. */
+
+
+      #chatbox-container {
+
+
+        position: fixed;
+
+
+        bottom: 80px;
+
+
+        right: 20px;
+
+
+        width: 300px;
+
+
+        height: 400px;
+
+
+        background: white;
+
+
+        border-radius: 12px;
+
+
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.25);
+
+
+        display: flex;
+
+
+        flex-direction: column;
+
+
+        overflow: hidden;
+
+
+        /* z-index high so it sits above most site elements */
+
+
+        z-index: 2147483647;
+
+
+        /* Hidden (off-screen) state using transform for smooth GPU animation */
+
+
+        transform: translateX(380px);
+
+
+        opacity: 0;
+
+
+        pointer-events: none;
+
+
+        transition: transform .38s cubic-bezier(.2, .9, .2, 1), opacity .28s;
+
+
+        will-change: transform, opacity;
+
+
+      }
+
+
+
+
+
+      /* show state -> visible & interactive */
+
+
+      #chatbox-container.show {
+
+
+        transform: translateX(0);
+
+
+        opacity: 1;
+
+
+        pointer-events: auto;
+
+
+      }
+
+
+
+
+
+      #chatbox-header {
+
+
+        flex: 0 0 50px;
+
+
+        background: #0078ff;
+
+
+        color: white;
+
+
+        display: flex;
+
+
+        justify-content: space-between;
+
+
+        align-items: center;
+
+
+        padding: 10px;
+
+
+      }
+
+
+
+
+
+      /* Messages area fills the available middle space and is scrollable */
+
+
+      #chatbox-messages {
+
+
+        flex: 1;
+
+
+        height: 280px;
+
+
+        padding: 10px;
+
+
+        overflow-y: auto;
+
+
+        box-sizing: border-box;
+
+
+        gap: 8px;
+
+
+        display: flex;
+
+
+        flex-direction: column;
+
+
+      }
+
+
+
+
+
+      .message {
+
+
+        max-width: 75%;
+
+
+        padding: 8px 12px;
+
+
+        border-radius: 12px;
+
+
+      }
+
+
+
+
+
+      .message.sent {
+
+
+        align-self: flex-end;
+
+
+        /* moves your messages to the right */
+
+
+        background-color: #007bff;
+
+
+        color: white;
+
+
+      }
+
+
+
+
+
+      .message.received {
+
+
+        align-self: flex-start;
+
+
+        /* moves other messages to the left */
+
+
+        background-color: #e5e5ea;
+
+
+        color: black;
+
+
+      }
+
+
+
+
+
+      /* If you want the newest messages to appear at the bottom visually,
+
+
+     use JS to auto-scroll to bottom on open/new message. */
+
+
+      /* Chat bubbles must NOT flex-grow */
+
+
+      .chat-message {
+
+
+        flex: 0 0 auto;
+
+
+        max-width: 75%;
+
+
+        padding: 8px 12px;
+
+
+        border-radius: 15px;
+
+
+        word-wrap: break-word;
+
+
+        animation: msgIn .18s ease;
+
+
+      }
+
+
+
+
+
+      .chat-user {
+
+
+        align-self: flex-end;
+
+
+        background: #0078ff;
+
+
+        color: white;
+
+
+        border-bottom-right-radius: 0;
+
+
+      }
+
+
+
+
+
+      .chat-ai {
+
+
+        align-self: flex-start;
+
+
+        background: #e5e5ea;
+
+
+        color: black;
+
+
+        border-bottom-left-radius: 0;
+
+
+      }
+
+
+
+
+
+      #chatbox-input-area {
+
+
+        flex: 0 0 56px;
+
+
+        display: flex;
+
+
+        gap: 8px;
+
+
+        align-items: center;
+
+
+        padding: 8px;
+
+
+        border-top: 1px solid #eee;
+
+
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 250, 250, 0.9));
+
+
+      }
+
+
+
+
+
+      #chatbox-input {
+
+
+        flex: 1;
+
+
+        padding: 8px;
+
+
+        border-radius: 8px;
+
+
+        border: 1px solid #ddd;
+
+
+        outline: none;
+
+
+      }
+
+
+
+
+
+      #chatbox-send {
+
+
+        background: #0078ff;
+
+
+        color: white;
+
+
+        border: none;
+
+
+        padding: 8px 12px;
+
+
+        border-radius: 8px;
+
+
+        cursor: pointer;
+
+
+      }
+
+
+
+
+
+      /* toggle button z-index should also be high so it's clickable */
+
+
+      #chatbox-toggle {
+
+
+        position: fixed;
+
+
+        bottom: 20px;
+
+
+        right: 20px;
+
+
+        z-index: 2147483647;
+
+
+      }
+
+
+
+
+
+      @keyframes msgIn {
+
+
+        from {
+
+
+          opacity: 0;
+
+
+          transform: translateY(6px);
+
+
+        }
+
+
+
+
+
+        to {
+
+
+          opacity: 1;
+
+
+          transform: translateY(0);
+
+
+        }
+
+
+      }
+
+
+    </style>
+
+
+<script>
+
+
+      document.addEventListener('DOMContentLoaded', () => {
+
+
+        const toggleBtn = document.getElementById("chatbox-toggle");
+
+
+        const chatbox = document.getElementById("chatbox-container");
+
+
+        const closeBtn = document.getElementById("chatbox-close");
+
+
+        const sendBtn = document.getElementById("chatbox-send");
+
+
+        const input = document.getElementById("chatbox-input");
+
+
+        const messages = document.getElementById("chatbox-messages");
+
+
+        // Ensure chatbox is direct child of body to avoid stacking context issues
+
+
+        if (chatbox && chatbox.parentElement !== document.body) {
+
+
+          document.body.appendChild(chatbox);
+
+
+        }
+
+
+        // open/close helpers
+
+
+        function openChat() {
+
+
+          chatbox.classList.add("show");
+
+
+          chatbox.setAttribute('aria-hidden', 'false');
+
+
+          input.focus();
+
+
+          // ensure latest messages visible
+
+
+          requestAnimationFrame(() => {
+
+
+            messages.scrollTop = messages.scrollHeight;
+
+
+          });
+
+
+        }
+
+
+
+
+
+        function closeChat() {
+
+
+          chatbox.classList.remove("show");
+
+
+          chatbox.setAttribute('aria-hidden', 'true');
+
+
+          toggleBtn.focus();
+
+
+        }
+
+
+        // Toggle button
+
+
+        toggleBtn.addEventListener('click', () => {
+
+
+          if (chatbox.classList.contains('show')) closeChat();
+
+
+          else openChat();
+
+
+        });
+
+
+        // Close button
+
+
+        closeBtn.addEventListener('click', closeChat);
+
+
+        // Close on Escape
+
+
+        document.addEventListener('keydown', (e) => {
+
+
+          if (e.key === "Escape" && chatbox.classList.contains("show")) closeChat();
+
+
+        });
+
+
+        // Send message handlers
+
+
+        sendBtn.addEventListener('click', sendMessage);
+
+
+        input.addEventListener('keydown', (e) => {
+
+
+          if (e.key === 'Enter') {
+
+
+            e.preventDefault();
+
+
+            sendMessage();
+
+
+          }
+
+
+        });
+
+
+        // single addMessage function (no duplicates)
+
+
+        function addMessage(text, sender) {
+
+
+          const div = document.createElement("div");
+
+
+          div.classList.add("chat-message", sender === "user" ? "chat-user" : "chat-ai");
+
+
+          div.textContent = text;
+
+
+          messages.appendChild(div);
+
+
+          requestAnimationFrame(() => {
+
+
+            messages.scrollTop = messages.scrollHeight;
+
+
+          });
+
+
+        }
+
+
+        // sendMessage (keeps your fetch)
+
+
+        async function sendMessage() {
+
+
+          const text = input.value.trim();
+
+
+          if (!text) return;
+
+
+          addMessage(text, "user");
+
+
+          input.value = "";
+
+
+          try {
+
+
+            const res = await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/ask", {
+
+
+              method: "POST",
+
+
+              headers: {
+
+
+                "Content-Type": "application/json"
+
+
+              },
+
+
+              body: JSON.stringify({
+
+
+                message: text
+
+
+              })
+
+
+            });
+
+
+            const data = await res.json();
+
+
+            addMessage(data.reply || "(No reply)", "ai");
+
+
+          } catch (err) {
+
+
+            addMessage("Error: " + err.message, "ai");
+
+
+          }
+
+
+        }
+
+
+      });
+
+
+    </script>
+
+
+<script src="/js/jquery.min.js"></script>
+
+
+<script src="/js/bootstrap.min.js"></script><script src="/js/lang-switcher.js"></script>
+
+
+<script src="/js/theme.js"></script>
+
+
+<script src="/vendor/fancybox/js/jquery.fancybox.js" type="text/javascript"></script>
+
+
+<script src="/vendor/fancybox/js/custom.fancybox.js" type="text/javascript"></script>
+
+
+<script>
+
+
+      jQuery.noConflict();
+
+
+      jQuery('.fancybox').fancybox();
+
+
+    </script>
+
+
+<div aria-label="Toggle music mute" aria-pressed="false" class="auto-music-toggle" role="button" tabindex="0">
+
+
+<!-- svg icon -->
+
+
+<svg aria-hidden="true" class="auto-music-icon" height="18" viewbox="0 0 24 24" width="18">
+
+
+<path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+
+
+</svg>
+
+
+</div>
+
+
+</footer></body>
+
+
+<!--blog-details23:55  -->
+
+
+</html>

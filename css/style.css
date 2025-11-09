@@ -6266,7 +6266,183 @@ a.fav-load {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 24px;
+  font-size: 24px;  
   cursor: pointer;
 }
+}
+/* Mobile-only: move lang-switcher immediately left of the hamburger, keep desktop intact */
+@media (max-width: 900px) {
+  /* Ensure navbar items flow left-to-right for ordering */
+  .custom-navbar-inner {
+    display: flex !important;       /* keep your existing flex behavior */
+    flex-wrap: wrap;                /* allow nav to drop below */
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Make sure the collapsible nav remains positioned absolutely and hidden by default (unchanged) */
+  .custom-navbar-nav {
+    order: 4;                       /* nav content drops under header when shown */
+    position: absolute;             /* preserves your current mobile dropdown behavior */
+    left: 0;
+    top: 72px;
+    width: 100%;
+  }
+
+  /* Place language control to the left of the toggle */
+  .lang-switcher {
+    order: 2;                       /* appear before the toggle in source order */
+    margin-left: 8px !important;    /* small gap from other items */
+    margin-right: 0 !important;     /* remove any big right margin that pushed it away */
+    align-self: center;
+    z-index: 1050;                  /* make sure dropdown overlays correctly */
+  }
+
+  /* Hamburger / menu toggle should come after the lang-switcher */
+  .menu-icon-btn,
+  .custom-navbar-toggle {
+    order: 3;
+    margin-left: 6px !important;
+    margin-right: 0 !important;
+    z-index: 1060;
+  }
+
+  /* Keep .custom-navbar-logo on the far left */
+  .custom-navbar-logo { order: 1; }
+
+  /* Neutralize any container margin that previously pushed lang to right */
+  .custom-navbar-inner,
+  .custom-navbar-nav,
+  .lang-switcher {
+    margin-right: 0 !important;
+  }
+  
+}
+/* Preserve desktop look: center nav while keeping lang inline */
+.custom-navbar-nav { margin: 0 auto; display: flex; gap: 8px; align-items: center; }
+.custom-navbar-nav { justify-content: flex-end; margin: 0 0 0 auto; }
+/* small spacing between nav and lang on desktop */
+.lang-switcher { display: flex; align-items: center; margin-left: 8px; }
+
+/* Mobile: order items so logo (1), lang (2), toggle (3), nav dropdown (4) */
+@media (max-width: 900px) {
+  .custom-navbar-logo { order: 1; }
+  .lang-switcher { order: 2; margin-left: 8px !important; margin-right: 0 !important; z-index:1050; }
+  .menu-icon-btn, .custom-navbar-toggle { order: 3; margin-left: 6px !important; z-index:1060; }
+  .custom-navbar-nav { order: 4; position: absolute; left: 0; top: 72px; width: 100%; display: none; }
+  .custom-navbar-nav.show { display: flex; flex-direction: column; }
+}
+/* === NAVBAR LAYOUT FIX === */
+
+/* DESKTOP: keep nav + lang together */
+@media (min-width: 901px) {
+  .custom-navbar-inner {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+
+  /* group nav list and lang switcher side by side */
+  .nav-lang-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+  }
+
+  /* prevent extra gaps or wrapping */
+  .custom-navbar-nav {
+    display: inline-flex !important;
+    flex-wrap: nowrap !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .lang-switcher {
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+}
+
+/* MOBILE: move lang switcher left of the menu icon */
+@media (max-width: 900px) {
+  .custom-navbar-inner {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    position: relative;
+  }
+
+  .lang-switcher {
+    order: 2; /* show before menu button */
+    margin-right: 6px !important;
+    position: relative;
+    display: inline-flex !important;
+    align-items: center !important;
+  }
+
+  .menu-icon-btn {
+    order: 3;
+    margin-left: 0 !important;
+  }
+
+  .custom-navbar-nav {
+    order: 4;
+  }
+}
+
+/* This rule styles your new wrapper */
+.navbar-controls-right {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Creates a clean space between the flag and hamburger */
+}
+
+/* This existing rule will now work perfectly */
+.custom-navbar-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  justify-content: flex-start;
+  display: flex;
+  align-items: center;
+  padding: 0 40px;
+  height: 120px;
+}
+.navbar-right-content {
+  display: flex;
+  align-items: center;
+  /* Add some gap between the Nav Links and the Language Button group */
+  gap: 24px; 
+}
+
+.navbar-utility-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px; /* Space between the flag and the hamburger icon */
+}
+@media (max-width: 900px) {
+  
+  /* 1. Hide the desktop links block */
+  .custom-navbar-nav {
+      /* This is required to make the next rule work */
+      display: none; 
+      /* When active, your mobile menu will likely use a different rule like position: fixed */
+  }
+  
+  /* 2. **THE FIX**: Push the entire right-side container to the edge */
+  .navbar-right-content {
+    /* Overrides any desktop margin/width rules */
+    margin-left: auto !important; 
+    
+    /* Ensure no desktop gap rule interferes */
+    gap: 0; 
+  }
+
+  /* 3. Revert/remove the 'order' rules if you added them */
+  .custom-navbar-logo,
+  .navbar-utility-controls {
+    order: initial; /* Reset the order so the logo comes first */
+  }
 }

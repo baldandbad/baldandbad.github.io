@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1" name="viewport"/>
+<title>Bản đồ Di tích lịch sử TPHCM</title>
+<link as="audio" href="/assets/music.mp3" rel="preload"/>
+<link as="style" href="/css/music-overlay.css" rel="preload"/>
+<link href="/css/music-overlay.css" rel="stylesheet"/>
+<script defer="" src="/js/music-overlay.js"></script>
+<link href="/images/favicon.png" rel="icon"/>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700;900&amp;display=swap" rel="stylesheet"/>
+<style>
+
+  #homeBtn {
+    font-family: "Noto Sans", Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-weight: 700;         
+    letter-spacing: 0.2px;    
+    text-transform: none;     
+  }
+</style>
+<style>
+  :root{
+    --bg1:#0b1220; --bg2:#08132b;
+    --card: rgba(255,255,255,0.03);
+    --accentA:#ff7ab6; --accentB:#ffd86b;
+    --good:#34d399; --bad:#fb7185;
+    --glass: rgba(255,255,255,0.03);
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+    background: linear-gradient(135deg,var(--bg1),var(--bg2));
+    color:#eaf5ff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:12px;
+  }
+
+  .wrap{width:100%;max-width:1100px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:16px;padding:12px;display:grid;grid-template-columns:1fr 360px;gap:12px}
+  @media(max-width:920px){ .wrap{grid-template-columns:1fr} }
+
+  .stage{background:var(--card);border-radius:12px;padding:14px;min-height:560px;display:flex;flex-direction:column;gap:12px;position:relative}
+  .topbar{display:flex;justify-content:space-between;align-items:center}
+  .logo{display:flex;gap:10px;align-items:center}
+  .badge{width:44px;height:44px;border-radius:10px;background:linear-gradient(45deg,var(--accentA),var(--accentB));display:flex;align-items:center;justify-content:center;font-weight:900;color:#051426}
+  .server{font-size:13px;color:#cfe6ff;opacity:.9}
+
+  .game-area{display:flex;gap:12px;align-items:flex-start}
+  .question-card{flex:1;background:linear-gradient(180deg, rgba(255,255,255,0.015), transparent);padding:16px;border-radius:12px;position:relative;overflow:hidden}
+  .qtext{font-weight:800;font-size:20px;margin-bottom:10px;min-height:56px}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  @media(max-width:520px){ .options{grid-template-columns:1fr} }
+  .opt{padding:12px;border-radius:12px;background:rgba(255,255,255,0.02);cursor:pointer;border:1px solid rgba(255,255,255,0.02);font-weight:800;transition:transform .12s, box-shadow .12s, opacity .12s}
+  .opt:hover{transform:translateY(-6px)}
+  .opt.correct{box-shadow:0 10px 30px rgba(52,211,153,0.12);border-color: rgba(52,211,153,0.2);background:rgba(52,211,153,0.06)}
+  .opt.wrong{box-shadow:0 10px 30px rgba(251,113,133,0.12);border-color: rgba(251,113,133,0.12);background:rgba(251,113,133,0.04)}
+  .meta-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+
+  .time-wrap{height:10px;background:rgba(255,255,255,0.03);border-radius:8px;overflow:hidden;margin-top:12px}
+  .time-bar{height:100%;width:100%;background:linear-gradient(90deg,var(--accentB),var(--accentA));transform-origin:left;transition:width 0.12s linear}
+
+  .sidebar{display:flex;flex-direction:column;gap:12px}
+  .card{background:var(--card);padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,0.02)}
+  .list{max-height:44vh;overflow:auto;padding-right:6px;display:flex;flex-direction:column;gap:8px}
+  .quiz-item{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), transparent)}
+  .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;font-weight:900}
+  .btn.primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#081226}
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:#cfe6ff}
+
+  .scoreboard{display:flex;flex-direction:column;align-items:center;gap:6px;padding:8px;border-radius:12px;background:linear-gradient(90deg, rgba(255,255,255,0.01), transparent)}
+  .score-number{font-size:28px;font-weight:900}
+  .combo{font-weight:800;color:#ffd86b}
+
+  .small{font-size:13px;color:#a8c0ff}
+  .hidden{display:none}
+  .shake{animation:shake .45s}
+  @keyframes shake{0%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-6px)}80%{transform:translateX(4px)}100%{transform:translateX(0)}}
+  .pop{animation:pop .18s}
+  @keyframes pop{from{transform:scale(0.96)}to{transform:scale(1)}}
+
+  #quizList { max-height: 40vh; overflow:auto; -webkit-overflow-scrolling:touch; padding-right:6px; }
+
+  .modal {
+    position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:40;
+    background: rgba(20,24,40,0.98); 
+    padding:16px;border-radius:12px;
+    box-shadow:0 18px 40px rgba(0,0,0,0.6);
+    min-width:260px;
+    border: 1.5px solid #ffd86b;
+  }
+  .modal input{width:100%;padding:10px;border-radius:8px;border:none;margin:8px 0}
+  .modal .row{display:flex;gap:8px}
+  @media(max-width:720px){ .wrap{padding:8px} .stage{min-height:520px} }
+
+  #message {position:fixed;left:12px;bottom:12px;background:rgba(0,0,0,0.5);padding:8px 12px;border-radius:10px;font-size:13px}
+
+  .end-overlay{position:fixed;left:0;top:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg, rgba(8,19,43,0.6), rgba(4,8,20,0.75));z-index:120;backdrop-filter: blur(6px);padding:16px}
+  .end-card{background:linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));padding:18px;border-radius:14px;width:100%;max-width:520px;color:#051226}
+  .end-header{display:flex;justify-content:space-between;align-items:center}
+  .end-list{margin-top:12px;display:flex;flex-direction:column;gap:8px;max-height:60vh;overflow:auto;padding-right:8px}
+  .end-row{display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(255,255,255,0.04)}
+  .end-winner{border:2px solid rgba(255,255,255,0.12);background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;font-weight:900}
+  .end-actions{display:flex;gap:8px;margin-top:12px;justify-content:flex-end}
+  .btn.end-ghost{background:transparent;border:1px solid rgba(0,0,0,0.06);color:inherit;padding:8px 12px;border-radius:10px}
+  .btn.end-primary{background:linear-gradient(90deg,#ffd86b,#ff7ab6);color:#051226;padding:8px 12px;border-radius:10px;font-weight:900}
+
+  #serverName { display: none !important; }
+
+  /* ===== MOBILE UI FOR QUIZ PAGE ===== */
+  @media (max-width: 900px) {
+    body {
+      /* Prevents the fixed .wrap from being cut off at the top */
+      padding-top: 0 !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      min-height: 100vh !important;
+    }
+    .wrap {
+      grid-template-columns: 1fr !important;
+      padding: 6px !important;
+      max-width: 100vw !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+      box-sizing: border-box !important;
+    }
+    .stage, .sidebar, .card, .question-card {
+      min-height: unset !important;
+      border-radius: 10px !important;
+      padding: 8px !important;
+    }
+    .topbar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 10px !important;
+    }
+    .logo {
+      flex-direction: row !important;
+      gap: 8px !important;
+      align-items: center !important;
+    }
+    .sidebar {
+      gap: 8px !important;
+    }
+    .scoreboard.card {
+      min-width: 90px !important;
+      padding: 6px !important;
+    }
+    .question-card {
+      padding: 10px !important;
+    }
+    .qtext {
+      font-size: 16px !important;
+      min-height: 36px !important;
+    }
+    .options {
+      grid-template-columns: 1fr !important;
+      gap: 8px !important;
+    }
+    .opt {
+      padding: 10px !important;
+      font-size: 15px !important;
+    }
+    .meta-row {
+      flex-direction: column !important;
+      gap: 4px !important;
+      align-items: flex-start !important;
+    }
+    .time-wrap {
+      margin-top: 8px !important;
+      height: 8px !important;
+    }
+    .time-bar {
+      height: 8px !important;
+    }
+    .end-card {
+      padding: 10px !important;
+      border-radius: 10px !important;
+      max-width: 98vw !important;
+    }
+    .end-header {
+      flex-direction: column !important;
+      gap: 6px !important;
+      align-items: flex-start !important;
+    }
+    .end-list {
+      padding-right: 0 !important;
+      max-height: 40vh !important;
+    }
+    .end-row {
+      padding: 7px !important;
+      font-size: 15px !important;
+    }
+    .btn, .btn.primary, .btn.ghost, .btn.end-primary, .btn.end-ghost {
+      padding: 8px 10px !important;
+      font-size: 15px !important;
+      border-radius: 8px !important;
+    }
+    #homeBtn {
+      font-size: 15px !important;
+      padding: 8px 10px !important;
+      border-radius: 8px !important;
+    }
+    .badge {
+      width: 36px !important;
+      height: 36px !important;
+      font-size: 17px !important;
+      border-radius: 8px !important;
+    }
+    .logo img {
+      height: 60px !important;
+    }
+    .sidebar .card {
+      padding: 8px !important;
+    }
+    .quiz-item {
+      padding: 7px !important;
+      font-size: 15px !important;
+    }
+    .list {
+      gap: 5px !important;
+    }
+    #quizList {
+      max-height: 30vh !important;
+      padding-right: 2px !important;
+    }
+    .modal {
+      min-width: 90vw !important;
+      padding: 10px !important;
+      border-radius: 8px !important;
+    }
+    #message {
+      left: 4px !important;
+      bottom: 4px !important;
+      padding: 6px 8px !important;
+      font-size: 13px !important;
+      border-radius: 8px !important;
+    }
+  }
+
+  @media (max-width: 520px) {
+    body {
+      padding-top: 0 !important;
+      align-items: flex-start !important;
+      justify-content: flex-start !important;
+      min-height: 100vh !important;
+    }
+    .wrap {
+      padding: 2px !important;
+      border-radius: 0 !important;
+      margin-top: 0 !important;
+      margin-bottom: 0 !important;
+    }
+    .stage, .sidebar, .card, .question-card, .end-card {
+      border-radius: 0 !important;
+      padding-left: 2px !important;
+      padding-right: 2px !important;
+    }
+    .topbar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 8px !important;
+    }
+    .logo {
+      flex-direction: row !important;
+      gap: 6px !important;
+      align-items: center !important;
+    }
+    .qtext {
+      font-size: 14px !important;
+      min-height: 24px !important;
+    }
+    .opt {
+      font-size: 13px !important;
+      padding: 8px !important;
+    }
+    .btn, .btn.primary, .btn.ghost, .btn.end-primary, .btn.end-ghost, #homeBtn {
+      font-size: 13px !important;
+      padding: 7px 8px !important;
+      border-radius: 6px !important;
+    }
+    .badge {
+      width: 28px !important;
+      height: 28px !important;
+      font-size: 13px !important;
+      border-radius: 6px !important;
+    }
+    .logo img {
+      height: 38px !important;
+    }
+    .sidebar .card {
+      padding: 4px !important;
+    }
+    .quiz-item {
+      padding: 4px !important;
+      font-size: 13px !important;
+    }
+    .end-row {
+      font-size: 13px !important;
+      padding: 4px !important;
+    }
+    .end-header {
+      font-size: 14px !important;
+    }
+    .end-list {
+      max-height: 30vh !important;
+    }
+    .modal {
+      min-width: 98vw !important;
+      padding: 4px !important;
+      border-radius: 4px !important;
+    }
+    #message {
+      font-size: 12px !important;
+      padding: 4px 6px !important;
+      border-radius: 6px !important;
+    }
+  }
+  /* ...existing code... */
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="stage" id="stage">
+<div class="topbar">
+<div class="logo">
+<div class="badge">Quiz</div>
+<div>
+<div style="font-weight:900">Minigame</div>
+<div class="server small" id="serverName">server</div>
+</div>
+</div>
+<div style="display:flex;gap:12px;align-items:center">
+<button aria-label="Return to home" class="btn ghost" id="homeBtn" onclick="returnHome()">Return to Home</button>
+<div class="scoreboard card">
+<div class="small">Score</div>
+<div class="score-number" id="scoreDisplay">0</div>
+<div class="combo small" id="comboDisplay">combo ×0</div>
+</div>
+</div>
+</div>
+<div class="game-area">
+<div class="question-card card" id="questionCard">
+<div class="qtext" id="qtext">Click "Play" to play or "Host" to create a room.</div>
+<div aria-hidden="true" class="time-wrap">
+<div class="time-bar" id="timeBar" style="width:100%;"></div>
+</div>
+<div class="meta-row" style="display:flex;align-items:center;gap:12px">
+<div style="flex:1">
+<div class="small" id="progressText">0 / 0</div>
+<div class="small" id="hintText">Quick answers get bonus points.</div>
+</div>
+<div style="width:96px;text-align:right">
+<div class="small">Time remaining</div>
+<div class="small" id="timeBonus">0s</div>
+</div>
+</div>
+<div class="options" id="options" style="margin-top:14px"></div>
+</div>
+</div>
+</div>
+<div class="sidebar">
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div>
+<div id="titleSide" style="font-weight:900">Play</div>
+<div class="small">Learn more about Historical Sites</div>
+</div>
+<div class="small" id="socketStatus">Socket: disconnected</div>
+</div>
+<div style="margin-top:12px;display:flex;gap:8px">
+<button class="btn ghost" onclick="openJoinModal()">Join</button>
+</div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="small">Quizzes</div>
+<div><button class="btn ghost" onclick="refreshQuizzes()">Refresh</button></div>
+</div>
+<div class="list" id="quizList"></div>
+</div>
+<div class="card">
+<div style="display:flex;justify-content:space-between;align-items:center">
+<div class="small">Room</div>
+<div><span class="small" id="roomCode">—</span></div>
+</div>
+<div style="margin-top:8px">
+<div class="small">Players</div>
+<div id="players" style="max-height:160px;overflow:auto;margin-top:8px"></div>
+</div>
+<div style="margin-top:8px;display:flex;gap:8px">
+<button class="btn primary" id="startBtn" onclick="startRoom()" style="display:none">Start</button>
+<button class="btn ghost" id="leaveBtn" onclick="leaveRoom()" style="display:none">Leave</button>
+</div>
+</div>
+</div>
+</div>
+<div class="small hidden" id="message"></div>
+<div class="modal hidden" id="joinModal">
+<div style="font-weight:900">Join Room</div>
+<input id="joinCode" placeholder="Room code (e.g. AB12)"/>
+<input id="joinName" placeholder="Name"/>
+<div style="display:flex;gap:8px;margin-top:8px">
+<button class="btn primary" onclick="submitJoin()">Join</button>
+<button class="btn ghost" onclick="closeJoinModal()">Cancel</button>
+</div>
+</div>
+<div class="end-overlay" id="endScreen" style="display:none">
+<div aria-labelledby="endTitle" aria-modal="true" class="end-card" role="dialog">
+<div class="end-header">
+<div>
+<div id="endTitle" style="font-weight:900;color:#eaf5ff">Score</div>
+<div class="small" id="endSubtitle">You completed the game!</div>
+</div>
+<div id="endScoreSummary" style="text-align:right;color:#eaf5ff"></div>
+</div>
+<div class="end-list" id="endList"></div>
+<div class="end-actions">
+<button class="btn end-ghost" onclick="closeEndScreen()">Home</button>
+<button class="btn end-primary" onclick="playAgain()">Play again</button>
+</div>
+</div>
+</div>
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<script>
+
+const API_URL = "https://baldandbadgithubio-production-4f3f.up.railway.app";
+
+let _handlersAttached = false;
+let socket = null;
+let quizzes = [];
+let questions = [];
+let currentIndex = 0;
+let score = 0;
+let combo = 0;
+let timer = null;
+let timerDuration = 12;
+let timerRemaining = 0;
+let roomCode = null;
+let amHost = false;
+
+let mode = 'idle'; 
+let currentMultiQuestion = null;
+let multiplayerIndex = null;
+let multiplayerTotal = null;
+let currentRoomCode = null;
+
+const submittedRef = { current: {} };
+
+const serverName = document.getElementById('serverName');
+const socketStatus = document.getElementById('socketStatus');
+const quizListEl = document.getElementById('quizList');
+const qtext = document.getElementById('qtext');
+const optionsEl = document.getElementById('options');
+const scoreDisplay = document.getElementById('scoreDisplay');
+const comboDisplay = document.getElementById('comboDisplay');
+const progressText = document.getElementById('progressText');
+const hintText = document.getElementById('hintText');
+const timeBonus = document.getElementById('timeBonus');
+const timeBar = document.getElementById('timeBar');
+const playersEl = document.getElementById('players');
+const roomCodeEl = document.getElementById('roomCode');
+const startBtn = document.getElementById('startBtn');
+const leaveBtn = document.getElementById('leaveBtn');
+const messageEl = document.getElementById('message');
+const joinModal = document.getElementById('joinModal');
+
+const endScreen = document.getElementById('endScreen');
+const endList = document.getElementById('endList');
+const endScoreSummary = document.getElementById('endScoreSummary');
+
+function showMsg(t, timeout=2500){
+  messageEl.textContent = t; messageEl.classList.remove('hidden');
+  setTimeout(()=>{ messageEl.classList.add('hidden'); }, timeout);
+}
+
+const AudioCtx = (window.AudioContext || window.webkitAudioContext) ? new (window.AudioContext || window.webkitAudioContext)() : null;
+function playTone(f, t = 0.12, type='sine', gain=0.12){
+  if(!AudioCtx) return;
+  const o = AudioCtx.createOscillator();
+  const g = AudioCtx.createGain();
+  o.type = type;
+  o.frequency.value = f;
+  g.gain.value = gain;
+  o.connect(g); g.connect(AudioCtx.destination);
+  o.start();
+  g.gain.exponentialRampToValueAtTime(0.0001, AudioCtx.currentTime + t);
+  setTimeout(()=>{ try{ o.stop(); }catch(e){} }, t*1000 + 10);
+}
+function clickSound(){ playTone(880, 0.06, 'sine', 0.06); }
+function correctSound(){ playTone(900,0.06,'sine',0.08); setTimeout(()=>playTone(1200,0.06,'sine',0.06),80); }
+function wrongSound(){ playTone(220,0.12,'sawtooth',0.12); }
+function startSound(){ playTone(440,0.12,'sine',0.12); setTimeout(()=>playTone(660,0.08,'sine',0.08),130); }
+function finishSound(){ playTone(520,0.12,'triangle',0.12); setTimeout(()=>playTone(780,0.08,'triangle',0.08),150); }
+
+function burstConfetti(x = window.innerWidth/2, y = window.innerHeight/4, count = 40) {
+  const colors = ["#ffd86b","#ff7ab6","#34d399","#60a5fa","#f97316","#a78bfa"];
+  const canvas = document.createElement('canvas');
+  canvas.style.position = 'fixed';
+  canvas.style.left = 0; canvas.style.top = 0; canvas.style.pointerEvents = 'none';
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  document.body.appendChild(canvas);
+  const ctx = canvas.getContext('2d');
+  const particles = [];
+  for (let i=0;i<count;i++){
+    particles.push({
+      x, y,
+      vx: (Math.random()-0.5)*8,
+      vy: (Math.random()-1.5)*8,
+      size: 6 + Math.random()*8,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      rot: Math.random()*360,
+      ttl: 60 + Math.random()*50
+    });
+  }
+  let raf;
+  function draw(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for (const p of particles){
+      p.x += p.vx;
+      p.y += p.vy;
+      p.vy += 0.3;
+      p.ttl--;
+      p.rot += 8;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot * Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.size/2, -p.size/2, p.size, p.size*0.6);
+      ctx.restore();
+    }
+    for (let i=particles.length-1;i>=0;i--) if (particles[i].ttl<=0) particles.splice(i,1);
+    if (particles.length>0) raf = requestAnimationFrame(draw);
+    else { cancelAnimationFrame(raf); canvas.remove(); }
+  }
+  draw();
+}
+
+function attachSocketHandlers() {
+  if (!socket || _handlersAttached) return;
+  _handlersAttached = true;
+
+  socket.on('connect', () => { console.log('[socket] connect', socket.id); socketStatus.textContent = 'Socket: connected'; });
+  socket.on('disconnect', (reason) => { console.log('[socket] disconnect', reason); socketStatus.textContent = 'Socket: disconnected'; });
+  socket.on('connect_error', (err) => { console.warn('[socket] conn error', err && err.message); socketStatus.textContent = 'Socket: error'; });
+
+  socket.on('roomCreated', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; amHost = true;
+    roomCodeEl.textContent = code; startBtn.style.display = 'inline-flex'; leaveBtn.style.display = 'inline-flex';
+    updatePlayers([]); showMsg('Room created: '+code, 2400);
+  });
+
+  socket.on('roomJoined', (payload) => {
+    const code = payload?.code ?? payload?.roomId ?? payload;
+    currentRoomCode = code; roomCode = code; roomCodeEl.textContent = code;
+    leaveBtn.style.display = 'inline-flex';
+    showMsg('Joined room ' + code, 1600);
+  });
+
+  socket.on('playerList', (list) => {
+    updatePlayers(list || []);
+  });
+
+  socket.on('question', (q) => {
+    console.log('[socket] question', q);
+    const normal = {
+      id: q.id ?? q.questionId ?? q.id,
+      question: q.text ?? q.question ?? q.q,
+      answers: q.answers ?? q.options ?? [],
+      index: (typeof q.index !== 'undefined') ? q.index : null,
+      total: (typeof q.total !== 'undefined') ? q.total : null,
+      timeLimit: q.timeLimit ?? 12
+    };
+    currentMultiQuestion = normal; multiplayerIndex = normal.index; multiplayerTotal = normal.total;
+
+    submittedRef.current = submittedRef.current || {};
+    submittedRef.current[normal.id] = false;
+    mode = 'multi';
+    showQuestion();
+    startSound();
+    startTimer(normal.timeLimit);
+  });
+
+  socket.on('question-ended', (payload) => {
+    console.log('[socket] question-ended', payload);
+    const correctId = payload.correctAnswerId;
+    Array.from(optionsEl.children).forEach(el=>{
+      const meta = el.querySelector('.small')?.textContent || '';
+      const m = meta.match(/Choice\s*(.+)$/i);
+      const choiceId = m ? m[1] : null;
+      el.classList.remove('waiting','disabled');
+      if (choiceId && String(choiceId) === String(correctId)) {
+        el.classList.add('correct');
+      }
+    });
+
+    const meResult = (payload.results || []).find(r => r.playerId === socket.id);
+    if (meResult && meResult.correct) { correctSound(); burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); }
+    else wrongSound();
+
+    const scoreMap = {};
+    (payload.scores || []).forEach(s => scoreMap[s.id] = s.total);
+    updatePlayers((payload.scores || []).map(s=>({ id: s.id, name: s.name, score: s.total})));
+
+    if (socket && socket.id && scoreMap[socket.id] !== undefined) {
+      scoreDisplay.textContent = scoreMap[socket.id];
+    }
+
+    clearInterval(timer);
+    setTimeout(()=> {
+      Array.from(optionsEl.children).forEach(el=>{ el.classList.remove('correct','wrong','waiting','disabled'); el.style.opacity = ''; });
+    }, 900);
+  });
+
+  socket.on('updateScores', (payload) => {
+    updatePlayers(payload || []);
+    playTone(720,0.04,'sine',0.06);
+  });
+
+  socket.on('gameOver', (payload) => {
+    console.log('[socket] gameOver', payload);
+    const scores = payload?.scores ?? payload ?? [];
+    finishSound();
+    burstConfetti(window.innerWidth/2, window.innerHeight/3, 140);
+    showMsg('Game over! Check final scores', 3000);
+    updatePlayers(scores.map(s=>({ id: s.id, name: s.name, score: s.total || s.score })));
+
+    showEndScreen(scores.map(s => ({ id: s.id, name: s.name, total: s.total || s.score || 0 })));
+  });
+
+  socket.on('error', (e) => { console.warn('[socket] server error', e); showMsg(String(e), 2600); });
+}
+
+async function refreshQuizzes(){
+  try{
+    const r = await fetch(API_URL + '/api/quizzes');
+    if(!r.ok) throw new Error(await r.text());
+    quizzes = await r.json();
+    renderQuizList();
+  }catch(e){
+    quizListEl.innerHTML = `<div class="small">Failed to load quizzes: ${escapeHtml(e.message)}</div>`;
+  }
+}
+
+function renderQuizList(){
+  quizListEl.innerHTML = '';
+  if(!quizzes || quizzes.length===0){
+    quizListEl.innerHTML = '<div class="small">No quizzes (click Refresh)</div>'; return;
+  }
+  quizzes.forEach(q=>{
+    const row = document.createElement('div'); row.className='quiz-item';
+    row.innerHTML = `<div><strong>${escapeHtml(q.title||('Quiz '+q.id))}</strong><div class="small">ID ${q.id}</div></div>`;
+    const actions = document.createElement('div');
+    const playBtn = document.createElement('button'); playBtn.className='btn primary'; playBtn.textContent='Play';
+    playBtn.onclick = ()=> openSolo(q.id);
+    const hostBtn = document.createElement('button'); hostBtn.className='btn ghost'; hostBtn.textContent='Host';
+    hostBtn.onclick = ()=> createRoom(q.id);
+    actions.appendChild(playBtn); actions.appendChild(hostBtn);
+    row.appendChild(actions);
+    quizListEl.appendChild(row);
+  });
+}
+
+async function openSolo(qid){
+  mode = 'solo';
+  await connectSocket(); 
+  try{
+    const r = await fetch(`${API_URL}/api/quizzes/${qid}`);
+    if(!r.ok) throw new Error(await r.text());
+    const data = await r.json();
+    questions = adaptRows(data);
+    if(questions.length === 0) { showMsg('Quiz has no questions'); return; }
+    currentIndex = 0; score = 0; combo = 0;
+    showQuestion();
+    startSound();
+  }catch(e){ showMsg('Failed to load quiz: ' + e.message, 3000); }
+}
+
+function adaptRows(rows){
+  if(!Array.isArray(rows)) return [];
+  if(rows.length && rows[0].answers) return rows.map(r=>({ id:r.id, question:r.question, answers:r.answers, correctAnswerId:r.correctAnswerId }));
+  return rows.map(r=>({
+    id: r.id,
+    question: r.question || r.question_text,
+    answers: [
+      { id:'A', text: r.option_a },
+      { id:'B', text: r.option_b },
+      { id:'C', text: r.option_c },
+      { id:'D', text: r.option_d }
+    ].filter(x=>x.text),
+    correctAnswerId: r.correct_option || r.correctAnswerId
+  }));
+}
+
+function renderOptions(answerArray, correctIdIfSolo=null, playMode='solo'){
+  optionsEl.innerHTML = '';
+  answerArray.forEach(ans => {
+    const b = document.createElement('div'); b.className='opt';
+    b.innerHTML = `<div style="font-weight:800">${escapeHtml(ans.text)}</div><div class="small">Choice ${escapeHtml(ans.id)}</div>`;
+    b.onclick = () => {
+      clickSound();
+      handlePick(ans.id, b, playMode, correctIdIfSolo);
+    };
+    optionsEl.appendChild(b);
+  });
+}
+
+function showQuestion(){
+  clearInterval(timer);
+  updateTimeBar(1);
+  timeBonus.textContent = '';
+
+  if(mode === 'solo'){
+    if(!questions.length){ qtext.textContent = 'No question loaded'; optionsEl.innerHTML=''; return; }
+    const q = questions[currentIndex];
+    qtext.textContent = q.question || '...';
+    progressText.textContent = `${currentIndex+1} / ${questions.length}`;
+    renderOptions(q.answers, q.correctAnswerId, 'solo');
+    startTimer(12);
+    scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
+    return;
+  }
+
+  if(mode === 'multi'){
+    if(!currentMultiQuestion){ qtext.textContent = 'Waiting for host to start...'; optionsEl.innerHTML = ''; updateTimeBar(0); return; }
+    const q = currentMultiQuestion;
+    qtext.textContent = q.question || '...';
+    if(typeof multiplayerIndex === 'number' && multiplayerTotal) progressText.textContent = `${multiplayerIndex+1} / ${multiplayerTotal}`;
+    else progressText.textContent = 'Multiplayer';
+    renderOptions(q.answers, null, 'multi');
+    startTimer(q.timeLimit ?? 12);
+    submittedRef.current = submittedRef.current || {};
+    submittedRef.current[q.id] = false;
+    return;
+  }
+
+  qtext.textContent = 'Click "Play" to play or "Host" to create a room.';
+  optionsEl.innerHTML = '';
+}
+
+function handlePick(answerId, el, playMode='solo', correctIdIfSolo=null){
+  if(el.classList.contains('disabled')) return;
+  Array.from(optionsEl.children).forEach(c=>{ c.classList.add('disabled'); c.classList.remove('correct','wrong'); });
+  clearInterval(timer);
+
+  if(playMode === 'solo'){
+    const q = questions[currentIndex];
+    const correct = String(correctIdIfSolo ?? q.correctAnswerId ?? '');
+    const isCorrect = String(answerId) === String(correct);
+    if(isCorrect){
+      correctSound();
+      burstConfetti(window.innerWidth/2, window.innerHeight/3, 60); // <--- Confetti on correct answer
+      const bonus = Math.round(timerRemaining);
+      const gained = 10 + clamp(bonus, 0, timerDuration);
+      score += gained;
+      combo++;
+      el.classList.add('correct');
+      showMsg('Correct! +' + gained, 1100);
+    }
+    else {
+      wrongSound();
+      combo = 0;
+      el.classList.add('wrong');
+      Array.from(optionsEl.children).forEach(ch=>{
+        const meta = ch.querySelector('.small')?.textContent || '';
+        const m = meta.match(/Choice\s*(.+)$/i);
+        if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
+      });
+    }
+    scoreDisplay.textContent = score; comboDisplay.textContent = 'combo ×' + combo;
+    setTimeout(()=>{ currentIndex++; if(currentIndex >= questions.length) finishRun(); else showQuestion(); }, 800);
+    return;
+  }
+
+  const q = currentMultiQuestion;
+  if(!q) { showMsg('No active question', 1500); return; }
+  submittedRef.current = submittedRef.current || {};
+  if(submittedRef.current[q.id]) { showMsg('Answer already submitted'); return; }
+  submittedRef.current[q.id] = true;
+
+  el.classList.add('waiting');
+  el.style.opacity = '0.8';
+
+  const codeToSend = currentRoomCode || roomCode || roomCodeEl.textContent || null;
+  if(!codeToSend || codeToSend === '—') { showMsg('No room code — join or create a room first'); el.classList.remove('waiting'); return; }
+
+  try {
+    socket.emit('submitAnswer', { code: codeToSend, answerId });
+  } catch (err) {
+    console.warn('Emit failed', err);
+    showMsg('Failed to send answer', 1500);
+    el.classList.remove('waiting');
+    submittedRef.current[q.id] = false;
+  }
+}
+
+function finishRun(){
+  clearInterval(timer);
+
+  const scores = [{ id: 'you', name: 'You', total: score }];
+  showMsg(`Run finished! Score ${score}`, 3000);
+
+  showEndScreen(scores);
+  questions = []; currentIndex=0; score=0; combo=0;
+  qtext.textContent = 'Click "Play" to play or "Host" to create a room.';
+  optionsEl.innerHTML = '';
+  scoreDisplay.textContent = '0';
+  comboDisplay.textContent = 'combo ×0';
+}
+
+function startTimer(seconds){
+  clearInterval(timer);
+  timerDuration = seconds;
+  timerRemaining = seconds;
+  updateTimeBar(1);
+  const tick = 0.1;
+  timer = setInterval(()=>{
+    timerRemaining = Math.max(0, timerRemaining - tick);
+    timeBonus.textContent = Math.round(timerRemaining) + 's';
+    const frac = Math.max(0, timerRemaining / timerDuration);
+    updateTimeBar(frac);
+    if(timerRemaining <= 0){
+      clearInterval(timer);
+      onTimeUp();
+    }
+  }, tick*1000);
+}
+function updateTimeBar(fraction){
+
+  const pct = Math.max(0, Math.min(1, fraction)) * 100;
+  timeBar.style.width = pct + '%';
+
+  if (fraction < 0.25) {
+    timeBar.style.background = 'linear-gradient(90deg,#fb7185,#ff7ab6)';
+  } else if (fraction < 0.6) {
+    timeBar.style.background = 'linear-gradient(90deg,#ffd86b,#ff7ab6)';
+  } else {
+    timeBar.style.background = 'linear-gradient(90deg,#60a5fa,#34d399)';
+  }
+}
+function onTimeUp(){
+  Array.from(optionsEl.children).forEach(c=>c.classList.add('disabled'));
+  if(mode === 'solo'){
+    const q = questions[currentIndex]; const correct = String(q.correctAnswerId || '');
+    Array.from(optionsEl.children).forEach(ch=>{
+      const meta = ch.querySelector('.small')?.textContent || '';
+      const m = meta.match(/Choice\s*(.+)$/i);
+      if(m && String(m[1]) === String(correct)) ch.classList.add('correct');
+    });
+    combo = 0;
+    setTimeout(()=>{ currentIndex++; if(currentIndex>=questions.length) finishRun(); else showQuestion(); }, 900);
+    return;
+  }
+
+  showMsg('Time up — waiting for host', 1800);
+}
+
+function connectSocket() {
+  if (socket && socket.connected) return Promise.resolve(socket);
+  if (socket && socket.connecting) {
+    return new Promise((resolve) => {
+      socket.once('connect', () => resolve(socket));
+      socket.once('connect_error', () => resolve(socket));
+    });
+  }
+
+  const url = (typeof API_URL === 'string' ? API_URL.replace(/\/+$/, '') : '');
+  console.log('[connectSocket] connecting to', url);
+
+  socket = io(url, {
+    transports: ['websocket', 'polling'],
+    reconnectionAttempts: 6
+  });
+
+  attachSocketHandlers();
+
+  return new Promise((resolve) => {
+    socket.once('connect', () => {
+      console.log('[connectSocket] connected', socket.id);
+      resolve(socket);
+    });
+    socket.once('connect_error', (err) => {
+      console.warn('[connectSocket] connect_error', err && err.message);
+      resolve(socket);
+    });
+  });
+}
+
+function openHostList(){
+  connectSocket();
+  showMsg('Hit "Host" next to a quiz to create a room (in this UI).', 2500);
+}
+
+async function createRoom(quizId){
+  clickSound();
+  await connectSocket();
+  mode = 'multi';
+  console.log('emit createRoom', quizId);
+  socket.emit('createRoom', { quizId });
+}
+
+function openJoinModal(){
+  joinModal.style.display = 'block'; joinModal.classList.remove('hidden');
+}
+function closeJoinModal(){
+  joinModal.style.display = 'none'; joinModal.classList.add('hidden');
+}
+
+async function submitJoin(){
+  const code = document.getElementById('joinCode').value?.trim();
+  const name = document.getElementById('joinName').value?.trim() || 'Player';
+  if(!code){ showMsg('Enter room code'); return; }
+  await connectSocket();
+  mode = 'multi';
+  socket.emit('joinRoom', { code, name });
+  closeJoinModal();
+  currentRoomCode = code; roomCodeEl.textContent = currentRoomCode;
+  leaveBtn.style.display = 'inline-flex';
+  showMsg('Joining room ' + code, 1500);
+  clickSound();
+}
+
+function startRoom(){
+  const code = currentRoomCode || roomCode;
+  if(!code){ showMsg('No room to start — create or join a room first', 1800); return; }
+  socket.emit('startGame', { code });
+  showMsg('Starting game…', 1000);
+}
+
+function leaveRoom(){
+  const code = currentRoomCode || roomCode;
+  roomCode = null; amHost = false;
+  roomCodeEl.textContent = '—';
+  playersEl.innerHTML = '';
+  startBtn.style.display = 'none';
+  leaveBtn.style.display = 'none';
+  if(socket && code){ try{ socket.emit('leaveRoom', { code }); } catch(e){} }
+  showMsg('Left room', 1200);
+}
+
+function updatePlayers(list){
+  playersEl.innerHTML = '';
+  (list || []).forEach(p=>{
+    const el = document.createElement('div'); el.style.display='flex'; el.style.justifyContent='space-between'; el.style.padding='6px 0';
+    el.innerHTML = `<div style="font-weight:800">${escapeHtml(p.name||p.player||'Player')}</div><div class="small">${p.score ?? 0}${p.answered ? ' ✓' : ''}</div>`;
+    playersEl.appendChild(el);
+  });
+}
+
+function showEndScreen(scores){
+
+  endList.innerHTML = '';
+  if(!Array.isArray(scores)) scores = [scores];
+  const normalized = scores.map(s => ({ id: s.id || s.name, name: s.name || s.id || 'Player', total: (s.total ?? s.score ?? 0) }));
+
+  normalized.sort((a,b) => (b.total || 0) - (a.total || 0));
+  const top = normalized[0];
+
+  endScoreSummary.innerHTML = `<div style="font-weight:800">${top.name} won! — ${top.total} pts</div>`;
+
+  normalized.forEach((p, i) => {
+    const row = document.createElement('div');
+    row.className = 'end-row' + (i===0 ? ' end-winner' : '');
+    row.innerHTML = `<div style="display:flex;gap:10px;align-items:center"><div style="font-weight:900">#${i+1}</div><div>${escapeHtml(p.name)}</div></div><div style="font-weight:900">${p.total}</div>`;
+    endList.appendChild(row);
+  });
+
+  endScreen.style.display = 'flex';
+  burstConfetti(window.innerWidth/2, window.innerHeight/3, 120);
+}
+
+function closeEndScreen(){
+  endScreen.style.display = 'none';
+
+  mode = 'idle';
+  currentMultiQuestion = null;
+  multiplayerIndex = null;
+  multiplayerTotal = null;
+  submittedRef.current = {};
+  updateTimeBar(0);
+  qtext.textContent = 'Click "Play" to play or "Host" to create a room.';
+  optionsEl.innerHTML = '';
+}
+
+function playAgain(){
+
+  closeEndScreen();
+  showMsg('Ready — start another game', 1400);
+}
+
+function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
+function escapeHtml(s){ if(s==null) return ''; return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+
+const HOME_PATH = '/home-1.html'; 
+
+function returnHome(){
+
+  window.location.href = HOME_PATH;
+}
+
+refreshQuizzes();
+connectSocket();
+
+</script>
+<div aria-label="Toggle music mute" aria-pressed="false" class="auto-music-toggle" role="button" tabindex="0">
+<!-- svg icon -->
+<svg aria-hidden="true" class="auto-music-icon" height="18" viewbox="0 0 24 24" width="18">
+<path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+</svg>
+</div>
+</body>
+</html>

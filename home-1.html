@@ -1,300 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
-  
-  <!--home-123:03  -->
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bản đồ Di tích lịch sử TPHCM</title>
-    <!--[if lt IE 9]>
+<!--home-123:03  -->
+<head>
+<meta charset="utf-8"/>
+<meta content="IE=edge" http-equiv="X-UA-Compatible"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<title>Bản đồ Di tích lịch sử TPHCM</title>
+<!--[if lt IE 9]>
 					<script src="js/html5shiv.min.js"></script>
 					<script src="js/respond.min.js"></script>
 					<![endif]-->
-          <link rel="preload" href="/assets/music.mp3" as="audio">
-<link rel="preload" href="/css/music-overlay.css" as="style">
-<link rel="stylesheet" href="/css/music-overlay.css">
-<script defer src="/js/music-overlay.js"></script>
-    <link rel="shortcut icon" href="images/favicon.png" />
-    <link href="css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/linearicons-free.css">
-    <link rel="stylesheet" href="css/animate.css">
-    <link rel="stylesheet" href="vendor/flexslider/flexslider.css">
-    <link rel="stylesheet" href="vendor/owlcarousel/owl.carousel.css">
-    <link rel="stylesheet" href="vendor/fancybox/css/fancybox.css">
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/kindergarten.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&display=swap" rel="stylesheet">
-  </head>
-  <body>
-<style>
-  .custom-navbar {
-    width: 100%;
-    background: #fff;
-    box-shadow: 0 2px 16px rgba(44,62,80,0.07), 0 1.5px 0 #f3f3f3;
-    border-bottom: 1.5px solid #f3f3f3;
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    font-family: 'Montserrat', 'Open Sans', sans-serif;
-    transition: box-shadow .18s;
-  }
-  .custom-navbar-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0 40px;
-    height: 120px;
-  }
-  .custom-navbar-logo {
-    display: flex;
-    align-items: center;
-    gap: 0;
-    text-decoration: none;
-    background: #fff;
-    border-radius: 12px;
-    padding: 0;
-    transition: box-shadow .18s, border .18s;
-  }
-  .custom-navbar-logo img {
-    height: 96px;
-    width: auto;
-    border-radius: 8px;
-    background: #fff;
-  }
-  .custom-navbar-nav {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-  }
-  .custom-navbar-nav > li {
-    position: relative;
-  }
-  .custom-navbar-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 18px 8px 18px;
-    color: #2f2f2f;
-    font-weight: 600;
-    border-radius: 8px 8px 0 0;
-    background: none;
-    border: none;
-    font-size: 1rem;
-    position: relative;
-    transition: color .18s, background .18s;
-  }
-  .custom-navbar-link::after {
-    content: '';
-    display: block;
-    position: absolute;
-    left: 18px;
-    right: 18px;
-    bottom: 2px;
-    height: 2.5px;
-    background: linear-gradient(90deg, #e53935 0%, #ff7043 100%);
-    border-radius: 2px;
-    transform: scaleX(0);
-    transition: transform .22s;
-  }
-  .custom-navbar-link:hover, .custom-navbar-link:focus {
-    color: #e53935;
-    background: #f9f9f9;
-  }
-  .custom-navbar-link:hover::after, .custom-navbar-link:focus::after {
-    transform: scaleX(1);
-  }
-  .custom-navbar-dropdown {
-    display: none;
-    position: absolute;
-    left: 0;
-    top: 110%;
-    min-width: 200px;
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(44,62,80,0.13);
-    padding: 8px 0;
-    z-index: 1001;
-    border: 1.5px solid #f3f3f3;
-    animation: fadeIn .18s;
-  }
-  .custom-navbar-nav > li:hover > .custom-navbar-dropdown,
-  .custom-navbar-nav > li:focus-within > .custom-navbar-dropdown {
-    display: block;
-  }
-  .custom-navbar-dropdown a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 11px 28px 11px 22px;
-    color: #e53935;
-    font-weight: 500;
-    text-decoration: none;
-    border-radius: 8px;
-    transition: background .16s, color .16s;
-    font-size: 0.98rem;
-    position: relative;
-  }
-  .custom-navbar-dropdown a:hover {
-    background: #fff3f1;
-    color: #d32f2f;
-  }
-  .custom-navbar-dropdown a::before {
-    content: '\2022';
-    color: #ff7043;
-    font-size: 1.2em;
-    margin-right: 8px;
-    opacity: 0.7;
-  }
-  .custom-navbar-toggle {
-    display: none;
-    background: none;
-    border: none;
-    color: #e53935;
-    font-size: 2rem;
-    cursor: pointer;
-    margin-left: 12px;
-    border-radius: 8px;
-    padding: 4px 10px;
-    transition: background .18s;
-  }
-  .custom-navbar-toggle:hover {
-    background: #ffe3de;
-  }
-  @media (max-width: 900px) {
-    .custom-navbar-inner {
-      flex-wrap: wrap;
-      height: auto;
-      padding: 0 10px;
-    }
-    .custom-navbar-nav {
-      flex-direction: column;
-      align-items: flex-start;
-      width: 100%;
-      background: #fff;
-      border-radius: 0 0 16px 16px;
-      box-shadow: 0 8px 32px rgba(44,62,80,0.13);
-      margin-top: 8px;
-      display: none;
-      position: absolute;
-      left: 0;
-      top: 72px;
-      z-index: 1002;
-      border-top: 1.5px solid #f3f3f3;
-    }
-    .custom-navbar-nav.show {
-      display: flex;
-    }
-    .custom-navbar-nav > li {
-      width: 100%;
-    }
-    .custom-navbar-link {
-      color: #e53935;
-      background: none;
-      width: 100%;
-      text-align: left;
-      border-radius: 0;
-      padding: 16px 22px 14px 22px;
-    }
-    .custom-navbar-link::after {
-      left: 22px;
-      right: 22px;
-      bottom: 4px;
-    }
-    .custom-navbar-link:hover {
-      background: #fff3f1;
-      color: #d32f2f;
-    }
-    .custom-navbar-dropdown {
-      position: static;
-      box-shadow: none;
-      background: #fff;
-      border-radius: 0;
-      min-width: 100%;
-      padding: 0;
-      border: none;
-    }
-    .custom-navbar-dropdown a {
-      padding: 13px 32px;
-    }
-    .custom-navbar-toggle {
-      display: block;
-    }
-  }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-</style>
-<nav class="custom-navbar">
-  <div class="custom-navbar-inner">
-    <a class="custom-navbar-logo" href="home-1.html">
-      <img src="images/logo5.png" alt="Logo" />
-    </a>
-    <button class="custom-navbar-toggle" aria-label="Mở menu" onclick="document.querySelector('.custom-navbar-nav').classList.toggle('show')">
-      <i class="fa fa-bars"></i>
-    </button>
-    <ul class="custom-navbar-nav">
-      <li><a class="custom-navbar-link" href="home-1.html">Trang Chủ</a></li>
-      <li><a class="custom-navbar-link" href="map.html">Bản Đồ</a></li>
-      <li><a class="custom-navbar-link" href="blog.html">Kho Thông Tin</a></li>
-      <li><a class="custom-navbar-link" href="quiz.html">Minigame</a></li>
-    </ul>
-  </div>
-</nav>
-    <!-- NEW HERO - copy this whole block into your page -->
-<section class="hero-neo" aria-label="Trang chủ - Bản đồ Di tích lịch sử">
-  <div class="hero-neo__viewport">
-    <div class="hero-neo__slides" role="list">
-      <article class="hero-neo__slide hero-neo__slide--active"
-               role="listitem"
-               data-bg="images/use_img/banner1.jpg"
-               aria-hidden="false">
-        <div class="hero-neo__overlay" aria-hidden="true"></div>
-        <div class="hero-neo__inner">
-          <h1 class="hero-neo__title">Khám phá<br> Bản đồ Di tích Lịch sử TPHCM</h1>
-          <p class="hero-neo__subtitle">Khám phá quá khứ — hiểu rõ hiện tại</p>
-          <div class="hero-neo__actions">
-            <a class="hero-neo__btn hero-neo__btn--primary" href="map.html">Xem bản đồ</a>
-            <a class="hero-neo__btn hero-neo__btn--ghost" href="blog.html">Tìm hiểu thêm</a>
-          </div>
-        </div>
-      </article>
-
-      <article class="hero-neo__slide"
-               role="listitem"
-               data-bg="images/use_img/banner2.jpg"
-               aria-hidden="true">
-        <div class="hero-neo__overlay" aria-hidden="true"></div>
-        <div class="hero-neo__inner">
-          <h1 class="hero-neo__title">Tìm hiểu<br> Lịch sử Sài Gòn<br> qua các Di tích</h1>
-          <p class="hero-neo__subtitle">Câu chuyện của thành phố — được kể qua từng địa điểm</p>
-          <div class="hero-neo__actions">
-            <a class="hero-neo__btn hero-neo__btn--primary" href="blog.html">Bắt đầu</a>
-            <a class="hero-neo__btn hero-neo__btn--ghost" href="quiz.html">Tìm hiểu thêm</a>
-          </div>
-        </div>
-      </article>
-    </div>
-  </div>
-
-  <!-- Controls -->
-  <button class="hero-neo__nav hero-neo__nav--prev" aria-label="Slide trước">&lsaquo;</button>
-  <button class="hero-neo__nav hero-neo__nav--next" aria-label="Slide kế tiếp">&rsaquo;</button>
-
-  <!-- Dots -->
-  <div class="hero-neo__dots" role="tablist" aria-label="Chọn slide"></div>
+<link as="audio" href="/assets/music.mp3" rel="preload"/>
+<link as="style" href="/css/music-overlay.css" rel="preload"/>
+<link href="/css/music-overlay.css" rel="stylesheet"/>
+<script defer="" src="/js/music-overlay.js"></script>
+<link href="/images/favicon.png" rel="shortcut icon"/>
+<link href="/css/bootstrap.min.css" rel="stylesheet"/>
+<link href="/css/font-awesome.min.css" rel="stylesheet"/>
+<link href="/css/linearicons-free.css" rel="stylesheet"/>
+<link href="/css/animate.css" rel="stylesheet"/>
+<link href="/vendor/flexslider/flexslider.css" rel="stylesheet"/>
+<link href="/vendor/owlcarousel/owl.carousel.css" rel="stylesheet"/>
+<link href="/vendor/fancybox/css/fancybox.css" rel="stylesheet"/>
+<link href="/css/global.css" rel="stylesheet"/>
+<link href="/css/style.css" rel="stylesheet"/>
+<link href="/css/kindergarten.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&amp;family=Merriweather:ital,opsz,wght@0,18..144,300..900;1,18..144,300..900&amp;display=swap" rel="stylesheet"/>
+</head>
+<body><style> .custom-navbar { width: 100%; background: #fff; box-shadow: 0 2px 16px rgba(44,62,80,0.07), 0 1.5px 0 #f3f3f3; border-bottom: 1.5px solid #f3f3f3; position: sticky; top: 0; z-index: 1000; font-family: 'Montserrat', 'Open Sans', sans-serif; transition: box-shadow .18s; } .custom-navbar-inner { justify-content: space-between; max-width: 1200px; margin: 0 auto; display: flex; align-items: center; padding: 0 40px; height: 120px; } .custom-navbar-logo { display: flex; align-items: center; gap: 0; text-decoration: none; background: #fff; border-radius: 12px; padding: 0; transition: box-shadow .18s, border .18s; } .custom-navbar-logo img { height: 96px; width: auto; border-radius: 8px; background: #fff; } .custom-navbar-nav { display: flex; align-items: center; gap: 8px; list-style: none; margin: 0; padding: 0; } .custom-navbar-nav > li { position: relative; } .custom-navbar-link { display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px 8px 18px; color: #2f2f2f; font-weight: 600; border-radius: 8px 8px 0 0; background: none; border: none; font-size: 1rem; position: relative; transition: color .18s, background .18s; } .custom-navbar-link::after { content: ''; display: block; position: absolute; left: 18px; right: 18px; bottom: 2px; height: 2.5px; background: linear-gradient(90deg, #e53935 0%, #ff7043 100%); border-radius: 2px; transform: scaleX(0); transition: transform .22s; } .custom-navbar-link:hover, .custom-navbar-link:focus { color: #e53935; background: #f9f9f9; } .custom-navbar-link:hover::after, .custom-navbar-link:focus::after { transform: scaleX(1); } .custom-navbar-dropdown { display: none; position: absolute; left: 0; top: 110%; min-width: 200px; background: #fff; border-radius: 12px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); padding: 8px 0; z-index: 1001; border: 1.5px solid #f3f3f3; animation: fadeIn .18s; } .custom-navbar-nav > li:hover > .custom-navbar-dropdown, .custom-navbar-nav > li:focus-within > .custom-navbar-dropdown { display: block; } .custom-navbar-dropdown a { display: flex; align-items: center; gap: 8px; padding: 11px 28px 11px 22px; color: #e53935; font-weight: 500; text-decoration: none; border-radius: 8px; transition: background .16s, color .16s; font-size: 0.98rem; position: relative; } .custom-navbar-dropdown a:hover { background: #fff3f1; color: transparent; } .custom-navbar-dropdown a::before { content: '2'; color: #ff7043; font-size: 1.2em; margin-right: 8px; opacity: 0.7; } .custom-navbar-toggle { display: none; background: none; border: none; color: #e53935; font-size: 2rem; cursor: pointer; margin-left: 12px; border-radius: 8px; padding: 4px 10px; transition: background .18s; } .custom-navbar-toggle:hover { background: #ffe3de; } /* new: menu toggle specific styles to avoid global button overrides */ .menu-icon-btn { /* reset heavy button rules from global styles */ background: transparent !important; border: none !important; box-shadow: none !important; color: #ff5722 !important; /* site orange */ font-size: 1.9rem; line-height: 1; padding: 6px 10px; display: none; /* hide by default (desktop) */ align-items: center; justify-content: center; border-radius: 8px; cursor: pointer; transition: background .18s, transform .12s; -webkit-appearance: none; } .menu-icon-btn:hover, .menu-icon-btn:focus { background: #fff3f1; color: #d32f2f !important; outline: none; } .menu-icon-btn:active { transform: translateY(1px) scale(.995); } /* keep the old custom-navbar-toggle selector for any other behavior but avoid generic button styling */ .custom-navbar-toggle { /* minimal shim so scripts querying this class still work */ background: none; border: none; padding: 0; } @media (max-width: 900px) { .custom-navbar-inner { flex-wrap: wrap; height: auto; padding: 0 10px; } /* show the menu button on mobile */ .menu-icon-btn { display: inline-flex; } .custom-navbar-nav { flex-direction: column; align-items: flex-start; width: 100%; background: #fff; border-radius: 0 0 16px 16px; box-shadow: 0 8px 32px rgba(44,62,80,0.13); margin-top: 8px; display: none; position: absolute; left: 0; top: 72px; z-index: 1002; border-top: 1.5px solid #f3f3f3; } .custom-navbar-nav.show { display: flex; } .custom-navbar-nav > li { width: 100%; } .custom-navbar-link { color: #e53935; background: none; width: 100%; text-align: left; border-radius: 0; padding: 16px 22px 14px 22px; } .custom-navbar-link::after { left: 22px; right: 22px; bottom: 4px; } .custom-navbar-link:hover { background: #fff3f1; color: #d32f2f; } .custom-navbar-dropdown { position: static; box-shadow: none; background: #fff; border-radius: 0; min-width: 100%; padding: 0; border: none; } .custom-navbar-dropdown a { padding: 13px 32px; } .custom-navbar-toggle { display: block; } } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } </style>
+<nav class="custom-navbar"><div class="custom-navbar-inner"><a href="/" class="custom-navbar-logo"><img src="/images/logo5.png" alt="Map" style="height: 96px;"></a><div class="navbar-right-content"><ul class="custom-navbar-nav"><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/home-1.html">Trang Chủ</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/map.html">Bản Đồ</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/blog.html"> Kho Thông Tin</a></li><li><a class="custom-navbar-link" style="color: #2f2f2f;" href="/quiz.html">Minigame</a></li></ul><div class="navbar-utility-controls"><div class="lang-switcher" style="position:relative; color: #2f2f2f;"><select id="lang-select" aria-label="Chọn ngôn ngữ" title="Chọn ngôn ngữ" hidden><option value="vi" aria-label="Tiếng Việt" title="Tiếng Việt">vi</option><option value="en" aria-label="English" title="English">en</option></select><div class="lang-control" role="group" aria-label="Language switcher"><button id="lang-btn" class="lang-btn" aria-haspopup="true" aria-expanded="false" title="Chọn ngôn ngữ" type="button"><img id="lang-btn-flag" class="flag-vi.svg" alt="Tiếng Việt" width="24" height="16" /><span class="visually-hidden">Chọn ngôn ngữ</span></button><ul class="lang-menu" role="menu" aria-labelledby="lang-btn"><li role="none"><button role="menuitem" class="lang-item" data-lang="vi" title="Tiếng Việt" type="button"><img class="flag-img" src="/images/flag-vi.svg" alt="Tiếng Việt" width="24" height="16" /><span class="lang-label">Tiếng Việt</span></button></li><li role="none"><button role="menuitem" class="lang-item" data-lang="en" title="English" type="button"><img class="flag-img" src="/images/flag-en.svg" alt="English" width="24" height="16" /><span class="lang-label">English</span></button></li></ul></div></div> <button aria-label="Mở menu" class="custom-navbar-toggle menu-icon-btn" onclick="document.querySelector('.custom-navbar-nav').classList.toggle('show')"><i class="fa fa-bars" aria-hidden="true"></i></button></div></div></div></nav>
+<!-- NEW HERO - copy this whole block into your page -->
+<section aria-label="Trang chủ - Bản đồ Di tích lịch sử" class="hero-neo">
+<div class="hero-neo__viewport">
+<div class="hero-neo__slides" role="list">
+<article aria-hidden="false" class="hero-neo__slide hero-neo__slide--active" data-bg="/images/use_img/banner1.jpg" role="listitem">
+<div aria-hidden="true" class="hero-neo__overlay"></div>
+<div class="hero-neo__inner">
+<h1 class="hero-neo__title">Khám phá<br/> Bản đồ Di tích Lịch sử TPHCM</h1>
+<p class="hero-neo__subtitle">Khám phá quá khứ — hiểu rõ hiện tại</p>
+<div class="hero-neo__actions">
+<a class="hero-neo__btn hero-neo__btn--primary" href="/map.html">Xem bản đồ</a>
+<a class="hero-neo__btn hero-neo__btn--ghost" href="/blog.html">Tìm hiểu thêm</a>
+</div>
+</div>
+</article>
+<article aria-hidden="true" class="hero-neo__slide" data-bg="/images/use_img/banner2.jpg" role="listitem">
+<div aria-hidden="true" class="hero-neo__overlay"></div>
+<div class="hero-neo__inner">
+<h1 class="hero-neo__title">Tìm hiểu<br/> Lịch sử Sài Gòn<br/> qua các Di tích</h1>
+<p class="hero-neo__subtitle">Câu chuyện của thành phố — được kể qua từng địa điểm</p>
+<div class="hero-neo__actions">
+<a class="hero-neo__btn hero-neo__btn--primary" href="/blog.html">Bắt đầu</a>
+<a class="hero-neo__btn hero-neo__btn--ghost" href="/quiz.html">Tìm hiểu thêm</a>
+</div>
+</div>
+</article>
+</div>
+</div>
+<!-- Controls -->
+<button aria-label="Slide trước" class="hero-neo__nav hero-neo__nav--prev">‹</button>
+<button aria-label="Slide kế tiếp" class="hero-neo__nav hero-neo__nav--next">›</button>
+<!-- Dots -->
+<div aria-label="Chọn slide" class="hero-neo__dots" role="tablist"></div>
 </section>
-
 <style>
 /* -------------------------
    HERO-NEO - Mobile-first
@@ -306,7 +76,6 @@
   --muted: rgba(255,255,255,0.9);
   --glass: rgba(255,255,255,0.06);
 }
-
 .hero-neo{
   position: relative;
   width: 100%;
@@ -314,7 +83,6 @@
   background: #000;
   font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
 }
-
 /* viewport keeps a consistent visual area */
 .hero-neo__viewport{
   height: var(--hero-height);
@@ -322,14 +90,12 @@
   align-items: center;
   justify-content: center;
 }
-
 /* slide container */
 .hero-neo__slides{
   position: relative;
   width: 100%;
   height: 100%;
 }
-
 /* each slide */
 .hero-neo__slide{
   position: absolute;
@@ -340,21 +106,18 @@
   place-items: center;
   padding: 2rem;
   box-sizing: border-box;
-
   /* start hidden */
   opacity: 0;
   transform: translateY(6%);
   transition: opacity 700ms cubic-bezier(.2,.9,.2,1), transform 700ms cubic-bezier(.2,.9,.2,1);
   pointer-events: none;
 }
-
 /* active slide */
 .hero-neo__slide--active{
   opacity: 1;
   transform: translateY(0);
   pointer-events: auto;
 }
-
 /* overlay for contrast */
 .hero-neo__overlay{
   position: absolute;
@@ -362,7 +125,6 @@
   background: linear-gradient(180deg, rgba(0,0,0,0.35) 0%, var(--overlay-dark) 70%);
   backdrop-filter: blur(2px);
 }
-
 /* content wrapper */
 .hero-neo__inner{
   position: relative;
@@ -372,7 +134,6 @@
   text-align: left;
   color: var(--muted);
 }
-
 /* titles */
 .hero-neo__title{
   margin: 0 0 .4rem 0;
@@ -385,7 +146,6 @@
   letter-spacing: -.02em;
   animation: heroTitleIn 700ms ease both;
 }
-
 /* subtitle */
 .hero-neo__subtitle{
   margin: .25rem 0 1rem 0;
@@ -394,10 +154,8 @@
   opacity: .95;
   animation: heroSubIn 900ms ease both;
 }
-
 /* buttons */
 .hero-neo__actions{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center; margin-top: .6rem; }
-
 .hero-neo__btn{
   display:inline-flex;
   align-items:center;
@@ -411,22 +169,18 @@
   transition: transform .18s ease, box-shadow .18s ease, opacity .12s ease;
   will-change: transform;
 }
-
 .hero-neo__btn:focus{ outline:3px solid rgba(255, 255, 255); outline-offset:3px; }
-
 .hero-neo__btn--primary{
   background: linear-gradient(90deg,var(--accent), #ff3b3b 140%);
   color:#ffffff;
   border: none;
 }
-
 .hero-neo__btn--ghost{
   background: transparent;
   color: #fff;
   border: 1px solid rgba(255,255,255,0.14);
   padding:.56rem .9rem;
 }
-
 /* nav arrows */
 .hero-neo__nav{
   position: absolute;
@@ -447,10 +201,8 @@
 }
 .hero-neo__nav:hover{ transform: translateY(-50%) scale(1.06); background: rgba(0,0,0,0.6); }
 .hero-neo__nav:active{ transform: translateY(-50%) scale(.98); }
-
 .hero-neo__nav--prev{ left: 12px; }
 .hero-neo__nav--next{ right: 12px; }
-
 /* dots */
 .hero-neo__dots{
   position: absolute;
@@ -467,7 +219,6 @@
   transition: transform .16s, background .16s;
 }
 .hero-neo__dots button[aria-selected="true"]{ background: #fff; transform: scale(1.25); }
-
 /* animation keyframes */
 @keyframes heroTitleIn{
   from{ transform: translateY(10%); opacity:0; }
@@ -477,37 +228,31 @@
   from{ transform: translateY(6%); opacity:0; }
   to{ transform: translateY(0); opacity:.98; }
 }
-
 /* responsive scale up */
 @media (min-width: 640px){
   .hero-neo__title{ font-size: 2.8rem; }
   .hero-neo__subtitle{ font-size: 1rem; }
   .hero-neo__inner{ padding-left: 2rem; padding-right: 1rem; text-align:left; }
 }
-
 @media (min-width: 1024px){
   .hero-neo__title{ font-size: 3.6rem; }
   .hero-neo__inner{ padding-left: 4rem; }
   .hero-neo__viewport{ height: 78vh; }
 }
-
 /* respect reduced motion */
 @media (prefers-reduced-motion: reduce){
   .hero-neo__slide, .hero-neo__title, .hero-neo__subtitle { transition:none; animation:none; }
 }
 </style>
-
 <script>
 /* Replace only the setActive + small timing bits in the previous slider script with this block */
 (function(){
   const root = document.querySelector('.hero-neo');
   if (!root) return;
-
   const slides = Array.from(root.querySelectorAll('.hero-neo__slide'));
   const prevBtn = root.querySelector('.hero-neo__nav--prev');
   const nextBtn = root.querySelector('.hero-neo__nav--next');
   const dotsWrap = root.querySelector('.hero-neo__dots');
-
   // build dots & set backgrounds (same as before)
   slides.forEach((s, i) => {
     const bg = s.dataset.bg || '';
@@ -526,55 +271,42 @@
     dotsWrap.appendChild(dot);
   });
   if (slides.length === 0) return;
-
   // initial activation
   slides[0].classList.add('hero-neo__slide--active');
   slides[0].setAttribute('aria-hidden','false');
   const dotButtons = Array.from(dotsWrap.children);
   if (dotButtons[0]) dotButtons[0].setAttribute('aria-selected','true');
-
   let index = 0;
   let timer = null;
   const interval = 6000;
   let isTransitioning = false;
   // match this to your CSS transition duration (ms)
   const TRANSITION_MS = 700;
-
   function setActive(newIndex){
     if (newIndex === index || isTransitioning || newIndex < 0 || newIndex >= slides.length) return;
-
     isTransitioning = true;
-
     const prev = slides[index];
     const next = slides[newIndex];
-
     // remove active from previous to start its fade-out
     prev.classList.remove('hero-neo__slide--active');
     prev.setAttribute('aria-hidden','true');
     if (dotButtons[index]) dotButtons[index].setAttribute('aria-selected','false');
-
     // Force layout/read (reflow) so the browser will treat the next class addition as a new transition
     // This avoids some browsers optimizing away the transition when changes happen too quickly.
     // Using void next.offsetWidth ensures reflow.
     void next.offsetWidth;
-
     // add active to next to start its fade-in
     next.classList.add('hero-neo__slide--active');
     next.setAttribute('aria-hidden','false');
     if (dotButtons[newIndex]) dotButtons[newIndex].setAttribute('aria-selected','true');
-
     index = newIndex;
-
     // release guard after the CSS transition finishes
     setTimeout(()=> { isTransitioning = false; }, TRANSITION_MS);
   }
-
   function prev(){ setActive((index - 1 + slides.length) % slides.length); resetTimer(); }
   function next(){ setActive((index + 1) % slides.length); resetTimer(); }
-
   prevBtn?.addEventListener('click', prev);
   nextBtn?.addEventListener('click', next);
-
   function startTimer(){
     if (timer) clearInterval(timer);
     timer = setInterval(() => {
@@ -589,7 +321,6 @@
     startTimer();
   }
   startTimer();
-
   // touch swipe
   let startX = 0, deltaX = 0;
   root.addEventListener('touchstart', (e)=> { startX = e.touches[0].clientX; deltaX=0; }, {passive:true});
@@ -598,7 +329,6 @@
     if (Math.abs(deltaX) < 40) return;
     if (deltaX > 0) prev(); else next();
   });
-
   // pause on hover/focus
   const interactive = [root, prevBtn, nextBtn, ...dotButtons];
   interactive.forEach(el => {
@@ -608,103 +338,99 @@
     el.addEventListener('focusin', ()=> stopTimer());
     el.addEventListener('focusout', ()=> startTimer());
   });
-
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) stopTimer();
     else startTimer();
   });
-
 })();
 </script>
-
-    <section class="about-with-slide">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 aboutus">
-            <div class="row">
-              <div class="col-xs-12 col-sm-7">
-                <div class="introduction">
-  <h3 class="intro-title">
-    <span>GIỚI THIỆU</span>
-  </h3>
-  <h4 class="intro-text">
+<section class="about-with-slide">
+<div class="container">
+<div class="row">
+<div class="col-xs-12 aboutus">
+<div class="row">
+<div class="col-xs-12 col-sm-7">
+<div class="introduction">
+<h3 class="intro-title">
+<span>GIỚI THIỆU</span>
+</h3>
+<h4 class="intro-text">
     Nhằm góp phần giáo dục truyền thống lịch sử, khơi dậy tinh thần “Uống nước nhớ nguồn” và ứng dụng công nghệ thông tin trong kỷ nguyên số, trang web này được xây dựng như một không gian trực tuyến để giới thiệu, lưu giữ và lan tỏa hình ảnh các di tích lịch sử – văn hóa tiêu biểu tại TP. Hồ Chí Minh.
-    <br><br>
+    <br/><br/>
     Các địa danh được thể hiện qua bài viết, hình ảnh và thông tin chi tiết, giúp người xem có trải nghiệm gần gũi, trực quan và sinh động, như thể đang trực tiếp bước vào không gian lịch sử của thành phố.
-    <br><br>
+    <br/><br/>
     Thông qua kho tư liệu này, thế hệ trẻ có cơ hội tiếp cận gần hơn với những giá trị truyền thống, hiểu thêm về những chặng đường đấu tranh, xây dựng và phát triển của dân tộc, từ đó nuôi dưỡng tình yêu quê hương đất nước và ý thức trách nhiệm gìn giữ, bảo tồn di sản.
   </h4>
 </div>
-
-              </div>
-              <div class="col-xs-12 col-sm-5">
-                <div class="flexslider about-slide">
-                  <ul class="slides">
-                    <li>
-                      <a href="home-1.html#">
-                        <img src="images/use_img/about-g1.jpg" alt="">
-                      </a>
-                    </li>
-                    <li>
-                      <a href="home-1.html#">
-                        <img src="images/use_img/about-g2.jpg" alt="">
-                      </a>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="our-features">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12">
-            <h3>
-              <span>TÍNH NĂNG</span>
-            </h3>
-            <ul>
-            </ul>
-            <div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
-              <i class="lnr lnr-graduation-hat"></i>
-              <h3>Bản Đồ</h3>
-              <h4 class="intro-text">
+</div>
+<div class="col-xs-12 col-sm-5">
+<div class="flexslider about-slide">
+<ul class="slides">
+<li>
+<a href="/home-1.html">
+<img alt="" src="/images/use_img/about-g1.jpg"/>
+</a>
+</li>
+<li>
+<a href="/home-1.html">
+<img alt="" src="/images/use_img/about-g2.jpg"/>
+</a>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="our-features">
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
+<h3>
+<span>TÍNH NĂNG</span>
+</h3>
+<ul>
+</ul>
+<div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
+<i class="lnr lnr-graduation-hat"></i>
+<h3>Bản Đồ</h3>
+<h4 class="intro-text">
     Khám phá TP.HCM dễ dàng hơn với bản đồ trực quan, giúp bạn nhanh chóng tìm được vị trí các di tích nổi bật và định hướng cho chuyến tham quan.
   </h4>
-            </div>
-            <div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
-              <i class="lnr lnr-graduation-hat"></i>
-              <h3>Kho thông tin</h3>
-              <h4 class="intro-text">
+</div>
+<div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
+<i class="lnr lnr-graduation-hat"></i>
+<h3>Kho thông tin</h3>
+<h4 class="intro-text">
     Mỗi di tích đều có phần mô tả ngắn gọn, hình ảnh minh họa và câu chuyện gắn liền với lịch sử – văn hóa, giúp bạn hiểu rõ hơn giá trị của từng địa điểm.
   </h4>
-            </div>
-            <div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
-              <i class="lnr lnr-smile"></i>
-              <h3>Quiz</h3>
-              <h4 class="intro-text">
+</div>
+<div class="col-xs-12 col-sm-4 feature wow bounceInLeft">
+<i class="lnr lnr-smile"></i>
+<h3>Quiz</h3>
+<h4 class="intro-text">
     Sau khi tìm hiểu, bạn có thể thử sức với những câu hỏi nhỏ để ôn lại kiến thức, vừa vui vừa giúp ghi nhớ thông tin thú vị về các di tích.
   </h4>
-            </div>
-            <div class="text-center col-xs-12">
-              <a href="blog.html#" data-animation="animated zoomInUp" class="btn btn-medium btn-default">Tìm Hiểu Thêm<i class="lnr lnr-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="fun-gallery">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12">
-            <h3>
-              <span>Hình Ảnh</span>
-            </h3>
-            <ul>
-            </ul>
+</div>
+<div class="text-center col-xs-12">
+<a class="btn btn-medium btn-default" data-animation="animated zoomInUp" href="/blog.html">Tìm Hiểu Thêm<i class="lnr lnr-arrow-right"></i>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="fun-gallery">
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
+<h3>
+<span>Hình Ảnh</span>
+</h3>
+<ul>
+</ul>
 <style>
   body{
     font-family: system-ui, -apple-system, "Segoe UI", Roboto, Arial;
@@ -712,26 +438,22 @@
     background:#fff;
     color:#111;
   }
-
   .custom-gallery-section{
     padding:20px;
     max-width:1200px;
     margin:0 auto;
   }
-
   .custom-gallery-title{
     font-weight:700;
     font-size:1.2rem;
     margin-bottom:16px;
     color:#0077cc;
   }
-
   .custom-gallery-grid{
     display:grid;
     grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));
     gap:16px;
   }
-
   .custom-gallery-grid img{
     width:100%;
     height:220px; /* uniform height */
@@ -743,7 +465,6 @@
     cursor:pointer;
     display:block;
   }
-
   /* Lightbox */
   .custom-lightbox{
     position:fixed;
@@ -778,43 +499,35 @@
     cursor:pointer;
   }
 </style>
-</head>
-<body>
-
 <section class="custom-gallery-section">
-  <div class="custom-gallery-grid">
-    <img src="images/cbtt3.jpg" alt="Ảnh 1">
-    <img src="images/ddl3.jpg" alt="Ảnh 2">
-    <img src="images/bttpchm1.jpg" alt="Ảnh 3">
-    <img src="images/cgv2.jpg" alt="Ảnh 4">
-    <img src="images/csgv2.jpg" alt="Ảnh 5">
-    <img src="images/dtth3.jpg" alt="Ảnh 6">
-    <img src="images/dpp1.jpg" alt="Ảnh 7">
-    <img src="images/ddpth1.jpg" alt="Ảnh 8">
-  </div>
+<div class="custom-gallery-grid">
+<img alt="Ảnh 1" src="/images/cbtt3.jpg"/>
+<img alt="Ảnh 2" src="/images/ddl3.jpg"/>
+<img alt="Ảnh 3" src="/images/bttpchm1.jpg"/>
+<img alt="Ảnh 4" src="/images/cgv2.jpg"/>
+<img alt="Ảnh 5" src="/images/csgv2.jpg"/>
+<img alt="Ảnh 6" src="/images/dtth3.jpg"/>
+<img alt="Ảnh 7" src="/images/dpp1.jpg"/>
+<img alt="Ảnh 8" src="/images/ddpth1.jpg"/>
+</div>
 </section>
-
 <!-- Lightbox -->
 <div class="custom-lightbox" id="custom-lightbox">
-  <button class="custom-lightbox-close" aria-label="Close">&times;</button>
-  <img src="" alt="Full view">
+<button aria-label="Close" class="custom-lightbox-close">×</button>
+<img alt="Full view" src=""/>
 </div>
-
 <script>
 /* 3D Tilt Effect */
 (function(){
   const maxRotate=25;
   const imgs=document.querySelectorAll('.custom-gallery-grid img');
-
   imgs.forEach(img=>{
     let rafId=null;
     let current={rx:0,ry:0}, target={rx:0,ry:0};
     let isPointerOver=false;
-
     function rect(){ return img.getBoundingClientRect(); }
     function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
     function lerp(a,b,t){ return a+(b-a)*t; }
-
     function onPointerMove(e){
       isPointerOver=true;
       const r=rect();
@@ -844,231 +557,223 @@
     }
     function startLoop(){ if(!rafId) rafId=requestAnimationFrame(update); }
     function cancelLoop(){ if(rafId){ cancelAnimationFrame(rafId); rafId=null; } }
-
     img.addEventListener('pointermove',onPointerMove);
     img.addEventListener('pointerleave',onPointerLeave);
     window.addEventListener('pagehide',cancelLoop);
   });
 })();
-
 /* Lightbox */
 (function(){
   const lightbox=document.getElementById('custom-lightbox');
   const lightboxImg=lightbox.querySelector('img');
   const closeBtn=lightbox.querySelector('.custom-lightbox-close');
-
   document.querySelectorAll('.custom-gallery-grid img').forEach(img=>{
     img.addEventListener('click',()=>{
       lightboxImg.src=img.src;
       lightbox.classList.add('active');
     });
   });
-
   closeBtn.addEventListener('click',()=> lightbox.classList.remove('active'));
   lightbox.addEventListener('click', e=>{
     if(e.target===lightbox){ lightbox.classList.remove('active'); }
   });
 })();
 </script>
-            <div class="text-center col-xs-12">
-              <a href="map.html" data-animation="animated zoomInUp" class="btn btn-medium btn-blue">Xem bản đồ<i class="lnr lnr-arrow-right"></i>
-              </a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <section class="school-classes">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12">
-            <h3>
-              <span>KHO THÔNG TIN</span>
-            </h3>
-            <ul>
-            </ul>
-            <div id="owl-classes" class="owl-carousel">
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="diadaocuchi.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img1.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">1 <small></small>
-                    </div>
-                    <h3>
-                      <a href="diadaocuchi.html"> Địa Đạo Củ Chi</a>
-                    </h3>
-                    <p>Địa đạo Củ Chi là di tích quốc gia đặc biệt, biểu tượng cho ý chí kiên cường, sáng tạo của quân dân Củ Chi, là công trình phòng thủ ngầm nổi tiếng thế giới, thu hút hàng triệu du khách mỗi năm.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Di tích quốc gia đặc biệt
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="nhathoducba.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img2.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">2 <small></small>
-                    </div>
-                    <h3>
-                      <a href="nhathoducba.html">Nhà Thờ Đức Bà</a>
-                    </h3>
-                    <p>Nhà thờ Đức Bà Sài Gòn là biểu tượng kiến trúc, tôn giáo và lịch sử của TP.HCM, nổi bật với phong cách Romanesque – Gothic, là trung tâm sinh hoạt Công giáo và điểm đến văn hóa, du lịch nổi tiếng của thành phố.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Di tích cấp thành phố
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="baotangchungtichchientranh.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img3.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">3 <small></small>
-                    </div>
-                    <h3>
-                      <a href="baotangchungtichchientranh.html">Bảo Tàng Chứng Tích Chiến Tranh</a>
-                    </h3>
-                    <p>Bảo tàng Chứng tích Chiến tranh là bảo tàng chuyên đề lớn nhất về chiến tranh tại Việt Nam, lưu giữ hơn 20.000 hiện vật, là nơi giáo dục lịch sử, tưởng niệm và truyền cảm hứng về hòa bình, nhân quyền cho các thế hệ và du khách quốc tế.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Bảo Tàng Chuyên Đề
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="chobenthanh.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img4.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">4 <small></small>
-                    </div>
-                    <h3>
-                      <a href="chobenthanh.html">Chợ Bến Thành</a>
-                    </h3>
-                    <p>Chợ Bến Thành là biểu tượng văn hóa, thương mại và du lịch của TP.HCM, nổi bật với kiến trúc thuộc địa Pháp kết hợp Á Đông, là nơi giao lưu kinh tế – văn hóa và bảo tồn nét sinh hoạt truyền thống của người Sài Gòn.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Di tích cấp thành phố
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="dinhdoclap.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img5.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">5 <small></small>
-                    </div>
-                    <h3>
-                      <a href="dinhdoclap.html">Dinh Độc Lập</a>
-                    </h3>
-                    <p>Dinh Độc Lập là di tích quốc gia đặc biệt, biểu tượng lịch sử của ngày thống nhất đất nước 30/4/1975, nổi bật với kiến trúc hiện đại kết hợp truyền thống, là điểm tham quan, giáo dục lịch sử và văn hóa tiêu biểu của TP.HCM.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Di tích quốc gia đặc biệt
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-              <div class="col-xs-12 zoom">
-                <div class="classes">
-                  <a href="lehoikhaihacauan.html" class="img-thumb">
-                    <figure>
-                      <img src="images/use_img/course_img6.jpg" alt="" />
-                    </figure>
-                  </a>
-                  <div class="classes-info">
-                    <div class="price">6 <small></small>
-                    </div>
-                    <h3>
-                      <a href="lehoikhaihacauan.html">Lễ Hội Khai Hạ - Cầu An</a>
-                    </h3>
-                    <p>Lễ hội Khai hạ - Cầu an tại Lăng Tả quân Lê Văn Duyệt là di sản văn hóa phi vật thể quốc gia, sự kiện truyền thống lớn đầu năm của Sài Gòn, mang ý nghĩa cầu an, tri ân tiền nhân, giữ gìn bản sắc văn hóa Nam Bộ.</p>
-                    <ul class="classes-time">
-                      <li>
-                        <span>Loại</span> Di sản văn hóa phi vật thể quốc gia.
-                      </li>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  <div class="container">
-  <div class="row">
-    <!-- Logo section -->
-    <div class="col-xs-12 text-center">
-      <img src="images/logo5.png" alt="Logo" class="logo-img" />
-    </div>
-  </div>
-
-  <div class="row">
-    <!-- Navigation menu below logo -->
-    <div class="col-xs-12 text-center">
-      <ul class="menu list-inline">
-        <li class="list-inline-item"><a href="home-1.html#">TRANG CHỦ</a></li>
-        <li class="list-inline-item"><a href="home-1.html#">BẢN ĐỒ</a></li>
-        <li class="list-inline-item"><a href="home-1.html#">KHO THÔNG TIN</a></li>
-        <li class="list-inline-item"><a href="quiz.html#">QUIZ</a></li>
-      </ul>
-    </div>
-  </div>
+<div class="text-center col-xs-12">
+<a class="btn btn-medium btn-blue" data-animation="animated zoomInUp" href="/map.html">Xem bản đồ<i class="lnr lnr-arrow-right"></i>
+</a>
 </div>
-        </div>
-      </div>
-      <div class="footer-bottom">
-        <div class="container">
-          <div class="row"></div>
-        </div>
-      </div>
-    <!-- Chatbox HTML -->
-    <!-- Chatbox Container -->
-    <button id="chatbox-toggle">TRỢ LÝ AI</button>
-    <div id="chatbox-container" aria-hidden="true">
-      <div id="chatbox-header"> Trợ lý AI <button id="chatbox-close">✖</button>
-      </div>
-      <div id="chatbox-messages" aria-live="polite">
-        <!-- sample messages -->
-        <div class="chat-message chat-ai">Xin chào!</div>
-      </div>
-      <div id="chatbox-input-area">
-        <input id="chatbox-input" type="text" placeholder="Type your message..." />
-        <button id="chatbox-send">Send</button>
-      </div>
-    </div>
-    <style>
+</div>
+</div>
+</div>
+</section>
+<section class="school-classes">
+<div class="container">
+<div class="row">
+<div class="col-xs-12">
+<h3>
+<span>KHO THÔNG TIN</span>
+</h3>
+<ul>
+</ul>
+<div class="owl-carousel" id="owl-classes">
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/diadaocuchi.html">
+<figure>
+<img alt="" src="/images/use_img/course_img1.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">1 <small></small>
+</div>
+<h3>
+<a href="/diadaocuchi.html"> Địa Đạo Củ Chi</a>
+</h3>
+<p>Địa đạo Củ Chi là di tích quốc gia đặc biệt, biểu tượng cho ý chí kiên cường, sáng tạo của quân dân Củ Chi, là công trình phòng thủ ngầm nổi tiếng thế giới, thu hút hàng triệu du khách mỗi năm.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Di tích quốc gia đặc biệt
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/nhathoducba.html">
+<figure>
+<img alt="" src="/images/use_img/course_img2.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">2 <small></small>
+</div>
+<h3>
+<a href="/nhathoducba.html">Nhà Thờ Đức Bà</a>
+</h3>
+<p>Nhà thờ Đức Bà Sài Gòn là biểu tượng kiến trúc, tôn giáo và lịch sử của TP.HCM, nổi bật với phong cách Romanesque – Gothic, là trung tâm sinh hoạt Công giáo và điểm đến văn hóa, du lịch nổi tiếng của thành phố.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Di tích cấp thành phố
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/baotangchungtichchientranh.html">
+<figure>
+<img alt="" src="/images/use_img/course_img3.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">3 <small></small>
+</div>
+<h3>
+<a href="/baotangchungtichchientranh.html">Bảo Tàng Chứng Tích Chiến Tranh</a>
+</h3>
+<p>Bảo tàng Chứng tích Chiến tranh là bảo tàng chuyên đề lớn nhất về chiến tranh tại Việt Nam, lưu giữ hơn 20.000 hiện vật, là nơi giáo dục lịch sử, tưởng niệm và truyền cảm hứng về hòa bình, nhân quyền cho các thế hệ và du khách quốc tế.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Bảo Tàng Chuyên Đề
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/chobenthanh.html">
+<figure>
+<img alt="" src="/images/use_img/course_img4.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">4 <small></small>
+</div>
+<h3>
+<a href="/chobenthanh.html">Chợ Bến Thành</a>
+</h3>
+<p>Chợ Bến Thành là biểu tượng văn hóa, thương mại và du lịch của TP.HCM, nổi bật với kiến trúc thuộc địa Pháp kết hợp Á Đông, là nơi giao lưu kinh tế – văn hóa và bảo tồn nét sinh hoạt truyền thống của người Sài Gòn.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Di tích cấp thành phố
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/dinhdoclap.html">
+<figure>
+<img alt="" src="/images/use_img/course_img5.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">5 <small></small>
+</div>
+<h3>
+<a href="/dinhdoclap.html">Dinh Độc Lập</a>
+</h3>
+<p>Dinh Độc Lập là di tích quốc gia đặc biệt, biểu tượng lịch sử của ngày thống nhất đất nước 30/4/1975, nổi bật với kiến trúc hiện đại kết hợp truyền thống, là điểm tham quan, giáo dục lịch sử và văn hóa tiêu biểu của TP.HCM.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Di tích quốc gia đặc biệt
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+<div class="col-xs-12 zoom">
+<div class="classes">
+<a class="img-thumb" href="/lehoikhaihacauan.html">
+<figure>
+<img alt="" src="/images/use_img/course_img6.jpg"/>
+</figure>
+</a>
+<div class="classes-info">
+<div class="price">6 <small></small>
+</div>
+<h3>
+<a href="/lehoikhaihacauan.html">Lễ Hội Khai Hạ - Cầu An</a>
+</h3>
+<p>Lễ hội Khai hạ - Cầu an tại Lăng Tả quân Lê Văn Duyệt là di sản văn hóa phi vật thể quốc gia, sự kiện truyền thống lớn đầu năm của Sài Gòn, mang ý nghĩa cầu an, tri ân tiền nhân, giữ gìn bản sắc văn hóa Nam Bộ.</p>
+<ul class="classes-time">
+<li>
+<span>Loại</span> Di sản văn hóa phi vật thể quốc gia.
+                      </li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<div class="container">
+<div class="row">
+<!-- Logo section -->
+<div class="col-xs-12 text-center">
+<img alt="Logo" class="logo-img" src="/images/logo5.png"/>
+</div>
+</div>
+<div class="row">
+<!-- Navigation menu below logo -->
+<div class="col-xs-12 text-center">
+<ul class="menu list-inline">
+<li class="list-inline-item"><a href="/home-1.html">TRANG CHỦ</a></li>
+<li class="list-inline-item"><a href="/home-1.html">BẢN ĐỒ</a></li>
+<li class="list-inline-item"><a href="/home-1.html">KHO THÔNG TIN</a></li>
+<li class="list-inline-item"><a href="/quiz.html">QUIZ</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="footer-bottom">
+<div class="container">
+<div class="row"></div>
+</div>
+</div>
+<!-- Chatbox HTML -->
+<!-- Chatbox Container -->
+<button id="chatbox-toggle">TRỢ LÝ AI</button>
+<div aria-hidden="true" id="chatbox-container">
+<div id="chatbox-header"> Trợ lý AI <button id="chatbox-close">✖</button>
+</div>
+<div aria-live="polite" id="chatbox-messages">
+<!-- sample messages -->
+<div class="chat-message chat-ai">Xin chào!</div>
+</div>
+<div id="chatbox-input-area">
+<input id="chatbox-input" placeholder="Type your message..." type="text"/>
+<button id="chatbox-send">Send</button>
+</div>
+</div>
+<style>
       /* Use a very high z-index to ensure the chat sits above other UI.
      If another element still covers it, make sure that element doesn't
      create a new stacking context with transform/opacity/position and a higher z-index. */
@@ -1093,14 +798,12 @@
         transition: transform .38s cubic-bezier(.2, .9, .2, 1), opacity .28s;
         will-change: transform, opacity;
       }
-
       /* show state -> visible & interactive */
       #chatbox-container.show {
         transform: translateX(0);
         opacity: 1;
         pointer-events: auto;
       }
-
       #chatbox-header {
         flex: 0 0 50px;
         background: #0078ff;
@@ -1110,7 +813,6 @@
         align-items: center;
         padding: 10px;
       }
-
       /* Messages area fills the available middle space and is scrollable */
       #chatbox-messages {
         flex: 1;
@@ -1122,27 +824,23 @@
         display: flex;
         flex-direction: column;
       }
-
       .message {
         max-width: 75%;
         padding: 8px 12px;
         border-radius: 12px;
       }
-
       .message.sent {
         align-self: flex-end;
         /* moves your messages to the right */
         background-color: #007bff;
         color: white;
       }
-
       .message.received {
         align-self: flex-start;
         /* moves other messages to the left */
         background-color: #e5e5ea;
         color: black;
       }
-
       /* If you want the newest messages to appear at the bottom visually,
      use JS to auto-scroll to bottom on open/new message. */
       /* Chat bubbles must NOT flex-grow */
@@ -1154,21 +852,18 @@
         word-wrap: break-word;
         animation: msgIn .18s ease;
       }
-
       .chat-user {
         align-self: flex-end;
         background: #0078ff;
         color: white;
         border-bottom-right-radius: 0;
       }
-
       .chat-ai {
         align-self: flex-start;
         background: #e5e5ea;
         color: black;
         border-bottom-left-radius: 0;
       }
-
       #chatbox-input-area {
         flex: 0 0 56px;
         display: flex;
@@ -1178,7 +873,6 @@
         border-top: 1px solid #eee;
         background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(250, 250, 250, 0.9));
       }
-
       #chatbox-input {
         flex: 1;
         padding: 8px;
@@ -1186,7 +880,6 @@
         border: 1px solid #ddd;
         outline: none;
       }
-
       #chatbox-send {
         background: #0078ff;
         color: white;
@@ -1195,7 +888,6 @@
         border-radius: 8px;
         cursor: pointer;
       }
-
       /* toggle button z-index should also be high so it's clickable */
       #chatbox-toggle {
         position: fixed;
@@ -1203,20 +895,18 @@
         right: 20px;
         z-index: 2147483647;
       }
-
       @keyframes msgIn {
         from {
           opacity: 0;
           transform: translateY(6px);
         }
-
         to {
           opacity: 1;
           transform: translateY(0);
         }
       }
     </style>
-    <script>
+<script>
       document.addEventListener('DOMContentLoaded', () => {
         const toggleBtn = document.getElementById("chatbox-toggle");
         const chatbox = document.getElementById("chatbox-container");
@@ -1238,7 +928,6 @@
             messages.scrollTop = messages.scrollHeight;
           });
         }
-
         function closeChat() {
           chatbox.classList.remove("show");
           chatbox.setAttribute('aria-hidden', 'true');
@@ -1279,7 +968,6 @@
   if (!text) return;
   addMessage(text, "user");
   input.value = "";
-
   console.log("Sending message:", text);
   try {
     const res = await fetch("https://baldandbadgithubio-production-4f3f.up.railway.app/ask", {
@@ -1289,10 +977,8 @@
     });
     console.log("Fetch complete. status:", res.status, res.statusText);
     console.log("Response headers:", Array.from(res.headers.entries()));
-
     const raw = await res.text();                 // read raw text first
     console.log("Raw response:", raw);
-
     // try parse JSON if content-type suggests JSON
     let data;
     const ct = res.headers.get("content-type") || "";
@@ -1307,7 +993,6 @@
       addMessage(`Non-JSON response (status ${res.status}). See Console/Network.`, "ai");
       return;
     }
-
     console.log("Parsed JSON:", data);
     addMessage(data.reply || "(No reply)", "ai");
   } catch (err) {
@@ -1317,78 +1002,77 @@
 }
       });
     </script>
-    <script src="js/jquery.min.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="vendor/flexslider/jquery.flexslider-min.js"></script>
-    <script src="vendor/owlcarousel/owl.carousel.js"></script>
-    <script>
-      jQuery.noConflict();
-      jQuery(document).ready(function($) {
-        var owl = $("#owl-classes");
-        owl.owlCarousel({
-          items: 3, //10 items above 1000px browser width
-          itemsDesktop: [1000, 3], //5 items between 1000px and 901px
-          itemsDesktopSmall: [900, 3], // 3 items betweem 900px and 601px
-          itemsTablet: [640, 2],
-          itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
-          navigation: false,
-          pagination: true,
-          autoPlay: true
-        });
-        var owl = $("#owl-teachers");
-        owl.owlCarousel({
-          items: 2, //10 items above 1000px browser width
-          itemsDesktop: [1000, 2], //5 items between 1000px and 901px
-          itemsDesktopSmall: [900, 2], // 3 items betweem 900px and 601px
-          itemsTablet: [600, 1],
-          itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
-          navigation: false,
-          pagination: true,
-          autoPlay: true
-        });
-
-        // initialize FlexSlider for the about-slide
-        if ($.fn && $.fn.flexslider) {
-          $('.about-slide').flexslider({
-            animation: 'slide',
-            controlNav: false,
-            directionNav: false,
-            slideshow: true,
-            slideshowSpeed: 4000,
-            animationSpeed: 600,
-            start: function(slider) {
-              // ensure the slider container is visible after init
-              slider.container.css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
-            }
-          });
-        } else {
-          // fallback: make sure the element is visible even if flexslider script failed to load
-          $('.about-slide').css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
+<script src="/js/jquery.min.js"></script><script src="/js/lang-switcher.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/vendor/flexslider/jquery.flexslider-min.js"></script>
+<script src="/vendor/owlcarousel/owl.carousel.js"></script>
+<!-- new: language switcher behavior -->
+<script src="/js/lang-switcher.js"></script>
+<script>
+  jQuery.noConflict();
+  jQuery(document).ready(function($) {
+    var owl = $("#owl-classes");
+    owl.owlCarousel({
+      items: 3, //10 items above 1000px browser width
+      itemsDesktop: [1000, 3], //5 items between 1000px and 901px
+      itemsDesktopSmall: [900, 3], // 3 items betweem 900px and 601px
+      itemsTablet: [640, 2],
+      itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
+      navigation: false,
+      pagination: true,
+      autoPlay: true
+    });
+    var owl = $("#owl-teachers");
+    owl.owlCarousel({
+      items: 2, //10 items above 1000px browser width
+      itemsDesktop: [1000, 2], //5 items between 1000px and 901px
+      itemsDesktopSmall: [900, 2], // 3 items betweem 900px and 601px
+      itemsTablet: [600, 1],
+      itemsMobile: [480, 1], // itemsMobile disabled - inherit from itemsTablet option
+      navigation: false,
+      pagination: true,
+      autoPlay: true
+    });
+    // initialize FlexSlider for the about-slide
+    if ($.fn && $.fn.flexslider) {
+      $('.about-slide').flexslider({
+        animation: 'slide',
+        controlNav: false,
+        directionNav: false,
+        slideshow: true,
+        slideshowSpeed: 4000,
+        animationSpeed: 600,
+        start: function(slider) {
+          // ensure the slider container is visible after init
+          slider.container.css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
         }
       });
-    </script>
-    <script src="js/theme.js"></script>
-    <script type="text/javascript" src="vendor/fancybox/js/jquery.fancybox.js"></script>
-    <script type="text/javascript" src="vendor/fancybox/js/custom.fancybox.js"></script>
-    <script>
+    } else {
+      // fallback: make sure the element is visible even if flexslider script failed to load
+      $('.about-slide').css({ 'visibility': 'visible', 'display': 'block', 'opacity': 1 });
+    }
+  });
+</script>
+<script src="/js/theme.js"></script>
+<script src="/vendor/fancybox/js/jquery.fancybox.js" type="text/javascript"></script>
+<script src="/vendor/fancybox/js/custom.fancybox.js" type="text/javascript"></script>
+<script>
       jQuery.noConflict();
       jQuery('.fancybox').fancybox();
     </script>
-    <script src="js/wow.min.js"></script>
-    <script>
+<script src="/js/wow.min.js"></script>
+<script>
       new WOW().init();
     </script>
-    <!-- partial: auto-music-minimal-class.html -->
+<!-- partial: auto-music-minimal-class.html -->
 <!-- single element with class (not a <button>) -->
-<div class="auto-music-toggle" role="button" tabindex="0" aria-pressed="false" aria-label="Toggle music mute">
-  <!-- svg icon -->
-  <svg class="auto-music-icon" width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
-    <path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
-  </svg>
+<div aria-label="Toggle music mute" aria-pressed="false" class="auto-music-toggle" role="button" tabindex="0">
+<!-- svg icon -->
+<svg aria-hidden="true" class="auto-music-icon" height="18" viewbox="0 0 24 24" width="18">
+<path d="M5 9v6h4l5 4V5L9 9H5z" fill="currentColor"></path>
+</svg>
 </div>
-
 <!-- (optional) <audio> element; script will create it if missing -->
 <!-- <audio id="auto-music-audio" src="/assets/music.mp3" preload="auto" loop></audio> -->
-  </body>
-  <!--home-123:18  -->
-</html>
+<!--home-123:18  -->
+</body></html>
