@@ -14,7 +14,7 @@ const paginationDiv = document.getElementById('pagination');
 async function loadData() {
   try {
     // try different possible relative paths if needed (adjust to your setup)
-    const pathCandidates = ['./js/pagesdataen.json', 'js/pagesdataen.json', '/js/pagesdataen.json'];
+    const pathCandidates = ['/js/pagesdataen.json', '/js/pagesdataen.json', '/js/pagesdataen.json'];
     let res = null;
     let lastErr = null;
 
