@@ -845,7 +845,6 @@
 <button onclick="applyFilter('cachmang')">Historical - Revolutionary Culture Relic</button>
 <button onclick="applyFilter('baotang')">Specialized Museum</button>
 <button onclick="applyFilter('khaoco')">Archaeological Relic</button>
-<button onclick="applyFilter('khu')">Biosphere Reserve</button>
 <button onclick="applyFilter('phivat')">Intangible Cultural Heritage</button>
 <button onclick="applyFilter('khac')">Other</button>
 </div>
@@ -878,7 +877,6 @@ const CATEGORY_COLORS = {
   khaoco:   '#10b981',
   dacbiet:  '#8b5cf6',
   cachmang: '#ef4444',
-  khu:      '#FFFF00',
   phivat:  '#9c27b0',
   default:  '#6b7280'
 };
@@ -958,7 +956,6 @@ const LEGEND_LABELS = {
   cachmang: 'Historical - Revolutionary Culture Relic',
   baotang: 'Specialized Museum',
   khaoco: 'Archaeological Relic',
-  khu: 'Biosphere Reserve',
   phivat: 'Intangible Cultural Heritage',
   default: 'Other'
 };
@@ -1451,7 +1448,6 @@ function categoryClass(cat){
     baotang:  'marker-cat-baotang',
     khaoco:   'marker-cat-khaoco',
     dacbiet:  'marker-cat-dacbiet',
-    khu:      'marker-cat-kientruc',
     phivat:  'marker-cat-phivat'
   }[cat] || 'marker-cat-default';
 }
@@ -1633,7 +1629,6 @@ const LEGEND_ORDER = [
   'kientruc',
   'baotang',
   'khaoco',
-  'khu',
   'phivat',
   'default'
 ];
@@ -1783,7 +1778,6 @@ const CATEGORY_DECOS = {
   baotang:   '/images/deco/baotang.png',
   khaoco:    '/images/deco/khaoco.png',
   dacbiet:   '/images/deco/dacbiet.png',
-  khu:       '/images/deco/khu.png',
   phivat:   '/images/deco/phivat.png',
   default:   '/images/deco/default.png'
 };

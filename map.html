@@ -1690,8 +1690,6 @@
 
 <button onclick="applyFilter('khaoco')">Di tích khảo cổ</button>
 
-<button onclick="applyFilter('khu')">Khu dự trữ sinh quyển</button>
-
 <button onclick="applyFilter('phivat')">Di sản văn hóa Phi vật thể</button>
 
 <button onclick="applyFilter('khac')">Khác</button>
@@ -1743,8 +1741,6 @@ const CATEGORY_COLORS = {
   dacbiet:  '#8b5cf6',
 
   cachmang: '#ef4444',
-
-  khu:      '#FFFF00',
 
   phivat:  '#9c27b0',
 
@@ -1903,8 +1899,6 @@ const LEGEND_LABELS = {
   dacbiet:  'Di tích quốc gia đặc biệt',
 
   cachmang: 'Di tích lịch sử – văn hóa cách mạng',
-
-  khu:      'Khu dự trữ sinh quyển',
 
   phivat: 'Di sản văn hóa Phi vật thể',
 
@@ -2890,8 +2884,6 @@ function categoryClass(cat){
 
     dacbiet:  'marker-cat-dacbiet',
 
-    khu:      'marker-cat-kientruc',
-
     phivat:  'marker-cat-phivat'
 
   }[cat] || 'marker-cat-default';
@@ -3254,8 +3246,6 @@ const LEGEND_ORDER = [
 
   'khaoco',
 
-  'khu',
-
   'phivat',
 
   'default'
@@ -3553,8 +3543,6 @@ const CATEGORY_DECOS = {
   khaoco:    'images/deco/khaoco.png',
 
   dacbiet:   'images/deco/dacbiet.png',
-
-  khu:       'images/deco/khu.png',
 
   phivat:   'images/deco/phivat.png',
 
